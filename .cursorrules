@@ -1,0 +1,122 @@
+# 🛠 Global Rules & Coding Standards
+
+ยินดีต้อนรับ! นี่คือข้อตกลงและมาตรฐานการพัฒนาสำหรับโปรเจกต์นี้ เพื่อให้โค้ดมีคุณภาพ ยืดหยุ่น และดูแลรักษาง่าย
+
+---
+
+### 1. 📋 การทำงานและวางแผน (Planning)
+
+- **ทำ Plan เป็นภาษาไทยทุกครั้ง** ก่อนเริ่มลงมือทำ Task ที่มีความซับซ้อน
+- **Documentation:** มี README และคำอธิบาย Architecture สำหรับส่วนที่สำคัญ
+
+### 2. 🏛 สถาปัตยกรรม (Architecture & Design)
+
+- **Clean Architecture:** ยึดถือหลักการ Clean Architecture อย่างเคร่งครัด
+- **Layer Separation:** แยกสัดส่วนของโค้ดให้ชัดเจนตาม Layer:
+  - `UI` (Components, Pages)
+  - `Application` (Hooks, Services)
+  - `Domain` (Types, Models, Logic)
+  - `Infrastructure` (API Clients, Config)
+- **Decoupling:** หลีกเลี่ยง Tight Coupling ระหว่าง UI และ Business Logic
+- **SOLID Principles:** ปฏิบัติตามหลักการ SOLID
+- **Composition over Inheritance:** เลือกใช้การเขียนโค้ดแบบต่อเติม (Composition) มากกว่าการใช้ Inheritance
+
+### 3. ⌨️ การเขียนโค้ด (Coding Standards)
+
+- **Strict TypeScript:** ห้ามใช้ `implicit any` โดยเด็ดขาด
+- **Scalability:** ออกแบบโค้ดให้รองรับการขยายตัว (Scale) และการดูแลรักษา (Maintainability)
+- **Reusable Components:** เน้นการสร้าง Component ที่นำกลับมาใช้ใหม่ได้และลดการซ้ำซ้อนของ Logic
+- **Micro-frontends Ready:** ออกแบบให้ง่ายต่อการแยกเป็น Micro-frontends ในอนาคต
+
+### 4. 📂 โครงสร้างโฟลเดอร์ (Folder Structure)
+
+ใช้โครงสร้างแบบ **Feature-based architecture** เพื่อรองรับโปรเจกต์ขนาดใหญ่:
+
+- `src/features/[feature-name]/`: รวมทุกอย่างที่เกี่ยวกับ Feature นั้นๆ (Components, Hooks, Types, Services)
+- `src/shared/`: รวมโค้ดที่ใช้ร่วมกันทั้งโปรเจกต์:
+  - `ui/`: Shared UI Components
+  - `hooks/`: Reusable Hooks
+  - `services/`: Common Service Layer
+  - `api/`: Centralized API Clients
+  - `types/`: Global Type Definitions
+
+### 5. 🌐 การจัดการ API (API Layer)
+
+- **Centralized API:** รวมการเรียก API ไว้ที่จุดเดียวใน Infrastructure Layer
+- **No Direct Fetch:** ห้ามใช้ `fetch` หรือ `axios` โดยตรงภายใน UI Component
+- **Service Layer:** เรียกใช้งานผ่าน Service Layer เสมอ (Application Layer)
+- **Reliability:** ต้องมี Error Handling และ Retry Strategy
+
+### 6. 🧪 การทดสอบ (Testing Strategy)
+
+- **Unit Tests:** สำหรับ Business Logic และ Domain Logic
+- **Integration Tests:** สำหรับ API และการเชื่อมต่อระหว่าง Layer
+- **React Testing Library:** สำหรับการทดสอบ UI Components
+- **Code Coverage:** รักษาความครอบคลุมของเทสไม่ต่ำกว่า 80%
+
+### 7. 🚀 ประสิทธิภาพและความปลอดภัย (Performance & Security)
+
+- **Performance:**
+  - ให้ความสำคัญกับการใช้ Server Components เมื่อเหมาะสม
+  - ใช้ Lazy Loading และ Dynamic Imports สำหรับ Component ขนาดใหญ่
+  - หลีกเลี่ยง Unnecessary Re-renders (ใช้ `React.memo` เมื่อจำเป็น)
+  - ปรับปรุงขนาด Bundle (Avoid large bundle size)
+  - Optimize images ด้วย `next/image`
+- **Security:**
+  - ปฏิบัติตาม OWASP guidelines:
+    - ป้องกัน XSS และ CSRF
+    - ใช้ Secure Headers
+    - Sanitize user inputs
+    - Implement Rate Limiting
+  - มี Input Validation เสมอ
+  - ห้าม Hardcode หรือเปิดเผย Environment Secrets
+
+### 8. ✨ คุณภาพโค้ด (Code Quality)
+
+- **Tools:** ใช้ ESLint และ Prettier เพื่อรักษามาตรฐานเดียวกัน
+- **Formatting:** รักษาฟอร์แมตของโค้ดให้สม่ำเสมอทั้งโปรเจกต์
+- **Observability:**
+  - ใช้ Structured Logging
+  - หลีกเลี่ยงการ Log ข้อมูลสำคัญ (Sensitive Information)
+  - มีระบบ Monitoring สำหรับ API Failures
+- **Clean Code:**
+  - ห้ามทิ้ง Unused Variables ไว้
+  - ห้ามใช้ `console.log` ในระดับ Production
+
+### 9. Naming Convention
+
+- **Files:**
+  - React Components → `PascalCase`
+  - Hooks → `useSomething`
+  - Utilities → `camelCase`
+  - Constants → `UPPER_CASE`
+- **Folders:** → `kebab-case`
+- **Types / Interfaces:** → `PascalCase`
+
+### 10. 🌐 รูปแบบการจัดการ API (Advanced Pattern)
+
+- **apiClient (Client-side):** สำหรับการดึงข้อมูลฝั่ง Client ผ่าน Next.js Gateway Proxy (`/api/gateway/`) เพื่อความปลอดภัยและจัดการ CORS
+- **apiServer (Server-side):** สำหรับการสื่อสารตรงกับ Backend จาก Server Components หรือ Server Actions พร้อมแนบ Cookies/Tokens อัตโนมัติ (ผ่าน `process.env.APPVRM_API_GATEWAY_AUTH`)
+- **Service Layer Logic:**
+    - คืนค่าในรูปแบบ `ServiceResponse<T>` (success, data, error)
+    - ต้องใช้ `ApiError` class ในการจัดการ error catch เพื่อส่งต่อข้อมูลไปยัง UI อย่างมีระบบ
+- **Mock Support:** ทุก Service ต้องรองรับ `IS_MOCK_MODE` เพื่อให้ทีม UI ทำงานต่อได้แม้ Backend ยังไม่เสร็จ
+
+### 11. 🖼 การจัดการ Layout (Layout Management)
+
+- **Hierarchical Layouts:** ใช้ Root Layout (`src/app/layout.tsx`) สำหรับ Global Providers และ Group Layouts (`src/app/(vrm)/layout.tsx`) สำหรับ Shared UI (Sidebar/Header)
+- **Shared Components:** เก็บ Layout Components ที่ใช้ซ้ำได้ไว้ใน `src/layouts/`
+- **Dynamic Routing:** การเลือกแสดงผล Layout เฉพาะทางให้ใช้ Route Groups `(group-name)` เพื่อความเป็นระเบียบและลดความซับซ้อน
+
+### 12. 🛡 Middleware & Security (ยืดหยุ่นตามโปรเจกต์)
+
+- **Auth Guard:** ใช้ `src/proxy.ts` ในการตรวจสอบสิทธิ์การเข้าถึง หากโปรเจกต์มีการใช้ Token ให้ตรวจสอบความถูกต้องก่อนเข้าถึง Protected Routes
+- **Flexible Token Management:** 
+    - กรณีโปรเจกต์มีระบบ Token: จัดการการแนบ Authorization Header และตรวจสอบการหมดอายุ
+    - กรณีใช้ **Fixed Token** หรือไม่มี Token: ให้ข้ามขั้นตอนการเช็ค Expiration หรือปรับแต่งให้เหมาะสมตามข้อกำหนดของ API
+- **Redirect Logic:** ปรับแต่งให้สอดคล้องกับพฤติกรรมของ Auth System ในโปรเจกต์นั้นๆ (เช่น Redirect เมื่อ Unauthenticated หรือจัดการตาม Fixed Token logic)
+
+---
+
+> [!IMPORTANT]  
+> กรุณาตรวจสอบให้แน่ใจว่าการแก้ไขโค้ดทุกครั้งเป็นไปตามข้อตกลงด้านบนนี้
