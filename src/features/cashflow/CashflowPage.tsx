@@ -14,12 +14,12 @@ export default function CashflowPage() {
     loading,
     transactions,
     balanceData,
-    volumeStats,
     cashflowStats,
     currentBalance,
     balanceChange,
     balanceChangePercent,
   } = useCashflowData();
+
 
   return (
     <Box sx={{ p: { xs: 1, lg: 3 }, flex: 1 }}>

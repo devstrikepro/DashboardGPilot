@@ -36,12 +36,12 @@ import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { useTheme } from "@mui/material/styles";
 import { useState } from "react";
-import type { Deal } from "@/shared/types/api";
+import type { GroupedDeal } from "@/shared/types/api";
 import type { SortField, SortDirection, HistoryTotals } from "../hooks/use-history-data";
 
 interface TradeTableProps {
   readonly loading?: boolean;
-  readonly deals: readonly Deal[];
+  readonly deals: readonly GroupedDeal[];
   readonly totals: HistoryTotals;
   readonly search: string;
   readonly onSearchChange: (value: string) => void;
@@ -312,9 +312,9 @@ export function TradeTable({
               <TableRow>
                 <TableCell sx={{ color: "text.secondary", fontWeight: 500, borderColor: theme.palette.divider }}>
                   <TableSortLabel
-                    active={sortField === "time"}
-                    direction={sortField === "time" ? sortDirection : "asc"}
-                    onClick={() => onSort("time")}
+                    active={sortField === "closeTime"}
+                    direction={sortField === "closeTime" ? sortDirection : "asc"}
+                    onClick={() => onSort("closeTime")}
                   >
                     Time
                   </TableSortLabel>
@@ -348,9 +348,9 @@ export function TradeTable({
                 </TableCell>
                 <TableCell align="right" sx={{ color: "text.secondary", fontWeight: 500, borderColor: theme.palette.divider }}>
                   <TableSortLabel
-                    active={sortField === "profit"}
-                    direction={sortField === "profit" ? sortDirection : "asc"}
-                    onClick={() => onSort("profit")}
+                    active={sortField === "netProfit"}
+                    direction={sortField === "netProfit" ? sortDirection : "asc"}
+                    onClick={() => onSort("netProfit")}
                   >
                     Net Profit
                   </TableSortLabel>
@@ -390,8 +390,8 @@ export function TradeTable({
                 };
 
                 const getDealProfitColor = () => {
-                  if (deal.net_profit > 0) return "success.main";
-                  if (deal.net_profit < 0) return "error.main";
+                  if (deal.netProfit > 0) return "success.main";
+                  if (deal.netProfit < 0) return "error.main";
                   return "text.primary";
                 };
 
@@ -403,7 +403,7 @@ export function TradeTable({
                     }}
                   >
                     <TableCell sx={{ fontFamily: '"Inter", monospace', fontSize: "0.75rem", color: "text.secondary", borderColor: theme.palette.divider }}>
-                      {deal.time}
+                      {deal.closeTime}
                     </TableCell>
                     <TableCell sx={{ fontFamily: '"Inter", monospace', fontWeight: 500, color: "text.primary", borderColor: theme.palette.divider }}>
                       {deal.symbol || "-"}
@@ -423,7 +423,7 @@ export function TradeTable({
                         borderColor: theme.palette.divider,
                       }}
                     >
-                      {deal.net_profit > 0 ? "+" : ""}${deal.net_profit.toFixed(2)}
+                      {deal.netProfit > 0 ? "+" : ""}${deal.netProfit.toFixed(2)}
                     </TableCell>
                   </TableRow>
                 );
@@ -456,8 +456,8 @@ export function TradeTable({
         {/* Mobile Card View */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
           {paginatedDeals.map((deal) => {
-            const isPositive = deal.net_profit > 0;
-            const isNegative = deal.net_profit < 0;
+            const isPositive = deal.netProfit > 0;
+            const isNegative = deal.netProfit < 0;
             
             let profitColor = "text.primary";
             if (isPositive) profitColor = "success.main";
@@ -484,7 +484,7 @@ export function TradeTable({
                       {deal.symbol || "-"}
                     </Typography>
                     <Typography variant="caption" sx={{ color: "text.secondary", fontFamily: '"Inter", monospace' }}>
-                      {deal.time}
+                      {deal.closeTime}
                     </Typography>
                   </Box>
                   <Typography
@@ -495,7 +495,7 @@ export function TradeTable({
                       color: profitColor
                     }}
                   >
-                    {isPositive ? "+" : ""}${deal.net_profit.toFixed(2)}
+                    {isPositive ? "+" : ""}${deal.netProfit.toFixed(2)}
                   </Typography>
                 </Box>
                 

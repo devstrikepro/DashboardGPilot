@@ -10,10 +10,18 @@ export const API_GATEWAY_SUB = "/api/gateway/sub";
 export const MAIN_ENDPOINTS = {
   /** เช็คสถานะ API และการเชื่อมต่อ MT5 */
   HEALTH: `${API_GATEWAY_MAIN}/api/v1/health`,
-  /** ดึงประวัติการเทรด (รองรับ Filtering) */
+  /** ดึงประวัติการเทรด raw (รองรับ Filtering) */
   TRADES: `${API_GATEWAY_MAIN}/api/v1/trades`,
+  /** ดึงประวัติการเทรด grouped by position (round-turn) */
+  TRADES_GROUPED: `${API_GATEWAY_MAIN}/api/v1/trades/grouped`,
   /** ดึงข้อมูลบัญชี MT5 */
   ACCOUNT: `${API_GATEWAY_MAIN}/api/v1/account`,
+  /** ดึง Performance Stats ทั้งหมด (Analytics page) */
+  ANALYTICS_PERFORMANCE: `${API_GATEWAY_MAIN}/api/v1/analytics/performance`,
+  /** ดึง Dashboard Summary (today/week/month profit, symbol stats) */
+  DASHBOARD_SUMMARY: `${API_GATEWAY_MAIN}/api/v1/dashboard/summary`,
+  /** ดึง Cashflow Summary (transactions, balance chart) */
+  CASHFLOW_SUMMARY: `${API_GATEWAY_MAIN}/api/v1/cashflow/summary`,
 } as const;
 
 /**

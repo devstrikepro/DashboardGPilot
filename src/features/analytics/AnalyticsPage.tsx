@@ -21,13 +21,14 @@ const PLDistribution = dynamic(() => import("@/features/analytics/components/pl-
 export default function AnalyticsPage() {
   const { loading, error, account, stats } = useAnalyticsData();
 
-  // Mapping equity curve to chart format
+  // Mapping equity curve to chart format (UI-only transform)
   const equityChartData = stats?.equityCurve.map(point => ({
-    date: point.date, // Formatted
-    time: point.time, // ISO สำหรับการกรอง
+    date: new Date(point.time).toLocaleDateString('en-US', { day: '2-digit', month: 'short' }),
+    time: point.time,
     equity: point.equity,
     balance: point.equity
   }));
+
 
   return (
     <Box sx={{ p: { xs: 2, lg: 3 }, flex: 1 }}>

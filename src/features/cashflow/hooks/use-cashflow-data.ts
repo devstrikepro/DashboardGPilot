@@ -1,96 +1,77 @@
 "use client";
 
-import { useMemo } from "react";
-import { calculateEquityCurve, getGroupedTrades } from "@/features/analytics/utils/performance-utils";
-import type { Deal } from "@/shared/types/api";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { CashflowService } from "@/shared/services/cashflow-service";
+import { useApiHealth } from "@/shared/providers/api-health-provider";
 import { useTradeData } from "@/shared/providers/trade-data-provider";
+import type { CashflowSummary, CashflowTransaction } from "@/shared/types/api";
 
-export interface Transaction {
-  id: number;
-  date: string;
-  type: string;
-  amount: number;
-  balance: number;
-  status: string;
-  method: string;
-}
+// Re-export Transaction type สำหรับ Components ที่ใช้อยู่
+export type { CashflowTransaction as Transaction };
 
+/**
+ * useCashflowData
+ * ดึง Cashflow Summary จาก Backend โดยตรง
+ * Backend คำนวณ: transactions, balance curve, deposits/withdrawals/netFlow
+ */
 export function useCashflowData() {
-  const { account, deals, loading, error, refreshData } = useTradeData();
+  const { account, loading: globalLoading, error: globalError, refreshData } = useTradeData();
+  const { isHealthy } = useApiHealth();
 
-  const currentBalance = useMemo(() => 
-    deals.reduce((sum: number, d: Deal) => sum + (d.profit + (d.commission || 0) + (d.swap || 0)), 0), 
-  [deals]);
+  const [summary, setSummary] = useState<CashflowSummary | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const transactions = useMemo<Transaction[]>(() => {
-    return deals
-      .filter((d) => d.type === "BALANCE")
-      .map((d, index) => {
-        const isPF = d.comment.startsWith("-PF");
-        let type = "Withdrawal";
-        if (isPF) {
-          type = "ProfitSharing";
-        } else if (d.profit >= 0) {
-          type = "Deposit";
-        }
+  const fetchSummary = useCallback(async () => {
+    if (!isHealthy) return;
+    try {
+      setLoading(true);
+      setError(null);
 
-        return {
-          id: d.ticket || index,
-          date: d.time.split("T")[0],
-          type,
-          amount: d.profit,
-          balance: 0,
-          status: "Completed",
-          method: d.comment || "MT5 Internal",
-        };
-      })
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [deals]);
+      const response = await CashflowService.getCashflowSummary();
 
-  const balanceData = useMemo(() => 
-    calculateEquityCurve(deals).map((point: any) => ({
-      date: new Date(point.time).toLocaleDateString('en-US', { day: '2-digit', month: 'short' }),
-      time: point.time, 
-      balance: point.equity ?? 0
-    })), [deals]);
+      if (response.success && response.data) {
+        setSummary(response.data);
+      } else {
+        setError((response.error as string) ?? "Failed to fetch cashflow summary");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unexpected error");
+    } finally {
+      setLoading(false);
+    }
+  }, [isHealthy]);
 
-  const volumeStats = useMemo(() => {
-    const groupedTrades = getGroupedTrades(deals).filter((d: Deal) => !!d.symbol);
-    const totalVolume = groupedTrades.reduce((sum: number, t: Deal) => sum + t.volume, 0);
-    const totalTrades = groupedTrades.length;
-    const targetVolume = Math.max(10, Math.round((currentBalance || 10000) / 100));
+  useEffect(() => {
+    fetchSummary();
+  }, [fetchSummary]);
 
-    return {
-      currentVolume: totalVolume,
-      targetVolume: targetVolume,
-      tradeCount: totalTrades
-    };
-  }, [deals, currentBalance]);
-
-  const cashflowStats = useMemo(() => {
-    const balanceDeals = deals.filter(d => d.type === "BALANCE");
-    const deposits = balanceDeals.filter(d => d.profit > 0).reduce((sum, d) => sum + d.profit, 0);
-    const withdrawals = balanceDeals.filter(d => d.profit < 0).reduce((sum, d) => sum + Math.abs(d.profit), 0);
-    
-    return {
-      deposits,
-      withdrawals,
-      netFlow: deposits - withdrawals
-    };
-  }, [deals]);
+  // Format balance data สำหรับ chart (UI-only transform)
+  const balanceData = useMemo(() => {
+    if (!summary) return [];
+    return summary.balanceData.map((point) => ({
+      date: new Date(point.time).toLocaleDateString("en-US", { day: "2-digit", month: "short" }),
+      time: point.time,
+      balance: point.equity ?? 0,
+    }));
+  }, [summary]);
 
   return {
-    loading,
-    error,
+    loading: loading || globalLoading,
+    error: error ?? globalError,
     account,
-    deals,
-    transactions,
+    transactions: summary?.transactions ?? [],
     balanceData,
-    volumeStats,
-    cashflowStats,
-    currentBalance,
-    balanceChange: 0, 
+    cashflowStats: {
+      deposits: summary?.deposits ?? 0,
+      withdrawals: summary?.withdrawals ?? 0,
+      netFlow: summary?.netFlow ?? 0,
+    },
+    currentBalance: summary?.currentBalance ?? 0,
+    balanceChange: 0,
     balanceChangePercent: 0,
-    refreshData
+    refreshData: async () => {
+      await Promise.all([refreshData(), fetchSummary()]);
+    },
   };
 }
