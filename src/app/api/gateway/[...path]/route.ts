@@ -24,35 +24,59 @@ async function handleRequest(
   { path }: { path: string[] }
 ) {
   try {
-    const backendUrl = process.env.API_URL || "http://localhost:8000";
-    const apiKey = process.env.API_KEY || "";
+    // 1. ติจารณาส่วนหัวของ Path เพื่อเลือก Backend
+    let targetBaseUrl = "";
+    let targetApiKey = "";
+    let finalPathSegments = [...path];
+
+    if (path[0] === "sub") {
+      // ยิงไป Backend-Sub
+      targetBaseUrl = process.env.API_URL_SUB || "http://localhost:8001";
+      targetApiKey = process.env.INTERNAL_API_KEY || "";
+      finalPathSegments = path.slice(1);
+    } else if (path[0] === "main") {
+      // ยิงไป Backend-Main (Explicit)
+      targetBaseUrl = process.env.API_URL_MAIN || process.env.API_URL || "http://localhost:8000";
+      targetApiKey = process.env.INTERNAL_API_KEY || "";
+      finalPathSegments = path.slice(1);
+    } else {
+      // กรณี Legacy หรือไม่มี Prefix ให้ยิงไป Backend-Main เป็น Default
+      targetBaseUrl = process.env.API_URL_MAIN || process.env.API_URL || "http://localhost:8000";
+      targetApiKey = process.env.INTERNAL_API_KEY || "";
+    }
     
     // สร้าง Search Params จาก URL ที่ส่งมา
     const { searchParams } = new URL(request.url);
     const queryString = searchParams.toString();
     
     // ประกอบ Full URL สำหรับ Backend
-    const fullPath = path.join("/");
-    const targetUrl = `${backendUrl}/${fullPath}${queryString ? `?${queryString}` : ""}`;
+    const fullPath = finalPathSegments.join("/");
+    const targetUrl = `${targetBaseUrl}/${fullPath}${queryString ? `?${queryString}` : ""}`;
 
-    // เตรียม Headers (ซ่อน X-API-Key จากหน้าบ้าน)
+    // เตรียม Headers
     const headers = new Headers();
     headers.set("Content-Type", "application/json");
-    if (apiKey) {
-      headers.set("X-API-Key", apiKey);
+    if (targetApiKey) {
+      headers.set("X-API-Key", targetApiKey);
     }
 
     // Forward Request ไปที่ Backend
     const response = await fetch(targetUrl, {
       method: request.method,
       headers: headers,
-      body: request.method === "POST" ? await request.text() : undefined,
+      body: request.method !== "GET" && request.method !== "DELETE" ? await request.text() : undefined,
       cache: "no-store",
     });
 
-    // รับข้อมูลจาก Backend และส่งกลับไปหา Browser
-    const data = await response.json();
-    return NextResponse.json(data, { status: response.status });
+    // ตรวจสอบ Content Type เพื่อจัดการ Response ให้ถูกต้อง
+    const contentType = response.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+      const data = await response.json();
+      return NextResponse.json(data, { status: response.status });
+    } else {
+      const text = await response.text();
+      return new NextResponse(text, { status: response.status, statusText: response.statusText });
+    }
   } catch (error) {
     console.error("Gateway Proxy Error:", error);
     return NextResponse.json(

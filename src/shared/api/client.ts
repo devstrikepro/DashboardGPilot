@@ -1,5 +1,5 @@
 import { ApiError } from './api-error';
-import { API_BASE_URL } from './endpoint';
+import { API_GATEWAY_MAIN } from './endpoint';
 
 /**
  * apiClient (Client-side)
@@ -10,15 +10,26 @@ export const apiClient = async <T>(
   options?: RequestInit,
   params?: Record<string, string | number | boolean | null | undefined>
 ): Promise<T> => {
-  // สร้าง Query String จาก params
-  const queryString = params 
-    ? '?' + Object.entries(params)
-        .filter(([_, value]) => value !== null && value !== undefined)
-        .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`)
-        .join('&')
-    : '';
+  // ตรวจสอบว่า endpoint ขึ้นต้นด้วย / หรือไม่ ถ้าไม่ให้เติมนำหน้า
+  const safeEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  
+  // ถ้า endpoint ไม่ได้ระบุ gateway มาให้ (ขึ้นต้นด้วย /api/gateway) ให้ default ไปที่ Main Gateway
+  const finalEndpoint = safeEndpoint.startsWith('/api/gateway') 
+    ? safeEndpoint 
+    : `${API_GATEWAY_MAIN}${safeEndpoint}`;
 
-  const url = `${API_BASE_URL}${endpoint}${queryString}`;
+  // สร้าง Query String จาก params
+  const searchParams = new URLSearchParams();
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) {
+        searchParams.append(key, String(value));
+      }
+    });
+  }
+  const queryString = searchParams.toString() ? `?${searchParams.toString()}` : '';
+
+  const url = `${finalEndpoint}${queryString}`;
 
   try {
     const response = await fetch(url, {
