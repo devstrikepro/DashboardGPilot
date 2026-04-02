@@ -12,9 +12,10 @@ interface SymbolStat {
 interface SymbolPerformanceProps {
   readonly loading?: boolean;
   readonly stats: readonly SymbolStat[];
+  readonly totalTrades?: number;
 }
 
-export function SymbolPerformance({ loading, stats }: Readonly<SymbolPerformanceProps>) {
+export function SymbolPerformance({ loading, stats, totalTrades }: Readonly<SymbolPerformanceProps>) {
   const renderStats = () => {
     if (loading) {
       return ['s1', 's2', 's3', 's4', 's5'].map((key) => (
@@ -117,16 +118,40 @@ export function SymbolPerformance({ loading, stats }: Readonly<SymbolPerformance
   return (
     <Card sx={{ height: "100%", display: 'flex', flexDirection: 'column' }}>
       <CardContent sx={{ p: { xs: 2, lg: 3 }, flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Box sx={{ mb: 2 }}>
-          <Typography
-            variant="subtitle1"
-            sx={{ fontWeight: 600, color: "text.primary" }}
-          >
-            Symbol Performance
-          </Typography>
-          <Typography variant="caption" sx={{ color: "text.secondary" }}>
-            Win rates by instrument (Top 5)
-          </Typography>
+        <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <Box>
+            <Typography
+              variant="subtitle1"
+              sx={{ fontWeight: 600, color: "text.primary" }}
+            >
+              Symbol Performance
+            </Typography>
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
+              Win rates by instrument (Top 5)
+            </Typography>
+          </Box>
+          {!loading && totalTrades !== undefined && (
+            <Box
+              sx={{
+                bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(34, 211, 238, 0.1)' : 'rgba(8, 145, 178, 0.05)',
+                px: 1.5,
+                py: 0.5,
+                borderRadius: 2,
+                border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(34, 211, 238, 0.2)' : 'rgba(8, 145, 178, 0.1)'}`
+              }}
+            >
+              <Typography 
+                sx={{ 
+                  color: 'primary.main', 
+                  fontSize: '0.75rem', 
+                  fontWeight: 700,
+                  fontFamily: 'var(--font-inter)'
+                }}
+              >
+                Total Trades: {totalTrades}
+              </Typography>
+            </Box>
+          )}
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2, flex: 1, minHeight: 150, overflow: 'auto' }}>
           {renderStats()}

@@ -80,7 +80,7 @@ export function BalanceChart({
               variant="subtitle1"
               sx={{ fontWeight: 600, color: "text.primary" }}
             >
-              Balance Velocity
+              Balance History
             </Typography>
             <Typography variant="caption" sx={{ color: "text.secondary" }}>
               Balance trend over selected period

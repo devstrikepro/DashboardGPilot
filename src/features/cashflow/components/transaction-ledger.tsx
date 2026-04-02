@@ -31,6 +31,11 @@ import type { Transaction } from "../hooks/use-cashflow-data";
 interface TransactionLedgerProps {
   readonly loading?: boolean;
   readonly transactions: readonly Transaction[];
+  readonly page?: number;
+  readonly limit?: number;
+  readonly total?: number;
+  readonly onPageChange?: (page: number) => void;
+  readonly onLimitChange?: (limit: number) => void;
 }
 
 const statusConfig = {
@@ -39,14 +44,41 @@ const statusConfig = {
   failed: { icon: CancelIcon, color: "#EF4444", bgColor: "rgba(239, 68, 68, 0.2)" },
 };
 
-export function TransactionLedger({ loading, transactions }: Readonly<TransactionLedgerProps>) {
+export function TransactionLedger({ 
+  loading, 
+  transactions,
+  page = 1,
+  limit = 10,
+  total = 0,
+  onPageChange,
+  onLimitChange
+}: Readonly<TransactionLedgerProps>) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
-  const [page, setPage] = useState(0);
-  const rowsPerPage = 10;
+
+  const formatDate = (dateStr: string) => {
+    try {
+      if (!dateStr) return "-";
+      return new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      }).format(new Date(dateStr));
+    } catch {
+      return dateStr;
+    }
+  };
 
   const handleChangePage = (_: unknown, newPage: number) => {
-    setPage(newPage);
+    onPageChange?.(newPage + 1);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onLimitChange?.(parseInt(event.target.value, 10));
+    onPageChange?.(1);
   };
 
   if (loading) {
@@ -62,10 +94,8 @@ export function TransactionLedger({ loading, transactions }: Readonly<Transactio
     );
   }
 
-  const paginatedTransactions = transactions.slice(
-    page * rowsPerPage,
-    (page + 1) * rowsPerPage
-  );
+  // Using transactions directly since backend should handle pagination
+  const paginatedTransactions = transactions;
 
   return (
     <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -101,14 +131,14 @@ export function TransactionLedger({ loading, transactions }: Readonly<Transactio
               </TableRow>
             </TableHead>
             <TableBody>
-              {paginatedTransactions.map((tx) => {
-                const statusKey = tx.status.toLowerCase() as keyof typeof statusConfig;
+              {paginatedTransactions.map((tx, idx) => {
+                const statusKey = tx.status?.toLowerCase() as keyof typeof statusConfig || 'completed';
                 const status = statusConfig[statusKey] || statusConfig.completed;
                 const StatusIcon = status.icon;
 
                 return (
                   <TableRow
-                    key={tx.id}
+                    key={`${tx.date}-${idx}`}
                     hover
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
@@ -139,8 +169,8 @@ export function TransactionLedger({ loading, transactions }: Readonly<Transactio
                         </Typography>
                       </Box>
                     </TableCell>
-                    <TableCell sx={{ fontSize: '0.875rem' }}>{tx.method}</TableCell>
-                    <TableCell sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>{tx.date}</TableCell>
+                    <TableCell sx={{ fontSize: '0.875rem' }}>{tx.comment || "-"}</TableCell>
+                    <TableCell sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>{formatDate(tx.date)}</TableCell>
                     <TableCell sx={{ fontWeight: 600, fontSize: '0.875rem' }}>
                         <Typography
                         component="span"
@@ -190,14 +220,14 @@ export function TransactionLedger({ loading, transactions }: Readonly<Transactio
 
         {/* Mobile View: Card List */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
-          {paginatedTransactions.map((tx) => {
-            const statusKey = tx.status.toLowerCase() as keyof typeof statusConfig;
+          {paginatedTransactions.map((tx, idx) => {
+            const statusKey = tx.status?.toLowerCase() as keyof typeof statusConfig || 'completed';
             const status = statusConfig[statusKey] || statusConfig.completed;
             const isOutflow = tx.type === "ProfitSharing" || tx.type.toLowerCase() === "withdrawal";
 
             return (
               <Paper
-                key={tx.id}
+                key={`${tx.date}-${idx}`}
                 elevation={0}
                 sx={{
                   p: 2,
@@ -223,7 +253,7 @@ export function TransactionLedger({ loading, transactions }: Readonly<Transactio
                           {tx.type === "ProfitSharing" ? "Profit Sharing" : tx.type}
                         </Typography>
                         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                          {tx.date}
+                          {formatDate(tx.date)}
                         </Typography>
                       </Box>
                    </Box>
@@ -239,7 +269,7 @@ export function TransactionLedger({ loading, transactions }: Readonly<Transactio
                 
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8rem' }}>
-                    {tx.method}
+                    {tx.comment || "-"}
                   </Typography>
                   <Chip
                     label={tx.status}
@@ -260,12 +290,13 @@ export function TransactionLedger({ loading, transactions }: Readonly<Transactio
         </Box>
 
         <TablePagination
-          rowsPerPageOptions={[10]}
+          rowsPerPageOptions={[10, 25, 50]}
           component="div"
-          count={transactions.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
+          count={total}
+          rowsPerPage={limit}
+          page={page - 1}
           onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
           sx={{
             borderTop: 'none',
             '.MuiTablePagination-toolbar': {

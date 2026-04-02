@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, Box, Typography, Grid, Skeleton } from "@mui/material";
+import type { CashflowSummary } from "@/shared/types/api";
 import { 
   CallReceived as CallReceivedIcon, 
   CallMade as CallMadeIcon, 
@@ -9,51 +10,59 @@ import {
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 
-const flowDataDefaults = [
-  {
-    title: "Largest Inflow",
-    value: "+$10,000",
-    subtitle: "Dec 01, 2024",
-    icon: CallReceivedIcon,
-    iconBg: "rgba(16, 185, 129, 0.2)",
-    iconColorKey: "success",
-    valueColorKey: "success",
-  },
-  {
-    title: "Largest Outflow",
-    value: "-$2,500",
-    subtitle: "Dec 12, 2024",
-    icon: CallMadeIcon,
-    iconBg: "rgba(239, 68, 68, 0.2)",
-    iconColorKey: "error",
-    valueColorKey: "text",
-  },
-  {
-    title: "Daily Delta",
-    value: "+$842.50",
-    subtitle: "Average daily change",
-    icon: TrendingUpIcon,
-    iconBg: "rgba(34, 211, 238, 0.2)",
-    iconColorKey: "primary",
-    valueColorKey: "success",
-  },
-  {
-    title: "Net Flow",
-    value: "+$14,500",
-    subtitle: "This quarter",
-    icon: TrendingDownIcon,
-    iconBg: "rgba(148, 163, 184, 0.1)",
-    iconColorKey: "secondary",
-    valueColorKey: "success",
-  },
-];
-
 interface FlowCardsProps {
+  readonly summary?: CashflowSummary | null;
   readonly loading?: boolean;
 }
 
-export function FlowCards({ loading }: Readonly<FlowCardsProps>) {
+export function FlowCards({ summary, loading }: Readonly<FlowCardsProps>) {
   const theme = useTheme();
+
+  const formatCurrency = (val: number) => {
+    return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(val);
+  };
+
+  const netFlow = (summary?.totalDeposit ?? 0) - (summary?.totalWithdrawal ?? 0);
+  const dailyDelta = (summary?.todayDeposit ?? 0) - (summary?.todayWithdrawal ?? 0) - (summary?.todayProfitSharing ?? 0);
+
+  const realFlowData = [
+    {
+      title: "Largest Inflow",
+      value: `+${formatCurrency(summary?.largestDeposit ?? 0)}`,
+      subtitle: "All time records",
+      icon: CallReceivedIcon,
+      iconBg: "rgba(16, 185, 129, 0.2)",
+      iconColorKey: "success",
+      valueColorKey: "success",
+    },
+    {
+      title: "Largest Outflow",
+      value: `-${formatCurrency(summary?.largestWithdrawal ?? 0)}`,
+      subtitle: "All time records",
+      icon: CallMadeIcon,
+      iconBg: "rgba(239, 68, 68, 0.2)",
+      iconColorKey: "error",
+      valueColorKey: "text",
+    },
+    {
+      title: "Daily Delta",
+      value: `${dailyDelta >= 0 ? '+' : ''}${formatCurrency(dailyDelta)}`,
+      subtitle: "Today's net change",
+      icon: dailyDelta >= 0 ? TrendingUpIcon : TrendingDownIcon,
+      iconBg: dailyDelta >= 0 ? "rgba(34, 211, 238, 0.2)" : "rgba(239, 68, 68, 0.2)",
+      iconColorKey: dailyDelta >= 0 ? "primary" : "error",
+      valueColorKey: dailyDelta >= 0 ? "success" : "error",
+    },
+    {
+      title: "Net Flow",
+      value: `${netFlow >= 0 ? '+' : ''}${formatCurrency(netFlow)}`,
+      subtitle: "All time",
+      icon: netFlow >= 0 ? TrendingUpIcon : TrendingDownIcon,
+      iconBg: "rgba(148, 163, 184, 0.1)",
+      iconColorKey: "secondary",
+      valueColorKey: netFlow >= 0 ? "success" : "text",
+    },
+  ];
 
   const getColor = (key: string) => {
     switch (key) {
@@ -74,7 +83,7 @@ export function FlowCards({ loading }: Readonly<FlowCardsProps>) {
 
   return (
     <Grid container spacing={{ xs: 1.5, lg: 2 }}>
-      {flowDataDefaults.map((item) => (
+      {realFlowData.map((item) => (
         <Grid key={item.title} size={{ xs: 6, md: 3 }}>
           <Card sx={{ height: "100%" }}>
             <CardContent sx={{ p: 2 }}>

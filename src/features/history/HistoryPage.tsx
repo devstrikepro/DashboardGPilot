@@ -17,14 +17,10 @@ export default function HistoryPage() {
     handleSort,
 
     // Filter Controls
-    search, setSearch,
+    symbolFilter, setSymbolFilter,
     typeFilter, setTypeFilter,
     startDate, setStartDate,
     endDate, setEndDate,
-    minProfit, setMinProfit,
-    maxProfit, setMaxProfit,
-    minVolume, setMinVolume,
-    maxVolume, setMaxVolume,
     
     filteredCount,
   } = useHistoryData();
@@ -60,27 +56,19 @@ export default function HistoryPage() {
         totals={totals}
         
         // Search & Sort
-        search={search}
-        onSearchChange={setSearch}
         sortField={sortField}
         sortDirection={sortDirection}
         onSort={handleSort}
         
         // Advanced Filters
+        symbolFilter={symbolFilter}
+        onSymbolFilterChange={setSymbolFilter}
         typeFilter={typeFilter}
         onTypeFilterChange={setTypeFilter}
         startDate={startDate}
         onStartDateChange={setStartDate}
         endDate={endDate}
         onEndDateChange={setEndDate}
-        minProfit={minProfit}
-        onMinProfitChange={setMinProfit}
-        maxProfit={maxProfit}
-        onMaxProfitChange={setMaxProfit}
-        minVolume={minVolume}
-        onMinVolumeChange={setMinVolume}
-        maxVolume={maxVolume}
-        onMaxVolumeChange={setMaxVolume}
         
         filteredCount={filteredCount}
       />

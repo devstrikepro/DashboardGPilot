@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { AnalyticsService } from "@/shared/services/analytics-service";
+import { TradeHistoryService } from "@/shared/services/trade-history-service";
 import { useApiHealth } from "@/shared/providers/api-health-provider";
 import type { GroupedDeal } from "@/shared/types/api";
 
@@ -38,14 +39,10 @@ export function useHistoryData() {
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   // UI States — Filtering
-  const [search, setSearch] = useState("");
+  const [symbolFilter, setSymbolFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState<"ALL" | "BUY" | "SELL">("ALL");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [minProfit, setMinProfit] = useState("");
-  const [maxProfit, setMaxProfit] = useState("");
-  const [minVolume, setMinVolume] = useState("");
-  const [maxVolume, setMaxVolume] = useState("");
 
   const fetchGroupedTrades = useCallback(async () => {
     if (!isHealthy) return;
@@ -53,12 +50,15 @@ export function useHistoryData() {
       setLoading(true);
       setError(null);
 
-      const response = await AnalyticsService.getGroupedTrades();
+      const [groupResponse, historyResponse] = await Promise.all([
+        AnalyticsService.getGroupedTrades({ pageSize: 10000 }), // Get all for client-side sort/filter
+        TradeHistoryService.getHistory() // Background sync
+      ]);
 
-      if (response.success && response.data) {
-        setAllTrades(response.data.list);
+      if (groupResponse.success && groupResponse.data) {
+        setAllTrades(groupResponse.data.paginated.list || []);
       } else {
-        setError(response.error?.message ?? "Failed to fetch trade history");
+        setError(groupResponse.error?.message ?? "Failed to fetch trade history");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unexpected error");
@@ -74,10 +74,7 @@ export function useHistoryData() {
   // Client-side filtering (instant UX) + sorting
   const filteredDeals = useMemo(() => {
     let result = allTrades.filter((deal) => {
-      const matchesSearch =
-        deal.ticket.toString().includes(search) ||
-        (deal.symbol?.toLowerCase() ?? "").includes(search.toLowerCase());
-
+      const matchesSymbol = !symbolFilter || (deal.symbol?.toLowerCase() ?? "").includes(symbolFilter.toLowerCase());
       const matchesType = typeFilter === "ALL" || deal.type === typeFilter;
 
       let matchesDate = true;
@@ -87,15 +84,7 @@ export function useHistoryData() {
         if (endDate && dealDate > endDate) matchesDate = false;
       }
 
-      let matchesProfit = true;
-      if (minProfit !== "" && deal.netProfit < Number.parseFloat(minProfit)) matchesProfit = false;
-      if (maxProfit !== "" && deal.netProfit > Number.parseFloat(maxProfit)) matchesProfit = false;
-
-      let matchesVolume = true;
-      if (minVolume !== "" && deal.volume < Number.parseFloat(minVolume)) matchesVolume = false;
-      if (maxVolume !== "" && deal.volume > Number.parseFloat(maxVolume)) matchesVolume = false;
-
-      return matchesSearch && matchesType && matchesDate && matchesProfit && matchesVolume;
+      return matchesSymbol && matchesType && matchesDate;
     });
 
     // Client-side sorting (UI State)
@@ -137,7 +126,8 @@ export function useHistoryData() {
     });
 
     return result;
-  }, [allTrades, search, sortField, sortDirection, typeFilter, startDate, endDate, minProfit, maxProfit, minVolume, maxVolume]);
+    return result;
+  }, [allTrades, symbolFilter, sortField, sortDirection, typeFilter, startDate, endDate]);
 
   const totals = useMemo<HistoryTotals>(() => {
     return filteredDeals.reduce(
@@ -176,14 +166,10 @@ export function useHistoryData() {
     handleSort,
 
     // Filter Controls
-    search, setSearch,
+    symbolFilter, setSymbolFilter,
     typeFilter, setTypeFilter,
     startDate, setStartDate,
     endDate, setEndDate,
-    minProfit, setMinProfit,
-    maxProfit, setMaxProfit,
-    minVolume, setMinVolume,
-    maxVolume, setMaxVolume,
 
     // Stats
     totalCount: allTrades.length,

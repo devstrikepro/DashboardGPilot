@@ -23,6 +23,7 @@ export interface ServiceResponse<T> {
     total: number;
     page?: number;
     limit?: number;
+    totalPage?:number;
   };
 }
 
@@ -30,7 +31,7 @@ export interface ServiceResponse<T> {
  * Interface สำหรับการ Check Health ของ API
  */
 export interface HealthResponse {
-  readonly success: boolean;
+  readonly success: string;
   readonly data: {
     readonly status: string;
   };
@@ -49,6 +50,8 @@ export interface TradeRequest {
   comment?: string | null;
   pageNumber?: number;
   pageSize?: number;
+  page?: number;     // Pagination
+  limit?: number;    // Pagination
 }
 
 // ---------------------------------------------
@@ -94,14 +97,25 @@ export interface SymbolStat {
   readonly winRate: number;
 }
 
+export interface DashboardRecentTransaction {
+  readonly type: string;
+  readonly amount: number;
+  readonly datetime: string;
+  readonly symbol?: string | null;
+}
+
 export interface DashboardSummary {
+  readonly balance: number;
   readonly profitToday: number;
   readonly profitWeek: number;
   readonly profitMonth: number;
-  readonly totalVolume: number;
-  readonly totalTrades: number;
-  readonly symbolStats: readonly SymbolStat[];
   readonly equityCurve: readonly EquityPoint[];
+  readonly symbolStats: {
+    readonly totaltrades?: number; // Match actual backend JSON response
+    readonly totalTrades?: number; // Keep for fallback if backend changes
+    readonly list: readonly SymbolStat[];
+  };
+  readonly recent: readonly DashboardRecentTransaction[];
 }
 
 // ---------------------------------------------
@@ -109,21 +123,25 @@ export interface DashboardSummary {
 // ---------------------------------------------
 
 export interface CashflowTransaction {
-  readonly id: number;
+  readonly type: string;
   readonly date: string;
-  readonly type: 'Deposit' | 'Withdrawal' | 'ProfitSharing';
   readonly amount: number;
-  readonly status: string;
-  readonly method: string;
+  readonly comment?: string | null;
+  readonly status?: string | null;
 }
 
 export interface CashflowSummary {
-  readonly deposits: number;
-  readonly withdrawals: number;
-  readonly netFlow: number;
-  readonly currentBalance: number;
+  readonly totalWithdrawal: number;
+  readonly totalDeposit: number;
+  readonly countWithdrawal: number;
+  readonly countDeposit: number;
+  readonly largestWithdrawal: number;
+  readonly largestDeposit: number;
+  readonly todayDeposit: number;
+  readonly todayWithdrawal: number;
+  readonly todayProfitSharing: number;
+  readonly totalTransactions: number;
   readonly transactions: readonly CashflowTransaction[];
-  readonly balanceData: readonly EquityPoint[];
 }
 
 // ---------------------------------------------
@@ -153,6 +171,16 @@ export interface GroupedDeal {
 /**
  * โครงสร้าง Response สำหรับรายการเทรดแบบกลุ่ม (พร้อมสถิติสรุป)
  */
+export interface GroupedTradesPage {
+  readonly pageTrades: number;
+  readonly pageVolume: number;
+  readonly pageGrossProfit: number;
+  readonly pageGrossLoss: number;
+  readonly pageNetProfit: number;
+  readonly pageFee: number;
+  readonly list: GroupedDeal[];
+}
+
 export interface GroupedTradesResponse {
   totalTrades: number;
   totalVolume: number;
@@ -160,7 +188,7 @@ export interface GroupedTradesResponse {
   grossLoss: number;
   netProfit: number;
   fee: number;
-  list: GroupedDeal[];
+  paginated: GroupedTradesPage;
 }
 
 // ---------------------------------------------

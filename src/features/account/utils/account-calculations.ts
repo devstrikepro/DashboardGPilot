@@ -26,12 +26,16 @@ export function mapAccountData(
 ): AccountFinancialStats {
   return {
     balance: cashflow?.currentBalance ?? 0,
-    deposits: cashflow?.deposits ?? 0,
+    deposits: cashflow?.transactions
+      ?.filter(t => t.type === 'Deposit')
+      ?.reduce((sum, t) => sum + t.amount, 0) ?? 0,
     withdrawals: cashflow?.withdrawals ?? 0,
     netProfit: cashflow?.netFlow ?? 0,
     profitToday: dash?.profitToday ?? 0,
     profitWeek: dash?.profitWeek ?? 0,
     profitMonth: dash?.profitMonth ?? 0,
-    profitSharing: 0, // ค่าเริ่มต้น หากมีการคำนวณแยกจะเพิ่มในภายหลัง
+    profitSharing: cashflow?.transactions
+      ?.filter(t => t.type === 'ProfitSharing')
+      ?.reduce((sum, t) => sum + Math.abs(t.amount), 0) ?? 0,
   };
 }

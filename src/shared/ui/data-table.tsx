@@ -35,7 +35,7 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { useTheme } from "@mui/material/styles";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { GroupedDeal } from "@/shared/types/api";
 import type { SortField, SortDirection, HistoryTotals } from "@/features/history/hooks/use-history-data";
 
@@ -43,27 +43,19 @@ interface DataTableProps {
   readonly loading?: boolean;
   readonly deals: readonly GroupedDeal[];
   readonly totals: HistoryTotals;
-  readonly search: string;
-  readonly onSearchChange: (value: string) => void;
   readonly sortField: SortField;
   readonly sortDirection: SortDirection;
   readonly onSort: (field: SortField) => void;
   
   // Advanced Filters
+  readonly symbolFilter: string;
+  readonly onSymbolFilterChange: (value: string) => void;
   readonly typeFilter: "ALL" | "BUY" | "SELL";
   readonly onTypeFilterChange: (value: "ALL" | "BUY" | "SELL") => void;
   readonly startDate: string;
   readonly onStartDateChange: (value: string) => void;
   readonly endDate: string;
   readonly onEndDateChange: (value: string) => void;
-  readonly minProfit: string;
-  readonly onMinProfitChange: (value: string) => void;
-  readonly maxProfit: string;
-  readonly onMaxProfitChange: (value: string) => void;
-  readonly minVolume: string;
-  readonly onMinVolumeChange: (value: string) => void;
-  readonly maxVolume: string;
-  readonly onMaxVolumeChange: (value: string) => void;
 
   readonly filteredCount: number;
 }
@@ -72,27 +64,19 @@ export function DataTable({
   loading,
   deals,
   totals,
-  search,
-  onSearchChange,
   sortField,
   sortDirection,
   onSort,
 
   // Advanced Filters
+  symbolFilter,
+  onSymbolFilterChange,
   typeFilter,
   onTypeFilterChange,
   startDate,
   onStartDateChange,
   endDate,
   onEndDateChange,
-  minProfit,
-  onMinProfitChange,
-  maxProfit,
-  onMaxProfitChange,
-  minVolume,
-  onMinVolumeChange,
-  maxVolume,
-  onMaxVolumeChange,
 
   filteredCount,
 }: Readonly<DataTableProps>) {
@@ -102,45 +86,64 @@ export function DataTable({
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  // Reset page to 0 when data or filter changes to avoid "empty page" issues
+  useEffect(() => {
+    setPage(0);
+  }, [deals.length, symbolFilter, typeFilter, startDate, endDate, sortField, sortDirection]);
+
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(Number.parseInt(event.target.value, 10));
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const val = Number.parseInt(event.target.value, 10);
+    setRowsPerPage(val);
     setPage(0);
   };
 
   const paginatedDeals = deals.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
-  if (loading) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 8 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   const handleResetFilters = () => {
-    onSearchChange("");
+    onSymbolFilterChange("");
     onTypeFilterChange("ALL");
     onStartDateChange("");
     onEndDateChange("");
-    onMinProfitChange("");
-    onMaxProfitChange("");
-    onMinVolumeChange("");
-    onMaxVolumeChange("");
   };
+
+  const pageTotals = useMemo(() => {
+    return paginatedDeals.reduce((acc, d) => ({
+      totalTrades: acc.totalTrades + 1,
+      volume: acc.volume + d.volume,
+      grossProfit: acc.grossProfit + (d.netProfit > 0 ? d.netProfit : 0),
+      grossLoss: acc.grossLoss + (d.netProfit < 0 ? Math.abs(d.netProfit) : 0),
+      netPL: acc.netPL + d.netProfit,
+      fees: acc.fees + (d.commission + d.swap + d.fee)
+    }), { totalTrades: 0, volume: 0, grossProfit: 0, grossLoss: 0, netPL: 0, fees: 0 });
+  }, [paginatedDeals]);
 
   return (
     <Card>
-      <CardContent sx={{ p: { xs: 2, lg: 3 } }}>
+      <CardContent sx={{ p: { xs: 2, lg: 3 }, position: 'relative' }}>
+        {loading && (
+          <Box 
+            sx={{ 
+              position: 'absolute', 
+              top: 0, left: 0, right: 0, bottom: 0, 
+              display: 'flex', justifyContent: 'center', alignItems: 'center',
+              bgcolor: isDark ? 'rgba(15, 23, 42, 0.5)' : 'rgba(255, 255, 255, 0.5)',
+              zIndex: 10,
+              borderRadius: 2
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        )}
         <Box
           sx={{
             display: "flex",
-            flexDirection: { xs: "column", lg: "row" },
+            flexDirection: "row",
             justifyContent: "space-between",
-            alignItems: { lg: "center" },
+            alignItems: "center",
             gap: 2,
             mb: 2,
           }}
@@ -154,31 +157,6 @@ export function DataTable({
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <TextField
-              size="small"
-              placeholder="Search symbol..."
-              value={search}
-              onChange={(e) => onSearchChange(e.target.value)}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ fontSize: 18, color: "text.secondary" }} />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-              sx={{
-                flex: 1,
-                minWidth: { lg: 240 },
-                "& .MuiOutlinedInput-root": {
-                  bgcolor: isDark ? "rgba(148, 163, 184, 0.05)" : "rgba(15, 23, 42, 0.02)",
-                  "& fieldset": {
-                    borderColor: isDark ? "rgba(148, 163, 184, 0.1)" : "rgba(15, 23, 42, 0.1)",
-                  },
-                },
-              }}
-            />
             <IconButton
               onClick={() => setShowFilters(!showFilters)}
               color={showFilters ? "primary" : "default"}
@@ -205,6 +183,18 @@ export function DataTable({
             }}
           >
             <Grid container spacing={2}>
+              {/* Symbol Filter */}
+              <Grid size={{ xs: 12, sm: 4, md: 3 }}>
+                 <TextField
+                  fullWidth
+                  size="small"
+                  label="Symbol"
+                  placeholder="Type symbol..."
+                  value={symbolFilter}
+                  onChange={(e) => onSymbolFilterChange(e.target.value)}
+                />
+              </Grid>
+
               {/* Type Filter */}
               <Grid size={{ xs: 12, sm: 4, md: 2 }}>
                 <FormControl fullWidth size="small">
@@ -245,53 +235,7 @@ export function DataTable({
                 />
               </Grid>
 
-              {/* Profit Range */}
-              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <TextField
-                    fullWidth
-                    size="small"
-                    label="Min Profit"
-                    type="number"
-                    value={minProfit}
-                    onChange={(e) => onMinProfitChange(e.target.value)}
-                  />
-                  <Typography variant="caption">-</Typography>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    label="Max Profit"
-                    type="number"
-                    value={maxProfit}
-                    onChange={(e) => onMaxProfitChange(e.target.value)}
-                  />
-                </Stack>
-              </Grid>
-
-              {/* Volume Range */}
-              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <TextField
-                    fullWidth
-                    size="small"
-                    label="Min Vol"
-                    type="number"
-                    value={minVolume}
-                    onChange={(e) => onMinVolumeChange(e.target.value)}
-                  />
-                  <Typography variant="caption">-</Typography>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    label="Max Vol"
-                    type="number"
-                    value={maxVolume}
-                    onChange={(e) => onMaxVolumeChange(e.target.value)}
-                  />
-                </Stack>
-              </Grid>
-
-              <Grid size={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Grid size={{ xs: 12, md: 3 }} sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                 <Button 
                   size="small" 
                   startIcon={<RefreshIcon />}
@@ -336,6 +280,12 @@ export function DataTable({
                   >
                     Type
                   </TableSortLabel>
+                </TableCell>
+                <TableCell align="right" sx={{ color: "text.secondary", fontWeight: 500, borderColor: theme.palette.divider }}>
+                  Open
+                </TableCell>
+                <TableCell align="right" sx={{ color: "text.secondary", fontWeight: 500, borderColor: theme.palette.divider }}>
+                  Close
                 </TableCell>
                 <TableCell align="right" sx={{ color: "text.secondary", fontWeight: 500, borderColor: theme.palette.divider }}>
                   <TableSortLabel
@@ -411,6 +361,12 @@ export function DataTable({
                     <TableCell sx={{ borderColor: theme.palette.divider }}>
                       {renderDealTypeChip()}
                     </TableCell>
+                    <TableCell align="right" sx={{ fontFamily: '"Inter", monospace', fontSize: "0.8rem", borderColor: theme.palette.divider }}>
+                      {deal.openPrice.toFixed(5)}
+                    </TableCell>
+                    <TableCell align="right" sx={{ fontFamily: '"Inter", monospace', fontSize: "0.8rem", borderColor: theme.palette.divider }}>
+                      {deal.closePrice.toFixed(5)}
+                    </TableCell>
                     <TableCell align="right" sx={{ fontFamily: '"Inter", monospace', color: "text.primary", borderColor: theme.palette.divider }}>
                       {deal.volume.toFixed(2)}
                     </TableCell>
@@ -429,14 +385,15 @@ export function DataTable({
                 );
               })}
               
-              {/* Summary Row inside table body (Matching "Total 11") */}
-              <TableRow sx={{ bgcolor: isDark ? "rgba(34, 211, 238, 0.05)" : "rgba(8, 145, 178, 0.03)" }}>
-                <TableCell colSpan={3} sx={{ fontWeight: 700, borderColor: theme.palette.divider }}>TOTAL</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 700, borderColor: theme.palette.divider }}>{totals.volume.toFixed(2)}</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 700, color: totals.netPL >= 0 ? "success.main" : "error.main", borderColor: theme.palette.divider }}>
-                  {totals.netPL >= 0 ? "+" : ""}${totals.netPL.toFixed(2)}
-                </TableCell>
-              </TableRow>
+              {paginatedDeals.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      No trades found
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -499,7 +456,7 @@ export function DataTable({
                   </Typography>
                 </Box>
                 
-                <Grid container spacing={1}>
+                <Grid container spacing={1} sx={{ mb: 1 }}>
                   <Grid size={4}>
                     <Typography variant="caption" sx={{ color: "text.secondary", display: 'block' }}>Type</Typography>
                     <Typography variant="body2" sx={{ 
@@ -512,6 +469,21 @@ export function DataTable({
                   <Grid size={4}>
                     <Typography variant="caption" sx={{ color: "text.secondary", display: 'block' }}>Lot</Typography>
                     <Typography variant="body2" sx={{ fontWeight: 600 }}>{deal.volume.toFixed(2)}</Typography>
+                  </Grid>
+                  <Grid size={4} sx={{ textAlign: 'right' }}>
+                    <Typography variant="caption" sx={{ color: "text.secondary", display: 'block' }}>Symbol</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>{deal.symbol || "-"}</Typography>
+                  </Grid>
+                </Grid>
+
+                <Grid container spacing={1}>
+                  <Grid size={4}>
+                    <Typography variant="caption" sx={{ color: "text.secondary", display: 'block' }}>Open</Typography>
+                    <Typography variant="body2" sx={{ fontSize: '0.8rem' }}>{deal.openPrice.toFixed(5)}</Typography>
+                  </Grid>
+                  <Grid size={4}>
+                    <Typography variant="caption" sx={{ color: "text.secondary", display: 'block' }}>Close</Typography>
+                    <Typography variant="body2" sx={{ fontSize: '0.8rem' }}>{deal.closePrice.toFixed(5)}</Typography>
                   </Grid>
                   <Grid size={4} sx={{ textAlign: 'right' }}>
                     <Typography variant="caption" sx={{ color: "text.secondary", display: 'block' }}>Ticket</Typography>
@@ -541,101 +513,103 @@ export function DataTable({
         </Box>
 
         <Paper
+          elevation={0}
           sx={{
             mt: 2,
-            p: 2,
-            bgcolor: isDark ? "rgba(148, 163, 184, 0.05)" : "rgba(15, 23, 42, 0.02)",
-            border: isDark ? "1px solid rgba(148, 163, 184, 0.08)" : "1px solid rgba(15, 23, 42, 0.05)",
+            overflow: 'hidden',
+            borderRadius: 2,
+            border: `1px solid ${theme.palette.divider}`,
           }}
         >
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 6, md: 2 }}>
-              <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                Total Trades
-              </Typography>
-              <Typography
-                sx={{
+          {/* Header Labels (Desktop Only) */}
+          <Box sx={{ 
+            display: { xs: 'none', md: 'grid' }, 
+            gridTemplateColumns: '1.2fr repeat(6, 1fr)',
+            bgcolor: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.03)",
+            borderBottom: `1px solid ${theme.palette.divider}`,
+            p: 1.5
+          }}>
+            <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary' }}>GROUP</Typography>
+            <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary', textAlign: 'right' }}>Total Trades</Typography>
+            <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary', textAlign: 'right' }}>Total Volume</Typography>
+            <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary', textAlign: 'right' }}>Gross Profit</Typography>
+            <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary', textAlign: 'right' }}>Gross Loss</Typography>
+            <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary', textAlign: 'right' }}>Net P/L</Typography>
+            <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary', textAlign: 'right' }}>Fees/Comm</Typography>
+          </Box>
+
+          {/* PAGE Row */}
+          <Box sx={{ 
+            display: { xs: 'flex', md: 'grid' }, 
+            flexDirection: 'column',
+            gridTemplateColumns: '1.2fr repeat(6, 1fr)',
+            p: 1.5,
+            borderBottom: `1px solid ${theme.palette.divider}`,
+            bgcolor: isDark ? 'transparent' : '#fff'
+          }}>
+            <Typography variant="body2" sx={{ fontWeight: 700, mb: { xs: 1, md: 0 } }}>PAGE TOTAL</Typography>
+            {[
+              { label: 'Trades', value: pageTotals.totalTrades, color: 'text.primary' },
+              { label: 'Volume', value: pageTotals.volume.toFixed(2), color: 'text.primary' },
+              { label: 'Gross Prof.', value: `+$${pageTotals.grossProfit.toFixed(2)}`, color: 'success.main' },
+              { label: 'Gross Loss', value: `-$${pageTotals.grossLoss.toFixed(2)}`, color: 'error.main' },
+              { label: 'Net P/L', value: `${pageTotals.netPL >= 0 ? '+' : ''}$${pageTotals.netPL.toFixed(2)}`, color: pageTotals.netPL >= 0 ? 'success.main' : 'error.main', bold: true },
+              { label: 'Fees', value: `$${pageTotals.fees.toFixed(2)}`, color: 'text.secondary' },
+            ].map((m, idx) => (
+              <Box key={idx} sx={{ 
+                display: 'flex', 
+                justifyContent: { xs: 'space-between', md: 'flex-end' }, 
+                alignItems: 'center',
+                mb: { xs: 0.5, md: 0 } 
+              }}>
+                <Typography variant="caption" sx={{ display: { md: 'none' }, color: 'text.secondary' }}>{m.label}</Typography>
+                <Typography variant="body2" sx={{ 
+                  textAlign: 'right', 
+                  fontWeight: m.bold ? 700 : 500, 
+                  color: m.color,
                   fontFamily: '"Inter", monospace',
-                  fontWeight: 700,
-                  color: "text.primary",
-                }}
-              >
-                {totals.totalTrades}
-              </Typography>
-            </Grid>
-            <Grid size={{ xs: 6, md: 2 }}>
-              <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                Total Volume
-              </Typography>
-              <Typography
-                sx={{
+                }}>
+                  {m.value}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+
+          {/* TOTAL Row */}
+          <Box sx={{ 
+            display: { xs: 'flex', md: 'grid' }, 
+            flexDirection: 'column',
+            gridTemplateColumns: '1.2fr repeat(6, 1fr)',
+            p: 1.5,
+            bgcolor: isDark ? "rgba(34, 211, 238, 0.08)" : "rgba(8, 145, 178, 0.05)",
+          }}>
+            <Typography variant="body2" sx={{ fontWeight: 700, mb: { xs: 1, md: 0 }, color: 'primary.main' }}>TOTAL SUMMARY</Typography>
+            {[
+              { label: 'Trades', value: totals.totalTrades, color: 'text.primary' },
+              { label: 'Volume', value: totals.volume.toFixed(2), color: 'text.primary' },
+              { label: 'Gross Prof.', value: `+$${totals.grossProfit.toFixed(2)}`, color: 'success.main' },
+              { label: 'Gross Loss', value: `-$${totals.grossLoss.toFixed(2)}`, color: 'error.main' },
+              { label: 'Net P/L', value: `${totals.netPL >= 0 ? '+' : ''}$${totals.netPL.toFixed(2)}`, color: totals.netPL >= 0 ? 'success.main' : 'error.main', bold: true },
+              { label: 'Fees', value: `$${(totals.commission + totals.swap + (totals as any).fee || 0).toFixed(2)}`, color: 'text.secondary' },
+            ].map((m, idx) => (
+              <Box key={idx} sx={{ 
+                display: 'flex', 
+                justifyContent: { xs: 'space-between', md: 'flex-end' }, 
+                alignItems: 'center',
+                mb: { xs: 0.5, md: 0 } 
+              }}>
+                <Typography variant="caption" sx={{ display: { md: 'none' }, color: 'text.secondary' }}>{m.label}</Typography>
+                <Typography variant="body2" sx={{ 
+                  textAlign: 'right', 
+                  fontWeight: m.bold ? 700 : 500, 
+                  color: m.color,
                   fontFamily: '"Inter", monospace',
-                  fontWeight: 700,
-                  color: "text.primary",
-                }}
-              >
-                {totals.volume.toFixed(2)} lots
-              </Typography>
-            </Grid>
-            <Grid size={{ xs: 6, md: 2 }}>
-              <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                Gross Profit
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: '"Inter", monospace',
-                  fontWeight: 700,
-                  color: "success.main",
-                }}
-              >
-                +${totals.grossProfit.toFixed(2)}
-              </Typography>
-            </Grid>
-            <Grid size={{ xs: 6, md: 2 }}>
-              <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                Gross Loss
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: '"Inter", monospace',
-                  fontWeight: 700,
-                  color: "error.main",
-                }}
-              >
-                ${totals.grossLoss.toFixed(2)}
-              </Typography>
-            </Grid>
-            <Grid size={{ xs: 6, md: 2 }}>
-              <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                Net P/L
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: '"Inter", monospace',
-                  fontWeight: 700,
-                  fontSize: "1.1rem",
-                  color: totals.netPL >= 0 ? "success.main" : "error.main",
-                }}
-              >
-                {totals.netPL > 0 ? "+" : ""}${totals.netPL.toFixed(2)}
-              </Typography>
-            </Grid>
-            <Grid size={{ xs: 6, md: 2 }}>
-              <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                Fee/Comm/Swap
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: '"Inter", monospace',
-                  fontWeight: 500,
-                  color: "text.secondary",
-                  fontSize: "0.8rem"
-                }}
-              >
-                ${(totals.commission + totals.swap + (totals as any).fee || 0).toFixed(2)}
-              </Typography>
-            </Grid>
-          </Grid>
+                }}>
+                  {m.value}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
         </Paper>
       </CardContent>
     </Card>

@@ -26,6 +26,8 @@ const mockDeals = [
     volume: 1,
     netProfit: 100,
     profit: 100,
+    openPrice: 1.0800,
+    closePrice: 1.0810,
   },
   {
     ticket: 2,
@@ -35,6 +37,8 @@ const mockDeals = [
     volume: 1,
     netProfit: 50,
     profit: 50,
+    openPrice: 1.2500,
+    closePrice: 1.2450,
   },
 ] as any[];
 
@@ -44,8 +48,8 @@ const defaultProps = {
   loading: false,
   deals: mockDeals,
   totals: mockTotals,
-  search: '',
-  onSearchChange: vi.fn(),
+  symbolFilter: '',
+  onSymbolFilterChange: vi.fn(),
   sortField: 'closeTime' as any,
   sortDirection: 'asc' as any,
   onSort: vi.fn(),
@@ -55,14 +59,6 @@ const defaultProps = {
   onStartDateChange: vi.fn(),
   endDate: '',
   onEndDateChange: vi.fn(),
-  minProfit: '',
-  onMinProfitChange: vi.fn(),
-  maxProfit: '',
-  onMaxProfitChange: vi.fn(),
-  minVolume: '',
-  onMinVolumeChange: vi.fn(),
-  maxVolume: '',
-  onMaxVolumeChange: vi.fn(),
   filteredCount: 2,
 };
 
@@ -84,17 +80,17 @@ describe('DataTable', () => {
     expect(screen.getAllByText('2 trades found').length).toBeGreaterThan(0);
   });
 
-  it('DataTable_OnSearchChange_TriggersCallback', () => {
+  it('DataTable_OnSymbolFilterChange_TriggersCallback', () => {
     render(
       <ThemeProvider theme={theme}>
         <DataTable {...defaultProps} />
       </ThemeProvider>
     );
 
-    const searchInput = screen.getByPlaceholderText('Search symbol...');
+    const searchInput = screen.getByPlaceholderText('Type symbol...');
     fireEvent.change(searchInput, { target: { value: 'EUR' } });
 
-    expect(defaultProps.onSearchChange).toHaveBeenCalledWith('EUR');
+    expect(defaultProps.onSymbolFilterChange).toHaveBeenCalledWith('EUR');
   });
 
   it('DataTable_LoadingState_ShowsCircularProgress', () => {

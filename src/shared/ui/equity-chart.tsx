@@ -81,13 +81,6 @@ export function EquityChart({ data: propData, loading, title = "Equity Curve" }:
         ]}
         series={[
           {
-            data: chartData.map((d) => d.equity),
-            label: "Equity",
-            color: theme.palette.primary.main,
-            area: true,
-            showMark: false,
-          },
-          {
             data: chartData.map((d) => d.balance),
             label: "Balance",
             color: theme.palette.success.main,
@@ -178,19 +171,6 @@ export function EquityChart({ data: propData, loading, title = "Equity Curve" }:
           </ToggleButtonGroup>
           
           <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 2 }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Box
-                sx={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: "50%",
-                  bgcolor: "primary.main",
-                }}
-              />
-              <Typography variant="caption" sx={{ color: "text.secondary", fontSize: '0.65rem' }}>
-                Equity
-              </Typography>
-            </Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Box
                 sx={{

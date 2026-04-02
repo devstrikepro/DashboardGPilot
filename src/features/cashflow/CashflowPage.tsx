@@ -6,18 +6,19 @@ import {
   TransactionLedger, 
   FlowCards 
 } from "@/features/cashflow/components";
-import { BalanceChart } from "@/shared/ui";
 import { useCashflowData } from "@/features/cashflow/hooks";
 
 export default function CashflowPage() {
   const {
     loading,
     transactions,
-    balanceData,
     cashflowStats,
-    currentBalance,
-    balanceChange,
-    balanceChangePercent,
+    summary,
+    page,
+    limit,
+    total,
+    setPage,
+    setLimit,
   } = useCashflowData();
 
 
@@ -36,21 +37,12 @@ export default function CashflowPage() {
           Cashflow Dashboard
         </Typography>
         <Typography variant="body2" sx={{ color: "text.secondary" }}>
-          Track deposits, withdrawals, and balance velocity
+          Track deposits and withdrawals
         </Typography>
       </Box>
 
       <Grid container spacing={{ xs: 2, lg: 3 }} sx={{ mb: { xs: 2, lg: 3 } }}>
-        <Grid size={{ xs: 12, lg: 8 }}>
-          <BalanceChart 
-            loading={loading}
-            data={balanceData}
-            currentBalance={currentBalance}
-            change={balanceChange}
-            changePercent={balanceChangePercent}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, lg: 4 }}>
+        <Grid size={{ xs: 12 }}>
           <CashflowDistribution 
             loading={loading} 
             deposits={cashflowStats?.deposits || 0}
@@ -60,10 +52,18 @@ export default function CashflowPage() {
       </Grid>
 
       <Box sx={{ mb: { xs: 2, lg: 3 } }}>
-        <FlowCards loading={loading} />
+        <FlowCards loading={loading} summary={summary} />
       </Box>
 
-      <TransactionLedger loading={loading} transactions={transactions} />
+      <TransactionLedger 
+        loading={loading} 
+        transactions={transactions} 
+        page={page}
+        limit={limit}
+        total={total}
+        onPageChange={setPage}
+        onLimitChange={setLimit}
+      />
     </Box>
   );
 }

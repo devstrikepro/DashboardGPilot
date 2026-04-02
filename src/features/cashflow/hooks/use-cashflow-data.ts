@@ -2,25 +2,26 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { CashflowService } from "@/shared/services/cashflow-service";
+import { TradeHistoryService } from "@/shared/services/trade-history-service";
 import { useApiHealth } from "@/shared/providers/api-health-provider";
-import { useTradeData } from "@/shared/providers/trade-data-provider";
-import type { CashflowSummary, CashflowTransaction } from "@/shared/types/api";
+import type { CashflowSummary, CashflowTransaction, Deal } from "@/shared/types/api";
 
-// Re-export Transaction type สำหรับ Components ที่ใช้อยู่
 export type { CashflowTransaction as Transaction };
 
 /**
  * useCashflowData
- * ดึง Cashflow Summary จาก Backend โดยตรง
- * Backend คำนวณ: transactions, balance curve, deposits/withdrawals/netFlow
+ * ดึง Cashflow Summary ขนานกับ Background Sync (/trades)
  */
 export function useCashflowData() {
-  const { account, loading: globalLoading, error: globalError, refreshData } = useTradeData();
   const { isHealthy } = useApiHealth();
 
   const [summary, setSummary] = useState<CashflowSummary | null>(null);
+  const [deals, setDeals] = useState<readonly Deal[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   const fetchSummary = useCallback(async () => {
     if (!isHealthy) return;
@@ -28,50 +29,49 @@ export function useCashflowData() {
       setLoading(true);
       setError(null);
 
-      const response = await CashflowService.getCashflowSummary();
+      const [cashResponse, historyResponse] = await Promise.all([
+        CashflowService.getCashflowSummary({ page, limit }),
+        TradeHistoryService.getHistory() // Background sync
+      ]);
 
-      if (response.success && response.data) {
-        setSummary(response.data);
+      if (cashResponse.success && cashResponse.data) {
+        setSummary(cashResponse.data);
       } else {
-        setError((response.error as string) ?? "Failed to fetch cashflow summary");
+        setError(cashResponse.error?.message ?? "Failed to fetch cashflow summary");
+      }
+      
+      if (historyResponse.success && historyResponse.data) {
+        setDeals(historyResponse.data);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unexpected error");
     } finally {
       setLoading(false);
     }
-  }, [isHealthy]);
+  }, [isHealthy, page, limit]);
 
   useEffect(() => {
     fetchSummary();
-  }, [fetchSummary]);
-
-  // Format balance data สำหรับ chart (UI-only transform)
-  const balanceData = useMemo(() => {
-    if (!summary) return [];
-    return summary.balanceData.map((point) => ({
-      date: new Date(point.time).toLocaleDateString("en-US", { day: "2-digit", month: "short" }),
-      time: point.time,
-      balance: point.equity ?? 0,
-    }));
-  }, [summary]);
+  }, [fetchSummary, page, limit]);
 
   return {
-    loading: loading || globalLoading,
-    error: error ?? globalError,
-    account,
+    loading,
+    error,
     transactions: summary?.transactions ?? [],
-    balanceData,
     cashflowStats: {
-      deposits: summary?.deposits ?? 0,
-      withdrawals: summary?.withdrawals ?? 0,
-      netFlow: summary?.netFlow ?? 0,
+      deposits: summary?.totalDeposit ?? 0,
+      withdrawals: summary?.totalWithdrawal ?? 0,
+      netFlow: (summary?.totalDeposit ?? 0) - (summary?.totalWithdrawal ?? 0),
     },
-    currentBalance: summary?.currentBalance ?? 0,
-    balanceChange: 0,
-    balanceChangePercent: 0,
-    refreshData: async () => {
-      await Promise.all([refreshData(), fetchSummary()]);
-    },
+    summary,
+    
+    // Pagination
+    page,
+    limit,
+    total: summary?.totalTransactions ?? 0,
+    setPage,
+    setLimit,
+
+    refreshData: fetchSummary,
   };
 }
