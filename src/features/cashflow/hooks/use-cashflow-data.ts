@@ -17,7 +17,6 @@ export function useCashflowData() {
   const { isHealthy } = useApiHealth();
 
   const [summary, setSummary] = useState<CashflowSummary | null>(null);
-  const [deals, setDeals] = useState<readonly Deal[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
@@ -30,21 +29,19 @@ export function useCashflowData() {
       setLoading(true);
       setError(null);
 
-      const [cashResponse, historyResponse, healthResponse] = await Promise.all([
+      const [cashResponse, healthResponse] = await Promise.all([
         CashflowService.getCashflowSummary({ page, limit }),
-        TradeHistoryService.getHistory(), // Background sync
         HealthService.checkHealth(),
       ]);
+
+      // Background Sync
+      TradeHistoryService.getHistory().catch(() => null);
 
       if (healthResponse.success && healthResponse.data?.status === "ok") {
         if (cashResponse.success && cashResponse.data) {
           setSummary(cashResponse.data);
         } else {
           setError(cashResponse.error?.message ?? "Failed to fetch cashflow summary");
-        }
-        
-        if (historyResponse.success && historyResponse.data) {
-          setDeals(historyResponse.data);
         }
       } else {
         setError(healthResponse.error || "System health check failed. Cannot load cashflow data.");

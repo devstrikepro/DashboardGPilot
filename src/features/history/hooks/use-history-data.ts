@@ -75,7 +75,7 @@ export function useHistoryData() {
       setError(null);
 
       // Parallel Fetch 3: Grouped Trades + Sync + Health
-      const [response, syncResponse, healthResponse] = await Promise.all([
+      const [response, healthResponse] = await Promise.all([
         AnalyticsService.getGroupedTrades({
           page: page + 1, // API is 1-indexed
           limit: rowsPerPage,
@@ -86,9 +86,11 @@ export function useHistoryData() {
           order_by: sortField,
           order_dir: sortDirection.toUpperCase() as "ASC" | "DESC"
         }),
-        TradeHistoryService.getHistory(),
         HealthService.checkHealth()
       ]);
+
+      // Background Sync - trigger the sync but don't wait
+      TradeHistoryService.getHistory().catch(() => null);
 
       if (healthResponse.success && healthResponse.data?.status === "ok") {
         if (response.success && response.data) {

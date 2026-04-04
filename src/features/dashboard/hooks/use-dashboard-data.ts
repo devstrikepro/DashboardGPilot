@@ -27,9 +27,10 @@ export function useDashboardData() {
       const [dashResponse, healthResponse] = await Promise.all([
         AnalyticsService.getDashboardSummary(),
         HealthService.checkHealth(),
-        // ยิงทิ้งเพื่อ updated db เฉยๆ (Background Sync)
-        TradeHistoryService.getHistory().catch(() => null),
       ]);
+
+      // ยิงทิ้งเพื่อ updated db เฉยๆ (Background Sync) - ทำงานเบื้องหลัง ไม่รอ
+      TradeHistoryService.getHistory().catch(() => null);
 
       if (healthResponse.success && healthResponse.data?.status === "ok") {
         if (dashResponse.success && dashResponse.data) {
