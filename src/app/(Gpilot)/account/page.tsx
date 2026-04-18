@@ -2,7 +2,7 @@ import { AccountPage } from "@/features/account";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Account | GPilotDashboard",
+  title: "Account | GPilot Product",
   description: "Manage your GPilot trading account.",
 };
 

@@ -84,7 +84,7 @@ export function PasswordManagementCard() {
           {/* Web Password Section */}
           <Box>
             <Typography variant="subtitle2" sx={{ mb: 1, display: "flex", alignItems: "center", gap: 1 }}>
-              <LockIcon fontSize="small" color="action" /> รหัสผ่านเข้าใช้งานเว็บ (Web Dashboard)
+              <LockIcon fontSize="small" color="action" /> รหัสผ่านเข้าใช้งานเว็บ
             </Typography>
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
               <TextField

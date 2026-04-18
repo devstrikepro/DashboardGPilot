@@ -6,10 +6,10 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 
-import type { DashboardRecentTransaction } from "@/shared/types/api";
+import type { ProductDetailRecentTransaction } from "@/shared/types/api";
 
 interface ExecutionLogProps {
-  readonly recent?: readonly DashboardRecentTransaction[];
+  readonly recent?: readonly ProductDetailRecentTransaction[];
   readonly loading?: boolean;
 }
 

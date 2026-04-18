@@ -69,7 +69,7 @@ export function LoginPage() {
               Welcome Back
             </Typography>
             <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
-              Access your GPilot Dashboard
+              Access your Dashboard
             </Typography>
           </Box>
 

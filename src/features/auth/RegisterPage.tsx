@@ -94,7 +94,7 @@ function RegisterContent() {
               Create Account
             </Typography>
             <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
-              Join GPilot Dashboard today
+              Join GPilot Product today
             </Typography>
           </Box>
 

@@ -4,16 +4,15 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Paper, BottomNavigation, BottomNavigationAction } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-import HistoryIcon from "@mui/icons-material/History";
+import DescriptionIcon from "@mui/icons-material/Description";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
+import WalletIcon from "@mui/icons-material/Wallet";
 import PersonIcon from "@mui/icons-material/Person";
 import { useThemeMode } from "@/shared/ui/theme-provider";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: <DashboardIcon /> },
-  { label: "Cashflow", href: "/cashflow", icon: <AccountBalanceWalletIcon /> },
-  { label: "History", href: "/history", icon: <HistoryIcon /> },
+  { label: "Wallet", href: "/wallet", icon: <WalletIcon /> },
   { label: "Account", href: "/account", icon: <PersonIcon /> },
 ];
 

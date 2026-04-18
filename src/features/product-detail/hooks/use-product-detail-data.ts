@@ -5,16 +5,16 @@ import { AnalyticsService } from "@/shared/services/analytics-service";
 import { TradeHistoryService } from "@/shared/services/trade-history-service";
 import { HealthService } from "@/shared/services/health-service";
 import { useApiHealth } from "@/shared/providers/api-health-provider";
-import type { DashboardSummary } from "@/shared/types/api";
+import type { ProductDetailSummary } from "@/shared/types/api";
 
 /**
- * useDashboardData
- * ดึง Dashboard Summary และ Health Check ขนานกัน
+ * useProductDetailData
+ * ดึง Product Detail Summary และ Health Check ขนานกัน
  * หมายเหตุ: getHistory() ถูกเรียกเพื่อกระตุ้น Background Sync ใน Backend เท่านั้น ไม่ได้นำข้อมูลมาแสดงผล
  */
-export function useDashboardData() {
+export function useProductDetailData() {
   const { isHealthy } = useApiHealth();
-  const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [summary, setSummary] = useState<ProductDetailSummary | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,7 +25,7 @@ export function useDashboardData() {
       setError(null);
 
       const [dashResponse, healthResponse] = await Promise.all([
-        AnalyticsService.getDashboardSummary(),
+        AnalyticsService.getProductDetailSummary(),
         HealthService.checkHealth(),
       ]);
 
@@ -37,13 +37,13 @@ export function useDashboardData() {
           setSummary(dashResponse.data);
         } else if (!dashResponse.success) {
           setError(
-            dashResponse.error?.message ?? "Failed to fetch dashboard summary",
+            dashResponse.error?.message ?? "Failed to fetch product detail summary",
           );
         }
       } else {
         setError(
           healthResponse.error ||
-            "System health check failed. Cannot load dashboard data.",
+            "System health check failed. Cannot load product detail data.",
         );
         setSummary(null);
       }

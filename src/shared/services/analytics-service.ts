@@ -2,7 +2,7 @@ import { apiClient } from '@/shared/api/client';
 import { ApiError } from '@/shared/api/api-error';
 import { ENDPOINTS } from '@/shared/api/endpoint';
 import { createLogger } from '@/shared/utils/logger';
-import type { ServiceResponse, DashboardSummary, TradeRequest, GroupedTradesResponse } from '@/shared/types/api';
+import type { ServiceResponse, ProductDetailSummary, TradeRequest, GroupedTradesResponse } from '@/shared/types/api';
 
 const logger = createLogger('AnalyticsService');
 
@@ -47,17 +47,17 @@ export const AnalyticsService = {
   /**
    * ดึง Dashboard Summary
    */
-  getDashboardSummary: async (params?: TradeRequest): Promise<ServiceResponse<DashboardSummary>> => {
+  getProductDetailSummary: async (params?: TradeRequest): Promise<ServiceResponse<ProductDetailSummary>> => {
     try {
-      logger.info('Fetching dashboard summary', { params });
-      return await apiClient<ServiceResponse<DashboardSummary>>(
-        ENDPOINTS.DASHBOARD_SUMMARY,
+      logger.info('Fetching product detail summary', { params });
+      return await apiClient<ServiceResponse<ProductDetailSummary>>(
+        ENDPOINTS.PRODUCT_DETAIL_SUMMARY,
         undefined,
         params as any,
       );
     } catch (e: unknown) {
-      const errorMsg = e instanceof ApiError ? e.message : 'เกิดข้อผิดพลาดในการดึง dashboard summary';
-      logger.error('Failed to fetch dashboard summary', e instanceof Error ? e : String(e));
+      const errorMsg = e instanceof ApiError ? e.message : 'เกิดข้อผิดพลาดในการดึง product detail summary';
+      logger.error('Failed to fetch product detail summary', e instanceof Error ? e : String(e));
       return { success: false, data: null, error: { code: 'FETCH_ERROR', message: errorMsg } };
     }
   },

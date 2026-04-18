@@ -27,14 +27,14 @@ describe('AnalyticsService', () => {
     });
   });
 
-  describe('getDashboardSummary', () => {
-    it('getDashboardSummary_Successful_ReturnsData', async () => {
+  describe('getProductDetailSummary', () => {
+    it('getProductDetailSummary_Successful_ReturnsData', async () => {
       const mockData = { timeline: [] } as any;
       vi.mocked(apiClient).mockResolvedValue({ success: true, data: mockData, error: null });
 
-      const result = await AnalyticsService.getDashboardSummary();
+      const result = await AnalyticsService.getProductDetailSummary();
 
-      expect(apiClient).toHaveBeenCalledWith(ENDPOINTS.DASHBOARD_SUMMARY, undefined, undefined);
+      expect(apiClient).toHaveBeenCalledWith(ENDPOINTS.PRODUCT_DETAIL_SUMMARY, undefined, undefined);
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockData);
     });

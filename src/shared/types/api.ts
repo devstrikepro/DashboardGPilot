@@ -92,7 +92,7 @@ export interface PerformanceStats {
 }
 
 // ---------------------------------------------
-// Dashboard Types
+// Product Detail Types
 // ---------------------------------------------
 
 export interface SymbolStat {
@@ -102,14 +102,14 @@ export interface SymbolStat {
   readonly winRate: number;
 }
 
-export interface DashboardRecentTransaction {
+export interface ProductDetailRecentTransaction {
   readonly type: string;
   readonly amount: number;
   readonly datetime: string;
   readonly symbol?: string | null;
 }
 
-export interface DashboardSummary {
+export interface ProductDetailSummary {
   readonly balance: number;
   readonly profitToday: number;
   readonly profitWeek: number;
@@ -131,7 +131,7 @@ export interface DashboardSummary {
     readonly totaltrades: number; // Match actual backend JSON response (lowercase)
     readonly list: readonly SymbolStat[];
   };
-  readonly recent: readonly DashboardRecentTransaction[];
+  readonly recent: readonly ProductDetailRecentTransaction[];
 }
 
 

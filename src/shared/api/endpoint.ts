@@ -17,7 +17,7 @@ export const MAIN_ENDPOINTS = {
   /** ดึงข้อมูลบัญชี MT5 */
   ACCOUNT: `${API_GATEWAY_MAIN}/api/v1/account`,
   /** ดึง Dashboard Summary (today/week/month profit, symbol stats) */
-  DASHBOARD_SUMMARY: `${API_GATEWAY_MAIN}/api/v1/dashboard/summary`,
+  PRODUCT_DETAIL_SUMMARY: `${API_GATEWAY_MAIN}/api/v1/dashboard/summary`,
   /** สรุปข้อมูลสำหรับหน้า Account (Balance, Profit, Deposits, Withdrawals) - Optimized */
   ACCOUNT_SUMMARY: `${API_GATEWAY_MAIN}/api/v1/dashboard/account`,
 

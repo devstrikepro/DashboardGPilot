@@ -3,13 +3,12 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
-import { Dashboard, AccountBalanceWallet, History, Analytics, Person } from "@mui/icons-material";
+import { Dashboard, Description, Analytics, Person, Wallet } from "@mui/icons-material";
 import { useThemeMode } from "@/shared/ui";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: Dashboard },
-  { label: "Cashflow", href: "/cashflow", icon: AccountBalanceWallet },
-  { label: "History", href: "/history", icon: History },
+  { label: "Wallet", href: "/wallet", icon: Wallet },
   { label: "My account", href: "/account", icon: Person },
 ];
 
@@ -61,7 +60,7 @@ export function Sidebar() {
                 justifyContent: "center",
               }}
             >
-              <Dashboard sx={{ color: "primary.main", fontSize: 20 }} />
+              <Description sx={{ color: "primary.main", fontSize: 20 }} />
             </Box>
             <Box>
               <Typography
@@ -73,7 +72,7 @@ export function Sidebar() {
                   letterSpacing: "-0.01em",
                 }}
               >
-                GPilotDashboard
+                GPilot Product
               </Typography>
               <Typography
                 variant="caption"

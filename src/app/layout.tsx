@@ -17,7 +17,7 @@ const manrope = Manrope({
 });
 
 export const metadata = {
-  title: "GPilotDashboard",
+  title: "GPilot Product",
   description: "Advanced Trading Terminal",
 };
 

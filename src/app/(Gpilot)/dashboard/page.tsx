@@ -1,9 +1,9 @@
 import { Metadata } from "next";
-import DashboardPage from "@/features/dashboard/DashboardPage";
+import { DashboardPage } from "@/features/dashboard";
 
 export const metadata: Metadata = {
-  title: "Trading Dashboard | Gpilot",
-  description: "Real-time trading performance and metrics dashboard.",
+  title: "Dashboard | GPilot Product",
+  description: "Products overview and performance dashboard.",
 };
 
 export default function Page() {
