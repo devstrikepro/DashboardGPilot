@@ -3,9 +3,11 @@
  */
 export const SERVICE_BASE_GPILOT = "/api/gateway/gpilot";
 export const SERVICE_BASE_SAFEGROW = "/api/gateway/safegrow";
-export const SERVICE_BASE_BANGRANJAN = "/api/gateway/bangranjan";
+export const SERVICE_BASE_HQULTIMATE = "/api/gateway/HQUltimate";
 export const SERVICE_BASE_PPVP = "/api/gateway/ppvp";
 export const SERVICE_BASE_GOLDENBOY = "/api/gateway/goldenboy";
+export const SERVICE_BASE_ROR = "/api/gateway/ror";
+
 
 /**
  * กำหนด Base Paths สำหรับ API Gateway
@@ -52,6 +54,28 @@ export const SUB_ENDPOINTS = {
   /** สั่ง Sync ข้อมูลการเทรด Referral (Manual) */
   TRADES_SYNC_REFERRALS: `/trades/sync/referrals`,
 } as const;
+
+/**
+ * รายการ Endpoint ของ Record of Ragnarok (Dedicated Service)
+ */
+export const ROR_ENDPOINTS = {
+  /** เช็คสถานะ API */
+  HEALTH: `/health`,
+  /** Wizard สำหรับดึง UUID */
+  WIZARD: `/api/v2/my/signin/wizard`,
+  /** เข้าสู่ระบบเฉพาะ ROR (B2Broker/STKPRO) */
+  AUTH_LOGIN: `/api/v2/my/signin`,
+  /** ยืนยันรหัส 2FA Google */
+  AUTH_2FA_GOOGLE: `/api/v2/my/2fa/google`,
+  /** ดึงข้อมูลการ Pledge */
+  PLEDGE: `/pledge`,
+  /** ดึงข้อมูล Leaderboard */
+  RANKING: `/ranking`,
+  /** ดึงข้อมูลบัญชีเทรด */
+  ACCOUNTS: '/api/v2/my/accounts',
+} as const;
+
+
 
 /**
  * Legacy Support (For backward compatibility)

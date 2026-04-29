@@ -141,7 +141,7 @@ export function RiskMetrics({
    
         <MetricItem 
           label="Win Rate" 
-          value={`${winRate.toFixed(1)}%`} 
+          value={`${winRate.toFixed(2)}%`} 
           color={theme.palette.success.main}
           icon={TrendingUpIcon}
           tooltip="อัตราการชนะ คำนวณจากเปอร์เซ็นต์ของไม้ที่ปิดแล้วมีกำไรสุทธิเทียบกับจำนวนออเดอร์ทั้งหมด"

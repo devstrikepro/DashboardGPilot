@@ -182,7 +182,7 @@ export function ProductCard({
                             className="metric-value"
                             variant="h4"
                             sx={{
-                                color: "text.primary",
+                                color: avgMonthProfit >= 0 ? "#10B981" : "#FFFFFF",
                                 fontWeight: 850,
                                 fontFamily: "var(--font-inter)",
                                 fontSize: "2.1rem",

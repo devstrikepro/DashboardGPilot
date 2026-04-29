@@ -8,14 +8,12 @@ import { ThemeProvider, createTheme } from '@mui/material';
 vi.mock('@/shared/services/trade-history-service', () => ({
   TradeHistoryService: {
     getReferralHistory: vi.fn(),
-    syncReferralTrades: vi.fn(),
   },
 }));
 
 // Mock MUI Icons to prevent EMFILE error (too many open files)
 vi.mock('@mui/icons-material', () => ({
   __esModule: true,
-  Sync: () => <div data-testid="SyncIcon" />,
   FileDownload: () => <div data-testid="FileDownloadIcon" />,
   ErrorOutline: () => <div data-testid="ErrorOutlineIcon" />,
   CheckCircleOutline: () => <div data-testid="CheckCircleOutlineIcon" />,
@@ -88,30 +86,6 @@ describe('ReferralSyncCard', () => {
     });
   });
 
-  it('triggers sync when button is clicked', async () => {
-    (TradeHistoryService.getReferralHistory as any).mockResolvedValue({
-      success: true,
-      data: mockData,
-      error: null
-    });
-    
-    (TradeHistoryService.syncReferralTrades as any).mockResolvedValue({
-      success: true,
-      data: { ...mockData, totalThisWeek: 200 },
-      error: null
-    });
-
-    renderWithTheme(<ReferralSyncCard />);
-
-    await waitFor(() => screen.getByText('ซิงค์ด่วน'));
-    
-    fireEvent.click(screen.getByText('ซิงค์ด่วน'));
-
-    await waitFor(() => {
-      expect(TradeHistoryService.syncReferralTrades).toHaveBeenCalled();
-      expect(screen.getByText(/\$200\.00/)).toBeInTheDocument();
-    });
-  });
 
   it('displays error message on fetch failure', async () => {
     (TradeHistoryService.getReferralHistory as any).mockResolvedValue({

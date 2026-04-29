@@ -19,13 +19,11 @@ import {
   IconButton,
   Tooltip,
   Skeleton,
-  CircularProgress,
   Divider,
   useTheme,
   useMediaQuery
 } from "@mui/material";
 import { 
-  Sync as SyncIcon, 
   FileDownload as ExportIcon, 
   ErrorOutline as ErrorIcon, 
   CheckCircleOutline as SuccessIcon,
@@ -63,7 +61,6 @@ export function ReferralSyncCard() {
   
   const [anchorDate, setAnchorDate] = useState<Date>(new Date());
   const [loading, setLoading] = useState(true);
-  const [syncing, setSyncing] = useState(false);
   const [data, setData] = useState<ReferralSyncSummary | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -101,23 +98,6 @@ export function ReferralSyncCard() {
 
   const isCurrentWeek = getMostRecentMonday(new Date()).getTime() === currentMonday.getTime();
 
-  const handleSync = async () => {
-    setSyncing(true);
-    setError(null);
-    try {
-      const response = await TradeHistoryService.syncReferralTrades();
-      if (response.success && response.data) {
-        setData(response.data);
-      } else {
-        setError(response.error?.message ?? "การซิงค์ข้อมูลล้มเหลว");
-      }
-    } catch (e) {
-      logger.error("Sync error", e instanceof Error ? e : String(e));
-      setError("เกิดข้อผิดพลาดในการซิงค์ข้อมูล");
-    } finally {
-      setSyncing(false);
-    }
-  };
 
   const handleExport = () => {
     if (!data?.trades.length) return;
@@ -186,23 +166,13 @@ export function ReferralSyncCard() {
               <span>
                 <IconButton 
                   onClick={handleExport} 
-                  disabled={loading || syncing || !data?.trades.length}
+                  disabled={loading || !data?.trades.length}
                   sx={{ border: '1px solid', borderColor: 'divider' }}
                 >
                   <ExportIcon fontSize="small" />
                 </IconButton>
               </span>
             </Tooltip>
-            <Button 
-              variant="contained" 
-              size={isMobile ? "small" : "medium"}
-              startIcon={syncing ? <CircularProgress size={18} color="inherit" /> : <SyncIcon />}
-              onClick={handleSync}
-              disabled={loading || syncing}
-              sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600 }}
-            >
-              {syncing ? "กำลังซิงค์..." : "ซิงค์ด่วน"}
-            </Button>
           </Stack>
         </Box>
 

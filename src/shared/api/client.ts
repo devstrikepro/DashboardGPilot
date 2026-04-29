@@ -2,8 +2,6 @@ import { ApiError } from './api-error';
 import { API_GATEWAY_MAIN } from './endpoint';
 import { logger } from '@/shared/utils/logger';
 
-// API Key injection (Global Rule #Security)
-const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || process.env.NEXT_PUBLIC_INTERNAL_API_KEY || 'Tarzan';
 
 // Configuration for Retry Strategy (Global Rule #3)
 const RETRY_CONFIG = {
@@ -34,21 +32,25 @@ const executeSingleFetch = async <T>(
   options: RequestInit,
   traceId: string,
   attempt: number,
-  endpoint: string
+  endpoint: string,
+  skipInternalHeaders?: boolean
 ): Promise<{ success: boolean; data?: T; retryable?: boolean; errorStatus?: number; error?: any }> => {
   try {
     logger.info(`Fetching: ${url}`, { traceId, attempt, method: options.method || 'GET' });
 
-    // ดึง Token จาก Storage (Global Rule #Security)
-    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+    // ดึง Token จาก Storage (แยกตามระบบหลัก vs ROR)
+    const tokenKey = skipInternalHeaders ? 'ror_auth_token' : 'auth_token';
+    const token = typeof window !== 'undefined' ? localStorage.getItem(tokenKey) : null;
 
     const response = await fetch(url, {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
-        'X-Trace-ID': traceId,
-        'X-API-Key': INTERNAL_API_KEY,
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        // ข้าม Header อัตโนมัติทั้งหมดถ้าเป็นบริการภายนอก (เช่น ROR)
+        ...(skipInternalHeaders ? {} : { 
+          'Content-Type': 'application/json',
+          'X-Trace-ID': traceId,
+        }),
+        ...(!skipInternalHeaders && token ? { 'Authorization': `Bearer ${token}` } : {}),
         ...options.headers,
       },
     });
@@ -89,14 +91,15 @@ const performFetchWithRetry = async <T>(
   url: string,
   options: RequestInit,
   traceId: string,
-  endpoint: string
+  endpoint: string,
+  skipInternalHeaders?: boolean
 ): Promise<T> => {
   let attempt = 0;
   let lastError: any;
 
   while (attempt < RETRY_CONFIG.maxAttempts) {
     attempt++;
-    const result = await executeSingleFetch<T>(url, options, traceId, attempt, endpoint);
+    const result = await executeSingleFetch<T>(url, options, traceId, attempt, endpoint, skipInternalHeaders);
     
     if (result.success) {
       return result.data as T;
@@ -138,6 +141,8 @@ export const apiClient = async <T>(
   // เลือกใช้อันที่ส่งมาหรือใช้ค่าพื้นฐาน
   const base = serviceBase || API_GATEWAY_MAIN;
   const isSubService = base.includes('/api/gateway/sub');
+  const isRorService = base.includes('/api/gateway/ror');
+
 
   // ดึง accountId จาก base (เช่น /api/gateway/gpilot -> gpilot)
   const getAccountId = (b: string) => {
@@ -158,10 +163,14 @@ export const apiClient = async <T>(
   let apiPath = '';
   if (isSubService) {
     apiPath = `/api/v1${safeEndpoint}`;
+  } else if (isRorService) {
+    // ROR Service เป็น External/Dedicated - ไม่ต้องเติม /api/v1/{accountId}
+    apiPath = safeEndpoint;
   } else {
     // สำหรับ Main Backend: /api/v1/{accountId}/{endpoint}
     apiPath = `/api/v1/${accountId}${safeEndpoint}`;
   }
+
 
   const urlBase = base.endsWith('/') ? base.slice(0, -1) : base;
   const finalEndpoint = `${urlBase}${apiPath}`;
@@ -178,5 +187,11 @@ export const apiClient = async <T>(
 
   const url = `${finalEndpoint}${queryString}`;
 
-  return performFetchWithRetry<T>(url, options || {}, traceId, endpoint);
+  console.log(`[API Client] Calling: ${url} (Service: ${accountId})`);
+
+  // ถ้าเป็น ROR Service ให้ข้าม Header ภายในโดยอัตโนมัติ เพื่อไม่ให้ API ภายนอกพัง
+  const skipInternalHeaders = isRorService;
+
+  return performFetchWithRetry<T>(url, options || {}, traceId, endpoint, skipInternalHeaders);
+
 };

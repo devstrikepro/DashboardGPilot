@@ -1,17 +1,334 @@
 {
-  "success": true,
-  "data": {
-    "login": 2121978453,
-    "server": "StrikeProfx-Server",
-    "name": "Panupong Kaewsakulnee",
-    "currency": "USD",
-    "balance": 299470.61,
-    "equity": 299470.61,
-    "margin": 0,
-    "margin_free": 299470.61,
-    "margin_level": 0,
-    "leverage": 500,
-    "profit": 0
-  },
-  "error": null
+    "total": 3,
+    "data": [
+        {
+            "accountId": 74551,
+            "accountNumber": "38227",
+            "archive": false,
+            "caption": "USD",
+            "currency": {
+                "alphabeticCode": "USD",
+                "name": "USD",
+                "numericCode": 840,
+                "minorUnit": 2,
+                "hasDestinationTagOrMemo": false
+            },
+            "favourite": false,
+            "group": {
+                "id": 3,
+                "name": "Fiat",
+                "priority": 2,
+                "type": "default"
+            },
+            "platform": {
+                "id": 1,
+                "name": "ew",
+                "caption": "eWallet",
+                "type": "personal",
+                "isDemo": false,
+                "terminalUrl": ""
+            },
+            "priority": 202,
+            "statement": {
+                "availableBalance": "7.190000000000000000",
+                "currentBalance": "7.190000000000000000",
+                "credit": "0.000000000000000000",
+                "equity": "0.000000000000000000",
+                "freeMargin": "0.000000000000000000",
+                "hold": "0.000000000000000000",
+                "margin": "0.000000000000000000",
+                "marginLevel": "0.00",
+                "pnl": "0.000000000000000000",
+                "updateTime": "2026-04-26T14:48:16+00:00"
+            },
+            "type": "personal",
+            "createTime": "2026-03-10T11:55:44+00:00",
+            "permissions": [
+                "deposit",
+                "enabled",
+                "exchange",
+                "transferDeposit",
+                "transferWithdrawal",
+                "visible",
+                "withdrawal"
+            ],
+            "productId": 2,
+            "rights": 253,
+            "leverage": 1,
+            "productCurrency": {
+                "id": 1,
+                "caption": "USD",
+                "product": {
+                    "id": 2,
+                    "type": "personal",
+                    "name": "ewallet_usd",
+                    "caption": "USD",
+                    "group": {
+                        "id": 3,
+                        "caption": "Fiat",
+                        "description": "Fiat",
+                        "type": "default",
+                        "priority": 2,
+                        "createTime": "2018-12-25T17:28:55+00:00",
+                        "updateTime": "2020-02-21T13:26:53+00:00"
+                    },
+                    "platform": {
+                        "id": 1,
+                        "caption": "eWallet",
+                        "shortCaption": "",
+                        "name": "ew",
+                        "class": "personal",
+                        "isDemo": false
+                    }
+                },
+                "currency": {
+                    "alphabeticCode": "USD",
+                    "name": "USD",
+                    "numericCode": 840,
+                    "minorUnit": 2,
+                    "hasDestinationTagOrMemo": false
+                },
+                "factory": 1,
+                "variants": {
+                    "startAmounts": [],
+                    "leverages": [
+                        "1"
+                    ]
+                },
+                "platformGroups": [
+                    "eWallet"
+                ],
+                "isHedgingEnabled": false,
+                "maxAccounts": 1,
+                "permissions": [
+                    "deposit",
+                    "enabled",
+                    "exchange",
+                    "transferDeposit",
+                    "transferWithdrawal",
+                    "visible",
+                    "withdrawal"
+                ],
+                "priority": 202,
+                "linkInfo": "",
+                "agreementLink": null,
+                "minDepositAmount": "0.000000000000000000"
+            }
+        },
+        {
+            "accountId": 74552,
+            "accountNumber": "38228",
+            "archive": false,
+            "caption": "USD Partner",
+            "currency": {
+                "alphabeticCode": "USD",
+                "name": "USD",
+                "numericCode": 840,
+                "minorUnit": 2,
+                "hasDestinationTagOrMemo": false
+            },
+            "favourite": true,
+            "group": {
+                "id": 6,
+                "name": "Partner",
+                "priority": 6,
+                "type": "default"
+            },
+            "platform": {
+                "id": 1,
+                "name": "ew",
+                "caption": "eWallet",
+                "type": "personal",
+                "isDemo": false,
+                "terminalUrl": ""
+            },
+            "priority": 220,
+            "statement": {
+                "availableBalance": "0.000000000000000000",
+                "currentBalance": "0.000000000000000000",
+                "credit": "0.000000000000000000",
+                "equity": "0.000000000000000000",
+                "freeMargin": "0.000000000000000000",
+                "hold": "0.000000000000000000",
+                "margin": "0.000000000000000000",
+                "marginLevel": "0.00",
+                "pnl": "0.000000000000000000",
+                "updateTime": "2026-04-26T14:48:16+00:00"
+            },
+            "type": "partner",
+            "createTime": "2026-03-10T11:55:46+00:00",
+            "permissions": [
+                "enabled",
+                "transferWithdrawal",
+                "visible"
+            ],
+            "productId": 34,
+            "rights": 81,
+            "leverage": 1,
+            "productCurrency": {
+                "id": 17,
+                "caption": "USD Partner",
+                "product": {
+                    "id": 34,
+                    "type": "partner",
+                    "name": "usdp",
+                    "caption": "USD Partner ",
+                    "group": {
+                        "id": 6,
+                        "caption": "Partner",
+                        "description": "Partner",
+                        "type": "default",
+                        "priority": 6,
+                        "createTime": "2020-02-24T10:01:52+00:00",
+                        "updateTime": "2020-09-03T10:35:18+00:00"
+                    },
+                    "platform": {
+                        "id": 1,
+                        "caption": "eWallet",
+                        "shortCaption": "",
+                        "name": "ew",
+                        "class": "personal",
+                        "isDemo": false
+                    }
+                },
+                "currency": {
+                    "alphabeticCode": "USD",
+                    "name": "USD",
+                    "numericCode": 840,
+                    "minorUnit": 2,
+                    "hasDestinationTagOrMemo": false
+                },
+                "factory": 1,
+                "variants": {
+                    "startAmounts": [],
+                    "leverages": [
+                        "1"
+                    ]
+                },
+                "platformGroups": [
+                    "eWallet"
+                ],
+                "isHedgingEnabled": false,
+                "maxAccounts": 1,
+                "permissions": [
+                    "enabled",
+                    "transferWithdrawal",
+                    "visible"
+                ],
+                "priority": 220,
+                "linkInfo": "",
+                "agreementLink": "",
+                "minDepositAmount": "0.000000000000000000"
+            }
+        },
+        {
+            "accountId": 74715,
+            "accountNumber": "2121984341",
+            "archive": false,
+            "caption": "2121984341",
+            "currency": {
+                "alphabeticCode": "USD",
+                "name": "USD",
+                "numericCode": 840,
+                "minorUnit": 2,
+                "hasDestinationTagOrMemo": false
+            },
+            "favourite": false,
+            "group": {
+                "id": 44,
+                "name": "MT5 PAMM Investor Account\t",
+                "priority": 44,
+                "type": "pammInvestor"
+            },
+            "platform": {
+                "id": 6,
+                "name": "mt5 live",
+                "caption": "MetaTrader 5 Live",
+                "type": "MetaTrader5",
+                "isDemo": false,
+                "terminalUrl": ""
+            },
+            "priority": 254,
+            "statement": {
+                "availableBalance": "271.970000000000000000",
+                "currentBalance": "271.970000000000000000",
+                "credit": "0.000000000000000000",
+                "equity": "271.970000000000000000",
+                "freeMargin": "271.970000000000000000",
+                "hold": "0.000000000000000000",
+                "margin": "0.000000000000000000",
+                "marginLevel": "0.00",
+                "pnl": "0.000000000000000000",
+                "updateTime": "2026-04-26T14:48:16+00:00"
+            },
+            "type": "trade",
+            "createTime": "2026-03-11T05:09:07+00:00",
+            "permissions": [
+                "enabled",
+                "transferDeposit",
+                "transferWithdrawal",
+                "visible"
+            ],
+            "productId": 74,
+            "rights": 113,
+            "leverage": 1,
+            "productCurrency": {
+                "id": 57,
+                "caption": "",
+                "product": {
+                    "id": 74,
+                    "type": "trade",
+                    "name": "MT5 PAMM Investment Account",
+                    "caption": "MT5 PAMM Investment Account",
+                    "group": {
+                        "id": 44,
+                        "caption": "MT5 PAMM Investor Account\t",
+                        "description": "MT5 PAMM Investor Account\t",
+                        "type": "pammInvestor",
+                        "priority": 44,
+                        "createTime": "2024-04-06T17:42:02+00:00",
+                        "updateTime": "2024-04-10T12:58:03+00:00"
+                    },
+                    "platform": {
+                        "id": 6,
+                        "caption": "MetaTrader 5 Live",
+                        "shortCaption": "",
+                        "name": "mt5 live",
+                        "class": "MetaTrader5",
+                        "isDemo": false
+                    }
+                },
+                "currency": {
+                    "alphabeticCode": "USD",
+                    "name": "USD",
+                    "numericCode": 840,
+                    "minorUnit": 2,
+                    "hasDestinationTagOrMemo": false
+                },
+                "factory": 1,
+                "variants": {
+                    "startAmounts": [],
+                    "leverages": [
+                        "1",
+                        "100"
+                    ]
+                },
+                "platformGroups": [
+                    "real\\STRPUSDSTIA-B"
+                ],
+                "isHedgingEnabled": true,
+                "maxAccounts": -1,
+                "permissions": [
+                    "enabled",
+                    "transferDeposit",
+                    "transferWithdrawal",
+                    "visible"
+                ],
+                "priority": 0,
+                "linkInfo": "",
+                "agreementLink": "",
+                "minDepositAmount": "0.000000000000000000"
+            }
+        }
+    ]
 }

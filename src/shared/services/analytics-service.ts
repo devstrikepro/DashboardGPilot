@@ -73,11 +73,6 @@ export const AnalyticsService = {
     try {
       logger.info('Fetching product detail', { params, serviceBase });
 
-      // Mock logic: If not gpilot, return mock data directly (satisfies tests)
-      if (serviceBase && serviceBase !== SERVICE_BASE_GPILOT) {
-        return { success: true, data: MOCK_PRODUCT_DETAIL, error: null };
-      }
-
       return await apiClient<ServiceResponse<ProductDetail>>(
         ENDPOINTS.PRODUCT_DETAIL,
         undefined,

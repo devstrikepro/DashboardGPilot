@@ -24,22 +24,42 @@ export function ApiHealthProvider({ children }: ApiHealthProviderProps) {
   const [lastChecked, setLastChecked] = useState<Date | null>(null);
   const pathname = usePathname();
 
+  const IS_MOCK_MODE = process.env.NEXT_PUBLIC_IS_MOCK_MODE === "True" || process.env.NEXT_PUBLIC_IS_MOCK_MODE === "true";
+
+  // Mock Auth Initialization
+  useEffect(() => {
+    if (IS_MOCK_MODE) {
+      if (typeof window !== "undefined") {
+        if (!localStorage.getItem("auth_token")) {
+          localStorage.setItem("auth_token", "dev-mock-token");
+          logger.info("Mock Auth Token initialized in localStorage");
+        }
+        // ตรวจสอบคุกกี้ด้วยเพื่อให้ Middleware ทำงานได้ถูกต้อง
+        if (!document.cookie.includes("auth_token")) {
+          document.cookie = "auth_token=dev-mock-token; path=/; max-age=86400";
+        }
+      }
+    }
+  }, [IS_MOCK_MODE]);
+
   const checkHealth = useCallback(async () => {
     setIsChecking(true);
     try {
       const res = await HealthService.checkHealth();
-      setIsHealthy(res.success && res.data.status === "ok");
+      // ในโหมด Mock ให้ถือว่า Healthy เสมอเพื่อให้ UI ไม่ค้าง
+      setIsHealthy(IS_MOCK_MODE ? true : (res.success && res.data.status === "ok"));
     } catch (err) {
       logger.error("API Health check failed unexpectedly in provider", err instanceof Error ? err : String(err));
-      setIsHealthy(false);
+      setIsHealthy(IS_MOCK_MODE); // ถ้าโหมด Mock ให้เป็น True
     } finally {
       setIsChecking(false);
       setLastChecked(new Date());
     }
-  }, []);
+  }, [IS_MOCK_MODE]);
 
-  // ยิง Health Check ทุกครั้งที่เปลี่ยนหน้าจอ (ตามข้อกำหนดของผู้ใช้)
+  // ยิง Health Check ทุกครั้งที่เปลี่ยนหน้าจอ (ยกเว้นหน้า ROR)
   useEffect(() => {
+    if (pathname?.includes("record-of-ragnarok")) return;
     checkHealth();
   }, [pathname, checkHealth]);
 

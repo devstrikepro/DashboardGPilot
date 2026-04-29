@@ -25,23 +25,23 @@ async function handleRequest(
 ) {
   try {
     let targetBaseUrl = "";
-    let targetApiKey = "";
     let finalPathSegments: string[] = [];
 
     const prefix = path[0];
     const SERVICE_MAP: Record<string, string | undefined> = {
-      gpilot: process.env.API_URL_GPILOT,
-      safegrow: process.env.API_URL_SAFEGROW,
-      ppvp: process.env.API_URL_PPVP,
-      goldenboy: process.env.API_URL_GOLDENBOY,
-      bangranjan: process.env.API_URL_BANGRANJAN,
+      gpilot: process.env.API_URL,
+      safegrow: process.env.API_URL,
+      ppvp: process.env.API_URL,
+      goldenboy: process.env.API_URL,
+      HQUltimate: process.env.API_URL,
+      ror: process.env.API_URL_STKPRO,
       sub: process.env.API_URL_SUB,
       main: process.env.API_URL_MAIN || process.env.API_URL,
     };
 
+
     if (SERVICE_MAP[prefix]) {
       targetBaseUrl = SERVICE_MAP[prefix]!;
-      targetApiKey = process.env.INTERNAL_API_KEY || "";
       
       const remainingPath = path.slice(1);
       
@@ -57,8 +57,7 @@ async function handleRequest(
       }
     } else {
       // กรณี Legacy หรือไม่มี Prefix ให้ยิงไป Backend-Main เป็น Default
-      targetBaseUrl = process.env.API_URL_MAIN || process.env.API_URL || "http://localhost:8000";
-      targetApiKey = process.env.INTERNAL_API_KEY || "";
+      targetBaseUrl = process.env.API_URL_MAIN || process.env.API_URL || "http://103.91.191.171:8000";
       finalPathSegments = [...path];
     }
     
@@ -73,13 +72,26 @@ async function handleRequest(
 
     // เตรียม Headers
     const headers = new Headers();
-    headers.set("Content-Type", "application/json");
-    if (targetApiKey) {
-      headers.set("X-API-Key", targetApiKey);
+    
+    // คัดลอก headers ที่จำเป็นจากต้นทาง
+    const headersToForward = ["accept", "user-agent"];
+    if (!prefix.includes('ror')) {
+      headersToForward.push("authorization");
     }
+    
+    headersToForward.forEach(h => {
+      const val = request.headers.get(h);
+      if (val) headers.set(h, val);
+    });
+
+
+    headers.set("Content-Type", "application/json");
+
 
     // Forward Request ไปที่ Backend
+    console.log(`[Proxy] ${request.method} ${request.url} -> ${targetUrl}`);
     const response = await fetch(targetUrl, {
+
       method: request.method,
       headers: headers,
       body: request.method !== "GET" && request.method !== "DELETE" ? await request.text() : undefined,

@@ -90,7 +90,7 @@ export function SymbolPerformance({ loading, stats, totalTrades }: Readonly<Symb
                   fontWeight: 500,
                 }}
               >
-                {item.winRate}%
+                {item.winRate.toFixed(2)}%
               </Typography>
             </Box>
           </Box>

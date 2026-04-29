@@ -3,7 +3,6 @@ import { Sidebar } from "@/layouts/sidebar";
 import { TopBar } from "@/layouts/top-bar"; 
 import { BottomNav } from "@/shared/ui/bottom-nav";
 import { TradeDataProvider } from "@/shared/providers/trade-data-provider";
-import { BackgroundSync } from "@/shared/components/background-sync";
 
 export default function GpilotLayout({
   children,
@@ -12,7 +11,6 @@ export default function GpilotLayout({
 }>) {
   return (
     <TradeDataProvider>
-      <BackgroundSync />
       <Box sx={{ display: "flex", minHeight: "100vh" }}>
         <Sidebar />
         <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", ml: { lg: "256px" }, pb: { xs: "80px", lg: 0 } }}>

@@ -7,7 +7,7 @@ import { useDashboardData } from "./hooks/use-dashboard-data";
 import { 
   SERVICE_BASE_GPILOT, 
   SERVICE_BASE_SAFEGROW, 
-  SERVICE_BASE_BANGRANJAN, 
+  SERVICE_BASE_HQULTIMATE, 
   SERVICE_BASE_PPVP, 
   SERVICE_BASE_GOLDENBOY 
 } from "@/shared/api/endpoint";
@@ -26,15 +26,15 @@ interface ProductInfo {
 const PRODUCTS: Record<string, ProductInfo> = {
   SAFEGROW: { id: 'safegrow', title: 'Safe Grow', initials: 'SG', serviceBase: SERVICE_BASE_SAFEGROW },
   GPILOT: { id: 'gpilot', title: 'Gpilot', initials: 'GP', serviceBase: SERVICE_BASE_GPILOT },
-  BANGRANJAN: { id: 'bangranjan', title: 'บางระจัน (Bang Rajan)', initials: 'BR', serviceBase: SERVICE_BASE_BANGRANJAN },
+  HQULTIMATE: { id: 'HQUltimate', title: 'HQUltimate', initials: 'HQ', serviceBase: SERVICE_BASE_HQULTIMATE },
   PPVP: { id: 'ppvp', title: 'PPVP', initials: 'PP', serviceBase: SERVICE_BASE_PPVP },
   GOLDENBOY: { id: 'goldenboy', title: 'GoldenBoy', initials: 'GB', serviceBase: SERVICE_BASE_GOLDENBOY },
 };
 
 const ROLE_PERMISSIONS: Record<AppRole, string[]> = {
-  'A': ['SAFEGROW', 'GPILOT', 'BANGRANJAN'],
-  'B': ['PPVP', 'GOLDENBOY', 'BANGRANJAN'],
-  'Admin': ['SAFEGROW', 'GPILOT', 'BANGRANJAN', 'PPVP', 'GOLDENBOY'],
+  'A': ['SAFEGROW', 'GPILOT', 'HQULTIMATE'],
+  'B': ['PPVP', 'GOLDENBOY', 'HQULTIMATE'],
+  'Admin': ['SAFEGROW', 'GPILOT', 'HQULTIMATE', 'PPVP', 'GOLDENBOY'],
 };
 
 const MOCK_ROLE: AppRole = 'Admin';

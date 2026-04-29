@@ -13,7 +13,7 @@ graph TD
     
     Frontend -->|Bearer Token| GpilotAPI[Gpilot Service]
     Frontend -->|Bearer Token| SafegrowAPI[Safegrow Service]
-    Frontend -->|Bearer Token| BangranjanAPI[Bangranjan Service]
+    Frontend -->|Bearer Token| HQUltimateAPI[HQUltimate Service]
     Frontend -->|Bearer Token| Others[Other Product Services...]
     
     GpilotAPI -->|Verifies JWT| MT5[MetaTrader 5]
@@ -57,9 +57,9 @@ The application implements a frontend-gated RBAC system to manage product visibi
 
 | Role | Access Permissions |
 | :--- | :--- |
-| **Admin** | Access to all products (Gpilot, Safegrow, Bangranjan, PPVP, GoldenBoy) |
-| **Role A** | Access to Safe Grow, Gpilot, and Bangranjan |
-| **Role B** | Access to PPVP, GoldenBoy, and Bangranjan |
+| **Admin** | Access to all products (Gpilot, Safegrow, HQUltimate, PPVP, GoldenBoy) |
+| **Role A** | Access to Safe Grow, Gpilot, and HQUltimate |
+| **Role B** | Access to PPVP, GoldenBoy, and HQUltimate |
 
 Visibility is controlled via `ROLE_PERMISSIONS` in `DashboardPage.tsx`, ensuring users only see relevant products on their dashboard.
 

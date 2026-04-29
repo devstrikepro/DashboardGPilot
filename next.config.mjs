@@ -13,8 +13,12 @@ const nextConfig = {
         destination: 'http://localhost:8001/:path*',
       },
       {
+        source: '/api/gateway/ror/:path*',
+        destination: 'https://api.strikeprofx.com/:path*',
+      },
+      {
         source: '/api/gateway/:account/:path*',
-        destination: 'http://localhost:8000/:path*',
+        destination: 'http://103.91.191.171:8000/:path*',
       },
     ];
   },
