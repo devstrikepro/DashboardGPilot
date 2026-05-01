@@ -25,6 +25,7 @@ import {
   Numbers as NumbersIcon,
   VpnKey as VpnKeyIcon
 } from "@mui/icons-material";
+import { AuthService } from "@/shared/services/auth-service";
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -33,10 +34,15 @@ function RegisterContent() {
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [showInvestorPassword, setShowInvestorPassword] = useState(false);
+  
+  const [email, setEmail] = useState("");
   const [refId, setRefId] = useState("");
   const [mt5Id, setMt5Id] = useState("");
   const [investorPassword, setInvestorPassword] = useState("");
+  
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successData, setSuccessData] = useState<{ email: string; defaultPassword?: string } | null>(null);
 
   useEffect(() => {
     const ref = searchParams.get("ref");
@@ -48,15 +54,36 @@ function RegisterContent() {
     }
   }, [searchParams]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!refId) {
       setError("Cannot register: Referral ID is missing.");
       return;
     }
-    // Mock successful registration
-    console.log("Registering with RefID:", refId);
-    router.push("/login");
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const res = await AuthService.register({
+        email,
+        mt5Id: Number(mt5Id),
+        mt5_password_plain: investorPassword
+      });
+
+      if (res.success && res.data) {
+        setSuccessData({
+          email: res.data.email,
+          defaultPassword: res.data.defaultPassword
+        });
+      } else {
+        setError(res.error?.message || "ลงทะเบียนไม่สำเร็จ");
+      }
+    } catch (err) {
+      setError("เกิดข้อผิดพลาดในการเชื่อมต่อ");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -108,55 +135,17 @@ function RegisterContent() {
             <Stack spacing={2.5}>
               <TextField
                 fullWidth
-                label="Full Name"
-                placeholder="Enter your name"
-                required
-                slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <PersonIcon sx={{ color: "text.secondary", fontSize: 20 }} />
-                      </InputAdornment>
-                    ),
-                    sx: { borderRadius: 3 }
-                  }
-                }}
-              />
-              <TextField
-                fullWidth
                 label="Email Address"
                 placeholder="name@company.com"
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 slotProps={{
                   input: {
                     startAdornment: (
                       <InputAdornment position="start">
                         <EmailIcon sx={{ color: "text.secondary", fontSize: 20 }} />
-                      </InputAdornment>
-                    ),
-                    sx: { borderRadius: 3 }
-                  }
-                }}
-              />
-              <TextField
-                fullWidth
-                label="Password"
-                placeholder="••••••••"
-                type={showPassword ? "text" : "password"}
-                required
-                slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <LockIcon sx={{ color: "text.secondary", fontSize: 20 }} />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                          {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                        </IconButton>
                       </InputAdornment>
                     ),
                     sx: { borderRadius: 3 }
@@ -234,24 +223,48 @@ function RegisterContent() {
                 helperText={!refId ? "Referral ID is mandatory" : "Pre-filled from your referral link"}
               />
 
-              <Button
-                fullWidth
-                size="large"
-                type="submit"
-                variant="contained"
-                disabled={!refId}
-                sx={{ 
-                  borderRadius: 3, 
-                  py: 1.5, 
-                  fontWeight: 700, 
-                  textTransform: "none",
-                  boxShadow: "0 8px 20px rgba(34, 211, 238, 0.3)",
-                  mt: 1
-                }}
-                endIcon={<ArrowForwardIcon />}
-              >
-                Sign Up
-              </Button>
+              {successData ? (
+                <Stack spacing={3}>
+                  <Alert severity="success" sx={{ borderRadius: 3 }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>ลงทะเบียนสำเร็จ!</Typography>
+                    <Typography variant="body2">
+                      อีเมล: {successData.email}<br />
+                      รหัสผ่านเริ่มต้น: <strong>{successData.defaultPassword || "P@ssw0rd-1"}</strong>
+                    </Typography>
+                    <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
+                      *โปรดบันทึกรหัสผ่านนี้ไว้เพื่อเข้าสู่ระบบครั้งแรก
+                    </Typography>
+                  </Alert>
+                  <Button
+                    fullWidth
+                    size="large"
+                    variant="contained"
+                    onClick={() => router.push("/login")}
+                    sx={{ borderRadius: 3, fontWeight: 700 }}
+                  >
+                    ไปหน้า Login
+                  </Button>
+                </Stack>
+              ) : (
+                <Button
+                  fullWidth
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                  disabled={!refId || isLoading}
+                  sx={{ 
+                    borderRadius: 3, 
+                    py: 1.5, 
+                    fontWeight: 700, 
+                    textTransform: "none",
+                    boxShadow: "0 8px 20px rgba(34, 211, 238, 0.3)",
+                    mt: 1
+                  }}
+                  endIcon={<ArrowForwardIcon />}
+                >
+                  {isLoading ? "Signing Up..." : "Sign Up"}
+                </Button>
+              )}
             </Stack>
           </form>
 

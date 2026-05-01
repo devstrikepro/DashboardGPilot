@@ -22,7 +22,7 @@ export const AuthService = {
    * ลงทะเบียนผู้ใช้ใหม่ (พร้อมเข้ารหัสรหัสผ่าน MT5)
    */
   register: async (
-    data: Omit<RegistrationRequest, 'mt5_password_encrypted'> & { mt5_password_plain: string }
+    data: Omit<RegistrationRequest, 'mt5PasswordEncrypted'> & { mt5_password_plain: string }
   ): Promise<ServiceResponse<RegistrationResponse>> => {
     try {
       logger.info('Registering new user', { email: data.email });
@@ -44,24 +44,23 @@ export const AuthService = {
       // 3. เตรียมข้อมูลส่งให้ Backend-Sub
       const requestData: RegistrationRequest = {
         email: data.email,
-        password: data.password,
-        invited_by_ref_id: data.invited_by_ref_id,
-        mt5_id: data.mt5_id,
-        mt5_password_encrypted: encryptedPassword
+        mt5Id: data.mt5Id,
+        mt5PasswordEncrypted: encryptedPassword
       };
 
       // 4. ส่งข้อมูลผ่าน Gateway Proxy
-      const result = await apiClient<RegistrationResponse>(SUB_ENDPOINTS.AUTH_REGISTER, {
+      const response = await apiClient<ServiceResponse<RegistrationResponse>>(SUB_ENDPOINTS.AUTH_REGISTER, {
         method: 'POST',
         body: JSON.stringify(requestData),
       }, undefined, API_GATEWAY_SUB);
+      
+      // จัดการกับ ServiceResponse (ห่อตามมาตรฐาน)
+      if (!response.success || !response.data) {
+        return response;
+      }
 
       logger.info('User registered successfully', { email: data.email });
-      return {
-        success: true,
-        data: result,
-        error: null
-      };
+      return response;
 
     } catch (error) {
       const errorMsg = error instanceof ApiError ? error.message : 'เกิดข้อผิดพลาดในการลงทะเบียน';
@@ -80,27 +79,36 @@ export const AuthService = {
    */
   login: async (data: LoginRequest): Promise<ServiceResponse<LoginResponse>> => {
     try {
-      logger.info('Attempting login', { username: data.username });
+      logger.info('Attempting login', { email: data.email });
 
-      // Backend-Sub ใช้ OAuth2 Password Request Form (Form Data)
-      const formData = new URLSearchParams();
-      formData.append('username', data.username);
-      formData.set('password', data.password);
+      // Backend-Sub ใช้ JSON สำหรับ login
+      const requestBody: LoginRequest = {
+        email: data.email,
+        password: data.password
+      };
 
-      const result = await apiClient<LoginResponse>(SUB_ENDPOINTS.AUTH_LOGIN, {
+      const response = await apiClient<ServiceResponse<LoginResponse>>(SUB_ENDPOINTS.AUTH_LOGIN, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formData.toString(),
+        body: JSON.stringify(requestBody),
       }, undefined, API_GATEWAY_SUB);
 
-      logger.info('Login successful', { username: data.username });
-      return {
-        success: true,
-        data: result,
-        error: null
-      };
+      if (!response.success || !response.data) {
+        return response;
+      }
+
+      const result = response.data;
+      logger.info('Login successful', { email: data.email });
+      
+      // เก็บ Token ใน Cookies/LocalStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('auth_token', result.accessToken);
+        if (result.refreshToken) {
+          localStorage.setItem('refresh_token', result.refreshToken);
+        }
+        document.cookie = `auth_token=${result.accessToken}; path=/; max-age=86400; SameSite=Strict`;
+      }
+
+      return response;
 
     } catch (error) {
       const errorMsg = error instanceof ApiError ? error.message : 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
@@ -120,10 +128,13 @@ export const AuthService = {
   updatePassword: async (newPassword: string): Promise<ServiceResponse<void>> => {
     try {
       logger.info('Updating web password');
-      await apiClient(SUB_ENDPOINTS.AUTH_UPDATE_PASSWORD, {
+      const response = await apiClient<ServiceResponse<{ message: string }>>(SUB_ENDPOINTS.AUTH_UPDATE_PASSWORD, {
         method: 'PATCH',
         body: JSON.stringify({ new_password: newPassword }),
       }, undefined, API_GATEWAY_SUB);
+
+      if (!response.success) return { success: false, data: undefined, error: response.error };
+      
       return { success: true, data: undefined, error: null };
     } catch (error) {
       const errorMsg = error instanceof ApiError ? error.message : 'ไม่สามารถเปลี่ยนรหัสผ่านได้';
@@ -152,10 +163,13 @@ export const AuthService = {
       }
 
       const encryptedPassword = await CryptoUtils.encrypt(newPlainPassword, encryptionKey);
-      await apiClient(SUB_ENDPOINTS.AUTH_UPDATE_MT5_PASSWORD, {
+      const response = await apiClient<ServiceResponse<{ message: string }>>(SUB_ENDPOINTS.AUTH_UPDATE_MT5_PASSWORD, {
         method: 'PATCH',
         body: JSON.stringify({ encrypted_password: encryptedPassword }),
       }, undefined, API_GATEWAY_SUB);
+
+      if (!response.success) return { success: false, data: undefined, error: response.error };
+
       return { success: true, data: undefined, error: null };
     } catch (error) {
       const errorMsg = error instanceof ApiError ? error.message : 'ไม่สามารถเปลี่ยนรหัสผ่าน MT5 ได้';

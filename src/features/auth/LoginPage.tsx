@@ -8,6 +8,7 @@ import {
   TextField, 
   Button, 
   Stack, 
+  Alert,
   IconButton, 
   InputAdornment,
   Link,
@@ -21,18 +22,44 @@ import {
   VisibilityOff as VisibilityOffIcon,
   Login as LoginIcon
 } from "@mui/icons-material";
+import { AuthService } from "@/shared/services/auth-service";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Development Mock Login
-    localStorage.setItem('auth_token', 'dev-mock-token');
-    router.push("/dashboard");
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const res = await AuthService.login({
+        email: email,
+        password: password
+      });
+
+      if (res.success && res.data) {
+        // นำทางไปยัง Dashboard หรือหน้าเปลี่ยนรหัสผ่านถ้าจำเป็น
+        if (res.data.user.requirePasswordChange) {
+            router.push("/change-password"); // สมมติว่ามีหน้านี้
+        } else {
+            router.push("/dashboard");
+        }
+      } else {
+        setError(res.error?.message || "เข้าสู่ระบบไม่สำเร็จ");
+      }
+    } catch (err) {
+      setError("เกิดข้อผิดพลาดในการเชื่อมต่อ");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -73,6 +100,11 @@ export function LoginPage() {
               Access your Dashboard
             </Typography>
           </Box>
+          {error && (
+            <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
+              {error}
+            </Alert>
+          )}
 
           <form onSubmit={handleSubmit}>
             <Stack spacing={2.5}>
@@ -82,6 +114,8 @@ export function LoginPage() {
                 placeholder="name@company.com"
                 type="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -97,6 +131,8 @@ export function LoginPage() {
                 placeholder="••••••••"
                 type={showPassword ? "text" : "password"}
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -129,6 +165,7 @@ export function LoginPage() {
                 size="large"
                 type="submit"
                 variant="contained"
+                disabled={isLoading}
                 sx={{ 
                   borderRadius: 3, 
                   py: 1.5, 
@@ -138,7 +175,7 @@ export function LoginPage() {
                   mt: 1
                 }}
               >
-                Sign In
+                {isLoading ? "Signing In..." : "Sign In"}
               </Button>
             </Stack>
           </form>

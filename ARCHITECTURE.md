@@ -8,16 +8,16 @@ The DashboardGpilot Frontend operates in a **Microservice Architecture** where e
 
 ```mermaid
 graph TD
-    User((User/Trader)) -->|Logs in| LoginVPS[Login VPS]
-    LoginVPS -->|Returns JWT| Frontend[DashboardGpilot Frontend]
+    User((User/Trader)) -->|Logs in| CoreAPI[Core-API / Sub-Backend]
+    CoreAPI -->|Returns JWT| Frontend[DashboardGpilot Frontend]
     
     Frontend -->|Bearer Token| GpilotAPI[Gpilot Service]
     Frontend -->|Bearer Token| SafegrowAPI[Safegrow Service]
     Frontend -->|Bearer Token| HQUltimateAPI[HQUltimate Service]
-    Frontend -->|Bearer Token| Others[Other Product Services...]
+    Frontend -->|Bearer Token| CoreAPI
     
     GpilotAPI -->|Verifies JWT| MT5[MetaTrader 5]
-    LoginVPS -->|Manages| AuthDB[(Auth Database)]
+    CoreAPI -->|Manages| MainDB[(MongoDB)]
 ```
 
 ## 🏗 Component Diagram (Folder Structure)
@@ -116,6 +116,19 @@ Hooks use `useQuery` to wrap async service calls, returning a standardized inter
 - **Structured Logging**: All logs follow a JSON format for better observability.
 - **Trace IDs**: Distributed tracing enabled via `X-Trace-ID` headers across all service calls.
 
+---
+
+## 🏥 Health Monitoring
+
+The application implements a **Dual-Service Health Check** mechanism via `ApiHealthProvider`:
+
+1. **Main Backend Health**: Checks connection to the primary product services (Connector-API).
+2. **Sub Backend Health**: Checks connection to the core system services (Core-API).
+
+Overall system health is considered "Healthy" only when both services are operational. Status is checked automatically on route changes (except for specific isolated views).
+
+---
+
 ## API Integration & Routing
 
 The system utilizes two distinct backend services which are harmonized via the `apiClient` utility:
@@ -125,10 +138,11 @@ The system utilizes two distinct backend services which are harmonized via the `
 - **URL Pattern**: `/api/v1/{accountId}/{endpoint}` (e.g., `/api/v1/gpilot/trades`).
 - **Base Path**: `/api/gateway/gpilot`.
 
-### 2. Sub Backend (GpilotBackendSub)
-- **Scope**: Global system operations (Auth, Cross-account Sync).
+### 2. Core-API / Sub Backend (GpilotBackendSub)
+- **Scope**: Global system operations (Auth, Cross-account Sync, Health).
 - **URL Pattern**: `/api/v1/{endpoint}` (e.g., `/api/v1/auth/login`).
 - **Base Path**: `/api/gateway/sub`.
+- **Role**: Serves as the primary Identity Provider (IdP) and system orchestrator.
 
 ### Routing Logic
 The `apiClient` automatically handle these patterns:

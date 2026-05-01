@@ -27,6 +27,7 @@
 - **📊 Real-time Analytics:** ระบบสรุปสถิติการเทรด (Balance, Profit, Win Rate) แบบเรียลไทม์จาก MT5
 - **🔄 Background Sync:** ระบบอัปเดตข้อมูลประวัติการเทรดทำงานเบื้องหลัง (Detail Page) เพื่อประสบการณ์การใช้งานที่ลื่นไหล
 - **🔐 Secure Access:** ระบบสมัครสมาชิกและล็อกอินที่เน้นความปลอดภัยสูงสุด รองรับ **Centralized Auth (JWT/Bearer Token)**
+- **🏥 Dual-Service Health:** ระบบตรวจสอบสถานะการเชื่อมต่อของทั้ง Main Backend และ Core-API แบบเรียลไทม์ เพื่อความมั่นใจในความพร้อมของระบบ
 
 ---
 

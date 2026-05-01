@@ -34,14 +34,12 @@ describe('AuthService', () => {
 
   describe('register', () => {
     it('register_WithValidData_EncryptsPasswordAndCallsApi', async () => {
-      const mockResult = { user_id: 123 };
+      const mockResult = { success: true, data: { user_id: 123 }, error: null };
       vi.mocked(apiClient).mockResolvedValue(mockResult);
 
       const data = {
         email: 'test@example.com',
-        password: 'web-password',
-        invited_by_ref_id: 'REF123',
-        mt5_id: 12345,
+        mt5Id: 12345,
         mt5_password_plain: 'mt5-pass-123',
       };
 
@@ -50,21 +48,22 @@ describe('AuthService', () => {
       expect(CryptoUtils.encrypt).toHaveBeenCalledWith('mt5-pass-123', MOCK_ENCRYPTION_KEY);
       expect(apiClient).toHaveBeenCalledWith(
         SUB_ENDPOINTS.AUTH_REGISTER,
-        expect.objectContaining({ method: 'POST' }),
+        expect.objectContaining({ 
+          method: 'POST',
+          body: expect.stringContaining('test@example.com')
+        }),
         undefined,
         API_GATEWAY_SUB
       );
       expect(result.success).toBe(true);
-      expect(result.data).toEqual(mockResult);
+      expect(result.data).toEqual(mockResult.data);
     });
 
     it('register_MissingKey_ReturnsConfigError', async () => {
       delete process.env.NEXT_PUBLIC_MT5_ENCRYPTION_KEY;
       const data = {
         email: 'test@example.com',
-        password: 'web-password',
-        invited_by_ref_id: 'REF123',
-        mt5_id: 12345,
+        mt5Id: 12345,
         mt5_password_plain: 'mt5-pass-123',
       };
 
@@ -77,30 +76,36 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('login_WithValidCredentials_ReturnsTokens', async () => {
-      const mockLoginResponse = { access_token: 'abc', token_type: 'bearer' };
+      const mockLoginResponse = { 
+        success: true, 
+        data: { 
+          accessToken: 'abc', 
+          tokenType: 'bearer', 
+          user: { id: '1', email: 'test@example.com', role: 'admin' } 
+        }, 
+        error: null 
+      };
       vi.mocked(apiClient).mockResolvedValue(mockLoginResponse);
 
-      const result = await AuthService.login({ username: 'user', password: 'pass' });
+      const result = await AuthService.login({ email: 'test@example.com', password: 'pass' });
 
       expect(apiClient).toHaveBeenCalledWith(
         SUB_ENDPOINTS.AUTH_LOGIN,
         expect.objectContaining({
           method: 'POST',
-          headers: expect.objectContaining({
-            'Content-Type': 'application/x-www-form-urlencoded',
-          }),
+          body: JSON.stringify({ email: 'test@example.com', password: 'pass' })
         }),
         undefined,
         API_GATEWAY_SUB
       );
       expect(result.success).toBe(true);
-      expect(result.data).toEqual(mockLoginResponse);
+      expect(result.data).toEqual(mockLoginResponse.data);
     });
   });
 
   describe('updateMT5Password', () => {
     it('updateMT5Password_Successful_CallsApiWithEncryptedPassword', async () => {
-      vi.mocked(apiClient).mockResolvedValue({});
+      vi.mocked(apiClient).mockResolvedValue({ success: true, data: { message: 'ok' }, error: null });
 
       const result = await AuthService.updateMT5Password('new-pass');
 

@@ -45,10 +45,13 @@ async function handleRequest(
       
       const remainingPath = path.slice(1);
       
+      // บริการที่ไม่ต้องการ prefix account-id (เช่น sub, ror)
+      const skipPrefixServices = ['sub', 'ror'];
+      
       // Backend ใหม่ต้องการ: /api/v1/{account_id}/...
       // ถ้าต้นทางมาเป็น /api/gateway/gpilot/api/v1/history
       // ต้องส่งไปเป็น http://backend/api/v1/gpilot/history
-      if (remainingPath[0] === 'api' && remainingPath[1] === 'v1') {
+      if (remainingPath[0] === 'api' && remainingPath[1] === 'v1' && !skipPrefixServices.includes(prefix)) {
         const afterV1 = remainingPath.slice(2);
         finalPathSegments = ["api", "v1", prefix, ...afterV1];
       } else {

@@ -13,18 +13,18 @@ export const HealthService = {
   /**
    * ตรวจสอบสถานะเชื่อมต่อ
    */
-  checkHealth: async (serviceBase?: string): Promise<HealthResponse> => {
+  checkHealth: async (serviceBase?: string): Promise<HealthResponse & { service?: string }> => {
     try {
-      logger.debug('Checking API health', { serviceBase });
-      const response = await apiClient<HealthResponse>(ENDPOINTS.HEALTH, undefined, undefined, serviceBase);
+      const isSub = serviceBase?.includes('/sub');
+      const endpoint = isSub ? '/health' : ENDPOINTS.HEALTH; // Sub-Backend uses /health or /api/v1/health
       
-      if (response.success) {
-        logger.debug('API health check passed', { status: response.data.status, serviceBase });
-      } else {
-        logger.warn('API health check returned unsuccessful status', { error: response.error, serviceBase });
-      }
+      logger.debug('Checking API health', { serviceBase, endpoint });
+      const response = await apiClient<HealthResponse>(endpoint, undefined, undefined, serviceBase);
       
-      return response;
+      return {
+        ...response,
+        service: isSub ? 'sub' : 'main'
+      };
     } catch (e: unknown) {
       const errorMsg = e instanceof ApiError ? e.message : 'Cannot connect to API Server';
       logger.error('API health check failed', { error: e instanceof Error ? e : String(e), serviceBase });
@@ -33,6 +33,7 @@ export const HealthService = {
         success: false,
         data: { status: 'down' },
         error: errorMsg,
+        service: serviceBase?.includes('/sub') ? 'sub' : 'main'
       };
     }
   },

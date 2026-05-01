@@ -6,7 +6,9 @@ import { HealthService } from "@/shared/services/health-service";
 import { logger } from "@/shared/utils/logger";
 
 interface ApiHealthContextType {
-  isHealthy: boolean;
+  isHealthy: boolean; // Overall health (both must be up)
+  isMainHealthy: boolean;
+  isSubHealthy: boolean;
   isChecking: boolean;
   lastChecked: Date | null;
   checkHealth: () => Promise<void>;
@@ -18,11 +20,16 @@ interface ApiHealthProviderProps {
   readonly children: React.ReactNode;
 }
 
+import { API_GATEWAY_SUB, API_GATEWAY_MAIN } from "@/shared/api/endpoint";
+
 export function ApiHealthProvider({ children }: ApiHealthProviderProps) {
-  const [isHealthy, setIsHealthy] = useState(true);
+  const [isMainHealthy, setIsMainHealthy] = useState(true);
+  const [isSubHealthy, setIsSubHealthy] = useState(true);
   const [isChecking, setIsChecking] = useState(false);
   const [lastChecked, setLastChecked] = useState<Date | null>(null);
   const pathname = usePathname();
+
+  const isHealthy = isMainHealthy && isSubHealthy;
 
   const IS_MOCK_MODE = process.env.NEXT_PUBLIC_IS_MOCK_MODE === "True" || process.env.NEXT_PUBLIC_IS_MOCK_MODE === "true";
 
@@ -45,12 +52,21 @@ export function ApiHealthProvider({ children }: ApiHealthProviderProps) {
   const checkHealth = useCallback(async () => {
     setIsChecking(true);
     try {
-      const res = await HealthService.checkHealth();
+      // ตรวจสอบทั้งคู่พร้อมกัน
+      const [mainRes, subRes] = await Promise.all([
+        HealthService.checkHealth(API_GATEWAY_MAIN),
+        HealthService.checkHealth(API_GATEWAY_SUB)
+      ]);
+      
       // ในโหมด Mock ให้ถือว่า Healthy เสมอเพื่อให้ UI ไม่ค้าง
-      setIsHealthy(IS_MOCK_MODE ? true : (res.success && res.data.status === "ok"));
+      setIsMainHealthy(IS_MOCK_MODE ? true : (mainRes.success && mainRes.data.status === "ok"));
+      setIsSubHealthy(IS_MOCK_MODE ? true : (subRes.success && subRes.data.api === "up"));
     } catch (err) {
       logger.error("API Health check failed unexpectedly in provider", err instanceof Error ? err : String(err));
-      setIsHealthy(IS_MOCK_MODE); // ถ้าโหมด Mock ให้เป็น True
+      if (!IS_MOCK_MODE) {
+        setIsMainHealthy(false);
+        setIsSubHealthy(false);
+      }
     } finally {
       setIsChecking(false);
       setLastChecked(new Date());
@@ -66,11 +82,13 @@ export function ApiHealthProvider({ children }: ApiHealthProviderProps) {
   const apiHealthValue = React.useMemo(
     () => ({
       isHealthy,
+      isMainHealthy,
+      isSubHealthy,
       isChecking,
       lastChecked,
       checkHealth,
     }),
-    [isHealthy, isChecking, lastChecked, checkHealth]
+    [isHealthy, isMainHealthy, isSubHealthy, isChecking, lastChecked, checkHealth]
   );
 
   return (

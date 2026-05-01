@@ -33,9 +33,11 @@ export interface ServiceResponse<T> {
 export interface HealthResponse {
   readonly success: boolean;
   readonly data: {
-    readonly status: string;
+    readonly status?: string;    // สำหรับ Main Backend
+    readonly api?: string;       // สำหรับ Backend-Sub
+    readonly database?: string;  // สำหรับ Backend-Sub
   };
-  readonly error: string | null;
+  readonly error: ErrorDetail | string | null;
 }
 
 /**

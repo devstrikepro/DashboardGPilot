@@ -17,7 +17,7 @@ export const config = {
 };
 
 // Flexible Token Management (Global Rules #12)
-const MOCK_AUTH_MODE = true; // ตั้งเป็น True เพื่อข้ามการตรวจสอบจริงในช่วง Dev 
+const MOCK_AUTH_MODE = false; // ตั้งเป็น True เพื่อข้ามการตรวจสอบจริงในช่วง Dev 
 
 export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;

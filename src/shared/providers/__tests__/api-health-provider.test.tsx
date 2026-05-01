@@ -34,10 +34,11 @@ describe('ApiHealthProvider', () => {
   });
 
   it('ApiHealthProvider_SuccessfulCheck_SetsIsHealthyTrue', async () => {
-    vi.mocked(HealthService.checkHealth).mockResolvedValue({
-      success: true,
-      data: { status: 'ok' },
-      error: null
+    vi.mocked(HealthService.checkHealth).mockImplementation(async (base) => {
+      if (base?.includes('/sub')) {
+        return { success: true, data: { api: 'up' }, error: null, service: 'sub' };
+      }
+      return { success: true, data: { status: 'ok' }, error: null, service: 'main' };
     });
 
     await act(async () => {
@@ -48,7 +49,7 @@ describe('ApiHealthProvider', () => {
       );
     });
 
-    expect(HealthService.checkHealth).toHaveBeenCalled();
+    expect(HealthService.checkHealth).toHaveBeenCalledTimes(2);
     expect(screen.getByTestId('status').textContent).toBe('Healthy');
   });
 
@@ -56,7 +57,8 @@ describe('ApiHealthProvider', () => {
     vi.mocked(HealthService.checkHealth).mockResolvedValue({
       success: false,
       data: { status: 'down' },
-      error: 'Down'
+      error: 'Down',
+      service: 'main'
     });
 
     await act(async () => {
@@ -74,7 +76,8 @@ describe('ApiHealthProvider', () => {
      vi.mocked(HealthService.checkHealth).mockResolvedValue({
       success: true,
       data: { status: 'ok' },
-      error: null
+      error: null,
+      service: 'main'
     });
 
     const { rerender } = render(
@@ -83,8 +86,8 @@ describe('ApiHealthProvider', () => {
       </ApiHealthProvider>
     );
 
-    // Initial check
-    expect(HealthService.checkHealth).toHaveBeenCalledTimes(1);
+    // Initial check (2 calls: main, sub)
+    expect(HealthService.checkHealth).toHaveBeenCalledTimes(2);
 
     // Change pathname
     vi.mocked(usePathname).mockReturnValue('/history');
@@ -97,6 +100,7 @@ describe('ApiHealthProvider', () => {
       );
     });
 
-    expect(HealthService.checkHealth).toHaveBeenCalledTimes(2);
+    // Second check (another 2 calls)
+    expect(HealthService.checkHealth).toHaveBeenCalledTimes(4);
   });
 });

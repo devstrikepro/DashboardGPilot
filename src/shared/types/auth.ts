@@ -3,10 +3,8 @@
  */
 export interface RegistrationRequest {
   email: string;
-  password: string;
-  invited_by_ref_id: string; // บังคับใส่
-  mt5_id: number;
-  mt5_password_encrypted: string; // ต้องเข้ารหัส AES-256-GCM มาจากหน้าบ้าน
+  mt5Id: number;
+  mt5PasswordEncrypted: string;
 }
 
 /**
@@ -15,7 +13,7 @@ export interface RegistrationRequest {
 export interface RegistrationResponse {
   id: string;
   email: string;
-  ref_id: string;
+  defaultPassword?: string;
   message: string;
 }
 
@@ -23,7 +21,7 @@ export interface RegistrationResponse {
  * ข้อมูลสำหรับการเข้าสู่ระบบ
  */
 export interface LoginRequest {
-  username: string; // ตรงกับ email
+  email: string;
   password: string;
 }
 
@@ -31,12 +29,14 @@ export interface LoginRequest {
  * ผลลัพธ์จากการเข้าสู่ระบบ
  */
 export interface LoginResponse {
-  access_token: string;
-  token_type: string;
+  accessToken: string;
+  refreshToken?: string;
+  tokenType: string;
   user: {
     id: string;
     email: string;
-    ref_id: string;
+    role: string;
+    requirePasswordChange?: boolean;
   };
 }
 
@@ -45,10 +45,12 @@ export interface LoginResponse {
  */
 export interface UserSession {
   token: string;
+  refreshToken?: string;
   user: {
     id: string;
     email: string;
-    ref_id: string;
+    role: string;
+    requirePasswordChange?: boolean;
   };
   isAuthenticated: boolean;
 }
