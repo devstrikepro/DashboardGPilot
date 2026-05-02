@@ -49,7 +49,7 @@ describe('ApiHealthProvider', () => {
       );
     });
 
-    expect(HealthService.checkHealth).toHaveBeenCalledTimes(2);
+    expect(HealthService.checkHealth).toHaveBeenCalledTimes(1);
     expect(screen.getByTestId('status').textContent).toBe('Healthy');
   });
 
@@ -86,8 +86,8 @@ describe('ApiHealthProvider', () => {
       </ApiHealthProvider>
     );
 
-    // Initial check (2 calls: main, sub)
-    expect(HealthService.checkHealth).toHaveBeenCalledTimes(2);
+    // Initial check (1 call: sub)
+    expect(HealthService.checkHealth).toHaveBeenCalledTimes(1);
 
     // Change pathname
     vi.mocked(usePathname).mockReturnValue('/history');
@@ -100,7 +100,7 @@ describe('ApiHealthProvider', () => {
       );
     });
 
-    // Second check (another 2 calls)
-    expect(HealthService.checkHealth).toHaveBeenCalledTimes(4);
+    // Second check (another 1 call)
+    expect(HealthService.checkHealth).toHaveBeenCalledTimes(2);
   });
 });

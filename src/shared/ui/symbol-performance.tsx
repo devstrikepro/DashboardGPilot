@@ -127,7 +127,7 @@ export function SymbolPerformance({ loading, stats, totalTrades }: Readonly<Symb
               Symbol Performance
             </Typography>
             <Typography variant="caption" sx={{ color: "text.secondary" }}>
-              Win rates by instrument (Top 5)
+              Win rates by instrument
             </Typography>
           </Box>
           {!loading && totalTrades !== undefined && (
@@ -153,7 +153,26 @@ export function SymbolPerformance({ loading, stats, totalTrades }: Readonly<Symb
             </Box>
           )}
         </Box>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, flex: 1, minHeight: 150, overflow: 'auto' }}>
+        <Box 
+          sx={{ 
+            display: "flex", 
+            flexDirection: "column", 
+            gap: 2, 
+            height: 320, 
+            overflowY: "auto",
+            pr: 1,
+            "&::-webkit-scrollbar": {
+              width: "4px",
+            },
+            "&::-webkit-scrollbar-track": {
+              background: "transparent",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              background: (theme) => theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(15, 23, 42, 0.1)",
+              borderRadius: "4px",
+            },
+          }}
+        >
           {renderStats()}
         </Box>
       </CardContent>

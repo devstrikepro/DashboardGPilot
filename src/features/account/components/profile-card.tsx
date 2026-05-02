@@ -8,7 +8,9 @@ import {
   CardContent, 
   Divider, 
   Avatar, 
-  Skeleton 
+  Skeleton,
+  SxProps,
+  Theme 
 } from "@mui/material";
 import { 
   Person as PersonIcon, 
@@ -23,6 +25,7 @@ interface ProfileCardProps {
   readonly leverage: number;
   readonly currency: string;
   readonly loading: boolean;
+  readonly sx?: SxProps<Theme>;
 }
 
 export function ProfileCard({ 
@@ -31,10 +34,11 @@ export function ProfileCard({
   server, 
   leverage, 
   currency, 
-  loading 
+  loading,
+  sx
 }: Readonly<ProfileCardProps>) {
   return (
-    <Card sx={{ borderRadius: 4, overflow: 'hidden', position: 'relative' }}>
+    <Card sx={{ borderRadius: 4, overflow: 'hidden', position: 'relative', ...sx }}>
       <Box sx={{ height: 100, bgcolor: 'primary.main', opacity: 0.1, position: 'absolute', top: 0, left: 0, right: 0 }} />
       <CardContent sx={{ pt: 6, px: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, mb: 3 }}>

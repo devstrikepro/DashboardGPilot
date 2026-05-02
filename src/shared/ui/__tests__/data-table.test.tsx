@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DataTable } from '../data-table';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import React from 'react';
 
 // Mock totals
@@ -75,7 +77,9 @@ describe('DataTable', () => {
   it('DataTable_RendersRows_MatchesMockData', () => {
     render(
       <ThemeProvider theme={theme}>
-        <DataTable {...defaultProps} />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DataTable {...defaultProps} />
+        </LocalizationProvider>
       </ThemeProvider>
     );
 
@@ -88,7 +92,9 @@ describe('DataTable', () => {
   it('DataTable_OnSymbolFilterChange_TriggersCallback', () => {
     render(
       <ThemeProvider theme={theme}>
-        <DataTable {...defaultProps} />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DataTable {...defaultProps} />
+        </LocalizationProvider>
       </ThemeProvider>
     );
 
@@ -101,7 +107,9 @@ describe('DataTable', () => {
   it('DataTable_LoadingState_ShowsCircularProgress', () => {
     render(
       <ThemeProvider theme={theme}>
-        <DataTable {...defaultProps} loading={true} />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DataTable {...defaultProps} loading={true} />
+        </LocalizationProvider>
       </ThemeProvider>
     );
 

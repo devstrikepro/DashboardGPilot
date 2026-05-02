@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Typography, Grid, Card, CardContent, Skeleton } from "@mui/material";
+import { Box, Typography, Grid, Card, CardContent, Skeleton, SxProps, Theme } from "@mui/material";
 import { AccountBalanceWallet as AccountBalanceWalletIcon, TrendingUp as TrendingUpIcon } from "@mui/icons-material";
 
 interface FinancialSummaryProps {
@@ -12,6 +12,7 @@ interface FinancialSummaryProps {
     readonly totalProfitSharing: number;
     readonly netProfit: number;
     readonly formatCurrency: (value: number) => string;
+    readonly sx?: SxProps<Theme>;
 }
 
 export function FinancialSummary({
@@ -23,9 +24,10 @@ export function FinancialSummary({
     totalProfitSharing,
     netProfit,
     formatCurrency,
+    sx,
 }: Readonly<FinancialSummaryProps>) {
     return (
-        <Card sx={{ borderRadius: 4 }}>
+        <Card sx={{ borderRadius: 4, ...sx }}>
             <CardContent sx={{ p: 3 }}>
                 <Typography
                     variant="subtitle1"

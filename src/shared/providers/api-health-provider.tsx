@@ -54,15 +54,10 @@ export function ApiHealthProvider({ children }: ApiHealthProviderProps) {
   const checkHealth = useCallback(async () => {
     setIsChecking(true);
     try {
-      // ตรวจสอบทั้งคู่พร้อมกัน
-      const [mainRes, subRes] = await Promise.all([
-        HealthService.checkHealth(API_GATEWAY_MAIN),
-        HealthService.checkHealth(API_GATEWAY_SUB)
-      ]);
+      // ตรวจสอบเฉพาะเส้น Sub ตามคำขอ
+      const subRes = await HealthService.checkHealth(API_GATEWAY_SUB);
       
-      // ในโหมด Mock ให้ถือว่า Healthy เสมอเพื่อให้ UI ไม่ค้าง
-      // ปรับปรุงให้ยืดหยุ่นขึ้น: ยอมรับทั้ง status === "ok" หรือ api === "up/ok"
-      setIsMainHealthy(IS_MOCK_MODE ? true : (mainRes.success && (mainRes.data.status === "ok" || mainRes.data.api === "up")));
+      setIsMainHealthy(true); // ข้าม Main ไปก่อน
       setIsSubHealthy(IS_MOCK_MODE ? true : (subRes.success && (subRes.data.api === "up" || subRes.data.status === "ok" || subRes.data.api === "ok")));
     } catch (err) {
       logger.error("API Health check failed unexpectedly in provider", err instanceof Error ? err : String(err));

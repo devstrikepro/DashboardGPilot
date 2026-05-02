@@ -8,8 +8,8 @@ import { useThemeMode } from "@/shared/ui";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: Dashboard },
-  { label: "Wallet", href: "/wallet", icon: Wallet },
   { label: "My account", href: "/account", icon: Person },
+  { label: "Wallet", href: "/wallet", icon: Wallet },
 ];
 
 export function Sidebar() {

@@ -4,6 +4,9 @@ import { createContext, useContext, useState, useMemo, useEffect, useCallback } 
 import { CssBaseline } from "@mui/material";
 import { ThemeProvider as MUIThemeProvider, PaletteMode } from "@mui/material/styles";
 import { getTheme } from "@/shared/config/theme";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import "dayjs/locale/en-gb";
 
 interface ThemeContextType {
   mode: PaletteMode;
@@ -42,8 +45,10 @@ export function ThemeProvider({ children }: Readonly<{ children: React.ReactNode
   return (
     <ThemeContext.Provider value={contextValue}>
       <MUIThemeProvider theme={theme}>
-        <CssBaseline />
-        {children}
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
+          <CssBaseline />
+          {children}
+        </LocalizationProvider>
       </MUIThemeProvider>
     </ThemeContext.Provider>
   );

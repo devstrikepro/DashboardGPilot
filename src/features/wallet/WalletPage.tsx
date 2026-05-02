@@ -11,8 +11,13 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import SavingsIcon from "@mui/icons-material/Savings";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { HealthService } from "@/shared/services/health-service";
+import { API_GATEWAY_SUB } from "@/shared/api/endpoint";
+import { createLogger } from "@/shared/utils/logger";
+
+const logger = createLogger("WalletPage");
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 const PROFIT_SHARING_BALANCE = 4_250.75;
@@ -48,6 +53,9 @@ const TX_META: Record<string, { icon: React.ReactNode; bg: string; color: string
 export function WalletPage() {
   const router = useRouter();
   const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const FEE_RATE = 0.015;
   const parsed   = parseFloat(withdrawAmount) || 0;
   const fee      = parsed * FEE_RATE;

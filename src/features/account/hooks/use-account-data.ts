@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useTradeData } from "@/shared/providers/trade-data-provider";
 import { AccountService } from "@/shared/services/account-service";
 import { HealthService } from "@/shared/services/health-service";
+import { API_GATEWAY_SUB } from "@/shared/api/endpoint";
 import { useApiHealth } from "@/shared/providers/api-health-provider";
 import type { AccountSummary } from "@/shared/types/api";
 
@@ -14,31 +15,11 @@ export function useAccountData() {
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
+    // Rely on Provider's isHealthy state instead of calling again
     if (!isHealthy) return;
-    try {
-      setLoading(true);
-      setError(null);
-
-      const [summaryRes, healthRes] = await Promise.all([
-        AccountService.getAccountSummary(),
-        HealthService.checkHealth(),
-      ]);
-
-      if (healthRes.success && healthRes.data?.status === "ok") {
-        if (summaryRes.success && summaryRes.data) {
-          setSummary(summaryRes.data);
-        } else if (summaryRes.error) {
-          setError(summaryRes.error.message);
-        }
-      } else {
-        setError(healthRes.error || "System health check failed. Cannot load account data.");
-        setSummary(null);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unexpected error");
-    } finally {
-      setLoading(false);
-    }
+    
+    setLoading(false);
+    setSummary(null);
   }, [isHealthy]);
 
   useEffect(() => {

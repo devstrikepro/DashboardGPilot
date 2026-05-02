@@ -34,11 +34,14 @@ import { useAuth } from "@/shared/providers/auth-provider";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { SecurityDialog } from "./security-dialog";
+import { Security as SecurityIcon } from "@mui/icons-material";
 
 export function TopBar() {
     const { mode, toggleTheme } = useThemeMode();
     const { user, isAuthenticated, logout } = useAuth();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [securityOpen, setSecurityOpen] = useState(false);
     const router = useRouter();
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -76,38 +79,39 @@ export function TopBar() {
                                     onClick={handleMenuOpen}
                                     sx={{
                                         p: 0.5,
-                                        border: '2px solid',
-                                        borderColor: 'primary.main',
-                                        borderRadius: '50%',
+                                        border: "2px solid",
+                                        borderColor: "primary.main",
+                                        borderRadius: "50%",
                                     }}
                                 >
-                                    <Avatar 
-                                        sx={{ 
-                                            width: 32, 
-                                            height: 32, 
-                                            bgcolor: 'primary.main',
-                                            fontSize: '0.875rem'
+                                    <Avatar
+                                        sx={{
+                                            width: 32,
+                                            height: 32,
+                                            bgcolor: "primary.main",
+                                            fontSize: "0.875rem",
                                         }}
                                     >
-                                        {user?.email?.[0].toUpperCase() || 'U'}
+                                        {user?.email?.[0].toUpperCase() || "U"}
                                     </Avatar>
                                 </IconButton>
                                 <Menu
                                     anchorEl={anchorEl}
                                     open={Boolean(anchorEl)}
                                     onClose={handleMenuClose}
-                                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                                    transformOrigin={{ horizontal: "right", vertical: "top" }}
+                                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
                                     slotProps={{
                                         paper: {
                                             sx: {
                                                 mt: 1.5,
                                                 borderRadius: 2,
                                                 minWidth: 200,
-                                                boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
-                                                bgcolor: mode === 'dark' ? '#1E293B' : '#FFFFFF',
-                                            }
-                                        }
+                                                boxShadow:
+                                                    "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
+                                                bgcolor: mode === "dark" ? "#1E293B" : "#FFFFFF",
+                                            },
+                                        },
                                     }}
                                 >
                                     <Box sx={{ px: 2, py: 1.5 }}>
@@ -119,31 +123,60 @@ export function TopBar() {
                                         </Typography>
                                     </Box>
                                     <Divider />
-                                    
-                                    <MenuItem onClick={() => { toggleTheme(); handleMenuClose(); }}>
+
+                                    <MenuItem
+                                        onClick={() => {
+                                            toggleTheme();
+                                            handleMenuClose();
+                                        }}
+                                    >
                                         <ListItemIcon>
-                                            {mode === 'dark' ? <LightModeIcon fontSize="small" sx={{ color: "#FBBF24" }} /> : <DarkModeIcon fontSize="small" sx={{ color: "#64748B" }} />}
+                                            {mode === "dark" ? (
+                                                <LightModeIcon fontSize="small" sx={{ color: "#FBBF24" }} />
+                                            ) : (
+                                                <DarkModeIcon fontSize="small" sx={{ color: "#64748B" }} />
+                                            )}
                                         </ListItemIcon>
-                                        <ListItemText>
-                                            {mode === 'dark' ? 'Light Mode' : 'Dark Mode'}
-                                        </ListItemText>
+                                        <ListItemText>{mode === "dark" ? "Light Mode" : "Dark Mode"}</ListItemText>
                                     </MenuItem>
 
-                                    <MenuItem onClick={() => { router.push("/add-port"); handleMenuClose(); }}>
+                                    <MenuItem
+                                        onClick={() => {
+                                            router.push("/add-port");
+                                            handleMenuClose();
+                                        }}
+                                    >
                                         <ListItemIcon>
                                             <PostAddIcon fontSize="small" />
                                         </ListItemIcon>
-                                        <ListItemText>Add Port</ListItemText>
+                                        <ListItemText>Add Port Member</ListItemText>
                                     </MenuItem>
 
-                                    <MenuItem onClick={() => { router.push("/register"); handleMenuClose(); }}>
+                                    <MenuItem
+                                        onClick={() => {
+                                            router.push("/register");
+                                            handleMenuClose();
+                                        }}
+                                    >
                                         <ListItemIcon>
                                             <PersonAddIcon fontSize="small" />
                                         </ListItemIcon>
                                         <ListItemText>Register</ListItemText>
                                     </MenuItem>
 
-                                    <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
+                                    <MenuItem
+                                        onClick={() => {
+                                            setSecurityOpen(true);
+                                            handleMenuClose();
+                                        }}
+                                    >
+                                        <ListItemIcon>
+                                            <SecurityIcon fontSize="small" />
+                                        </ListItemIcon>
+                                        <ListItemText>Security Settings</ListItemText>
+                                    </MenuItem>
+
+                                    <MenuItem onClick={handleLogout} sx={{ color: "error.main" }}>
                                         <ListItemIcon>
                                             <LogoutIcon fontSize="small" color="error" />
                                         </ListItemIcon>
@@ -187,6 +220,10 @@ export function TopBar() {
                         )}
                     </Box>
                 </Toolbar>
+                <SecurityDialog 
+                    open={securityOpen} 
+                    onClose={() => setSecurityOpen(false)} 
+                />
             </AppBar>
         </>
     );

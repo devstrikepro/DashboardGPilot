@@ -33,6 +33,8 @@ import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { useTheme } from "@mui/material/styles";
 import { useState, useMemo } from "react";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 import type { GroupedDeal } from "@/shared/types/api";
 import type { SortField, SortDirection, HistoryTotals } from "@/features/history/hooks/use-history-data";
 
@@ -112,7 +114,7 @@ export function DataTable({
       const date = new Date(isoString);
       return new Intl.DateTimeFormat("en-GB", {
         day: "2-digit",
-        month: "short",
+        month: "2-digit",
         year: "numeric",
         hour: "2-digit",
         minute: "2-digit",
@@ -227,25 +229,21 @@ export function DataTable({
 
               {/* Date Filters */}
               <Grid size={{ xs: 12, sm: 4, md: 2 }}>
-                <TextField
-                  fullWidth
-                  size="small"
+                <DatePicker
                   label="Start Date"
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => onStartDateChange(e.target.value)}
-                  slotProps={{ inputLabel: { shrink: true } }}
+                  value={startDate ? dayjs(startDate) : null}
+                  onChange={(newValue) => onStartDateChange(newValue ? newValue.format("YYYY-MM-DD") : "")}
+                  slotProps={{ textField: { size: "small", fullWidth: true } }}
+                  format="DD/MM/YYYY"
                 />
               </Grid>
               <Grid size={{ xs: 12, sm: 4, md: 2 }}>
-                <TextField
-                  fullWidth
-                  size="small"
+                <DatePicker
                   label="End Date"
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => onEndDateChange(e.target.value)}
-                  slotProps={{ inputLabel: { shrink: true } }}
+                  value={endDate ? dayjs(endDate) : null}
+                  onChange={(newValue) => onEndDateChange(newValue ? newValue.format("YYYY-MM-DD") : "")}
+                  slotProps={{ textField: { size: "small", fullWidth: true } }}
+                  format="DD/MM/YYYY"
                 />
               </Grid>
 

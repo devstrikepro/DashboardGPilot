@@ -1,0 +1,93 @@
+import type { GroupedDeal } from "@/shared/types/api";
+
+export const MOCK_BALANCE_DATA = [
+    { date: "Apr 01", balance: 10000, time: "2024-04-01T00:00:00Z" },
+    { date: "Apr 05", balance: 10500, time: "2024-04-05T00:00:00Z" },
+    { date: "Apr 10", balance: 10300, time: "2024-04-10T00:00:00Z" },
+    { date: "Apr 15", balance: 11200, time: "2024-04-15T00:00:00Z" },
+    { date: "Apr 20", balance: 11800, time: "2024-04-20T00:00:00Z" },
+    { date: "Apr 25", balance: 12500, time: "2024-04-25T00:00:00Z" },
+    { date: "May 01", balance: 13200, time: "2024-05-01T00:00:00Z" },
+];
+
+export const MOCK_SYMBOL_STATS = [
+    { symbol: "XAUUSD", trades: 45, profit: 1250.50, winRate: 68.5 },
+    { symbol: "EURUSD", trades: 32, profit: -450.20, winRate: 45.0 },
+    { symbol: "GBPUSD", trades: 28, profit: 890.00, winRate: 72.4 },
+    { symbol: "BTCUSD", trades: 15, profit: 2100.30, winRate: 60.0 },
+    { symbol: "USDJPY", trades: 22, profit: -120.40, winRate: 52.3 },
+    { symbol: "AUDUSD", trades: 18, profit: 340.00, winRate: 55.5 },
+    { symbol: "USDCAD", trades: 12, profit: -50.00, winRate: 48.2 },
+    { symbol: "NZDUSD", trades: 10, profit: 120.00, winRate: 62.0 },
+];
+
+export const MOCK_DEALS: GroupedDeal[] = [
+    {
+        ticket: 875421,
+        positionId: 875421,
+        symbol: "XAUUSD",
+        type: "BUY" as const,
+        entry: "In/Out",
+        volume: 0.5,
+        openPrice: 2345.20,
+        closePrice: 2355.80,
+        profit: 537.10,
+        commission: -5.00,
+        swap: -2.10,
+        fee: 0,
+        netProfit: 530.00,
+        reason: "Client",
+        comment: "TP",
+        openTime: "2024-05-01T10:20:00Z",
+        closeTime: "2024-05-01T14:20:00Z",
+    },
+    {
+        ticket: 875422,
+        positionId: 875422,
+        symbol: "EURUSD",
+        type: "SELL" as const,
+        entry: "In/Out",
+        volume: 1.2,
+        openPrice: 1.08540,
+        closePrice: 1.08420,
+        profit: 156.00,
+        commission: -12.00,
+        swap: 0,
+        fee: 0,
+        netProfit: 144.00,
+        reason: "Client",
+        comment: "Manual",
+        openTime: "2024-05-01T15:10:00Z",
+        closeTime: "2024-05-01T16:45:00Z",
+    },
+    {
+        ticket: 875423,
+        positionId: 875423,
+        symbol: "GBPUSD",
+        type: "BUY" as const,
+        entry: "In/Out",
+        volume: 0.8,
+        openPrice: 1.25400,
+        closePrice: 1.25950,
+        profit: 448.00,
+        commission: -8.00,
+        swap: 0,
+        fee: 0,
+        netProfit: 440.00,
+        reason: "Client",
+        comment: "TP",
+        openTime: "2024-05-01T17:05:00Z",
+        closeTime: "2024-05-01T18:10:00Z",
+    }
+];
+
+export const MOCK_TOTALS = {
+    totalTrades: 3,
+    volume: 2.5,
+    grossProfit: 1114.00,
+    grossLoss: 0,
+    netPL: 1114.00,
+    commission: -25.00,
+    swap: -2.10,
+    fee: 0
+};

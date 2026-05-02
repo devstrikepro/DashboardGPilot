@@ -35,6 +35,8 @@ import {
 } from "@mui/icons-material";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { TradeHistoryService } from "@/shared/services/trade-history-service";
+import { HealthService } from "@/shared/services/health-service";
+import { API_GATEWAY_SUB } from "@/shared/api/endpoint";
 import { createLogger } from "@/shared/utils/logger";
 import { SyncedTrade } from "@/shared/types/api";
 import { getMostRecentMonday, getEndOfWeek, addDays, toISODateString } from "@/shared/utils/date-utils";
@@ -72,18 +74,14 @@ export function ReferralSyncCard() {
     if (!isSilent) setLoading(true);
     setError(null);
     try {
-      const response = await TradeHistoryService.getReferralHistory({
-        from_date: toISODateString(currentMonday),
-        to_date: toISODateString(currentSunday)
-      });
-      if (response.success && response.data) {
-        setData(response.data);
-        // เก็บวันที่ซิงค์ล่าสุดจากข้อมูลล่าสุด (ถ้ามี)
-        if (response.data.length > 0) {
-          setLastSync(response.data[0].time);
-        }
+      const response = await HealthService.checkHealth(API_GATEWAY_SUB);
+      if (response.success) {
+        setData([]); // Clear data as we are only checking health
       } else {
-        setError(response.error?.message ?? "ไม่สามารถดึงข้อมูลประวัติได้");
+        const errorMessage = typeof response.error === 'object' && response.error !== null 
+          ? response.error.message 
+          : (response.error || "ไม่สามารถเชื่อมต่อกับระบบได้");
+        setError(errorMessage);
       }
     } catch (e) {
       logger.error("Fetch history error", e instanceof Error ? e : String(e));
@@ -105,7 +103,7 @@ export function ReferralSyncCard() {
 
 
   const handleExport = () => {
-    if (!data.length) return;
+    if (!Array.isArray(data) || !data.length) return;
 
     // Create CSV content
     const headers = ["วันที่", "Account ID", "Email", "ยอดที่หัก (USD)", "สถานะ", "หมายเหตุ"];
@@ -244,7 +242,7 @@ export function ReferralSyncCard() {
                   COMMISSION THIS WEEK
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5, color: 'text.primary' }}>
-                  ${data.reduce((acc, curr) => acc + Math.abs(curr.netProfit), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  ${(Array.isArray(data) ? data : []).reduce((acc, curr) => acc + Math.abs(curr.netProfit), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </Typography>
               </Box>
               <Box sx={{ 
@@ -274,7 +272,7 @@ export function ReferralSyncCard() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {data.map((trade, index) => (
+                    {(Array.isArray(data) ? data : []).map((trade, index) => (
                       <TableRow key={`${trade.ticket}-${index}`} hover>
                         <TableCell>
                           <Typography variant="body2" sx={{ fontWeight: 600 }}>
@@ -305,7 +303,7 @@ export function ReferralSyncCard() {
                         </TableCell>
                       </TableRow>
                     ))}
-                    {(!data || data.length === 0) && (
+                    {(!Array.isArray(data) || data.length === 0) && (
                       <TableRow>
                         <TableCell colSpan={4} align="center" sx={{ py: 4 }}>
                           <Typography variant="body2" sx={{ color: 'text.secondary' }}>

@@ -191,18 +191,7 @@ export function LoginPage() {
               </Button>
             </Stack>
           </form>
-
           <Box sx={{ mt: 4, textAlign: "center" }}>
-            <Typography variant="body2" sx={{ color: "text.secondary", mb: 1 }}>
-              Don't have an account?{" "}
-              <Link 
-                href="/register" 
-                underline="hover" 
-                sx={{ fontWeight: 700, color: "primary.main" }}
-              >
-                Sign Up
-              </Link>
-            </Typography>
             
             <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
