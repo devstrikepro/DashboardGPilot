@@ -7,6 +7,7 @@ export const SERVICE_BASE_HQULTIMATE = "/api/gateway/hqultimate";
 export const SERVICE_BASE_PPVP = "/api/gateway/ppvp";
 export const SERVICE_BASE_GOLDENBOY = "/api/gateway/goldenboy";
 export const SERVICE_BASE_ROR = "/api/gateway/ror";
+export const SERVICE_BASE_ROR_INTERNAL = "/api/gateway/ror-internal";
 
 
 /**
@@ -92,6 +93,21 @@ export const ROR_ENDPOINTS = {
   AUTH_2FA_SMS: `/api/v2/my/2fa/sms`,
   /** ดึงข้อมูลบัญชีเทรด */
   ACCOUNTS: '/api/v2/my/accounts',
+} as const;
+
+/**
+ * รายการ Endpoint ของ Backend-Ror (Internal Storage & Support)
+ * หมายเหตุ: ใช้สำหรับเก็บข้อมูลที่ Sync มาจาก ROR
+ */
+export const ROR = {
+  /** เช็คสถานะ API และ Database */
+  HEALTH: `/api/v1/health`,
+  /** ดึงสถิติรายพอร์ต (Winrate, Profit, Balance) */
+  PORT_STATS: `/api/v1/ports/stats`,
+  /** ดึงข้อมูล Support Counts (Active/Expired) */
+  SUPPORT_COUNTS: `/api/v1/support/counts`,
+  /** บันทึกข้อมูล Support ใหม่ */
+  SUPPORT_ADD: `/api/v1/support`,
 } as const;
 
 

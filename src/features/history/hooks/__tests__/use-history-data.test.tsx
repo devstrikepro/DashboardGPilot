@@ -29,7 +29,7 @@ describe("useHistoryData Hook (TanStack Query)", () => {
     vi.clearAllMocks();
   });
 
-  const mockHistoryResponse = {
+  const mockHistoryResponse = [{
     paginated: {
       list: [{ ticket: 1, symbol: "EURUSD", netProfit: 100 }],
       total: 1,
@@ -40,7 +40,7 @@ describe("useHistoryData Hook (TanStack Query)", () => {
     netProfit: 100,
     fee: 0,
     totalTrades: 1,
-  } as any;
+  }] as any;
 
   it("useHistoryData_SuccessfulFetch_StoresDataInQuery", async () => {
     vi.mocked(AnalyticsService.getGroupedTrades).mockResolvedValue({

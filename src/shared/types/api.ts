@@ -194,6 +194,7 @@ export interface AccountProfile {
  * ข้อมูลสถิติและการเงินภาพรวม (จาก Backend-Sub /account/finance)
  */
 export interface AccountFinance {
+  readonly mt5Id?: number;
   readonly user_id: string;
   readonly grossTradeProfit: number;
   readonly totalDeposits: number;
@@ -253,14 +254,15 @@ export interface GroupedTradesPage {
 }
 
 export interface GroupedTradesResponse {
-  totalTrades: number;
-  totalVolume: number;
-  totalPL: number;       // alias: "totalP/L"
-  grossProfit: number;
-  grossLoss: number;
-  netProfit: number;
-  fee: number;
-  paginated: GroupedTradesPage;
+  readonly mt5Id?: number;
+  readonly totalTrades: number;
+  readonly totalVolume: number;
+  readonly totalPL: number;       // alias: "totalP/L"
+  readonly grossProfit: number;
+  readonly grossLoss: number;
+  readonly netProfit: number;
+  readonly fee: number;
+  readonly paginated: GroupedTradesPage;
 }
 
 // ---------------------------------------------
@@ -275,6 +277,16 @@ export interface ReferralSyncSummary {
 export interface ReferralSyncRequest {
   readonly from_date?: string;
   readonly to_date?: string;
+}
+
+/**
+ * ผลลัพธ์การ Sync รายพอร์ต (Backend-Sub /account/sync)
+ */
+export interface SyncResult {
+  readonly mt5Id: number;
+  readonly syncedCount: number;
+  readonly success: boolean;
+  readonly message?: string | null;
 }
 
 // ---------------------------------------------

@@ -16,7 +16,7 @@ describe('AnalyticsService', () => {
 
   describe('getGroupedTrades', () => {
     it('getGroupedTrades_Successful_ReturnsData', async () => {
-      const mockData = { list: [] } as any;
+      const mockData = [{ list: [] }] as any;
       vi.mocked(apiClient).mockResolvedValue({ success: true, data: mockData, error: null });
 
       const result = await AnalyticsService.getGroupedTrades();
@@ -28,7 +28,7 @@ describe('AnalyticsService', () => {
     });
 
     it('getGroupedTrades_WithServiceBase_PassesBaseToClient', async () => {
-      const mockData = { list: [] } as any;
+      const mockData = [{ list: [] }] as any;
       vi.mocked(apiClient).mockResolvedValue({ success: true, data: mockData, error: null });
       const serviceBase = SERVICE_BASE_GPILOT;
 

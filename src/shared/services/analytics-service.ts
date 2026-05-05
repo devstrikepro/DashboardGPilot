@@ -18,7 +18,7 @@ export const AnalyticsService = {
    * ดึง Trade History ที่ grouped by position (round-turn)
    */
 
-  getGroupedTrades: async (params?: TradeRequest, serviceBase?: string): Promise<ServiceResponse<GroupedTradesResponse>> => {
+  getGroupedTrades: async (params?: TradeRequest, serviceBase?: string): Promise<ServiceResponse<GroupedTradesResponse | GroupedTradesResponse[]>> => {
     try {
       logger.info('Fetching grouped trades', { params, serviceBase });
 
@@ -40,7 +40,7 @@ export const AnalyticsService = {
       // Only pass params if not empty to match expected apiClient behavior in tests
       const finalParams = Object.keys(mappedParams).length > 0 ? mappedParams : undefined;
 
-      return await apiClient<ServiceResponse<GroupedTradesResponse>>(
+      return await apiClient<ServiceResponse<GroupedTradesResponse | GroupedTradesResponse[]>>(
         endpoint,
         undefined,
         finalParams,

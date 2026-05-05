@@ -17,6 +17,10 @@ const nextConfig = {
         destination: 'https://api.strikeprofx.com/:path*',
       },
       {
+        source: '/api/gateway/ror-internal/:path*',
+        destination: 'http://103.91.191.171:8002/:path*',
+      },
+      {
         source: '/api/gateway/:account/:path*',
         destination: 'http://103.91.191.171:8000/:path*',
       },

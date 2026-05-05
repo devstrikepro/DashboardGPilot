@@ -4,7 +4,8 @@ import { createLogger } from '@/shared/utils/logger';
 import type { 
   ServiceResponse, 
   AccountProfile, 
-  AccountFinance 
+  AccountFinance,
+  SyncResult
 } from '@/shared/types/api';
 
 const logger = createLogger('AccountService');
@@ -41,11 +42,11 @@ export const AccountService = {
   /**
    * ดึงข้อมูลการเงินและสถิติภาพรวม (Finance, Equity Curve)
    */
-  getFinance: async (): Promise<ServiceResponse<AccountFinance>> => {
+  getFinance: async (): Promise<ServiceResponse<AccountFinance[]>> => {
     try {
       logger.info('Fetching account finance from Backend-Sub');
       
-      const response = await apiClient<ServiceResponse<AccountFinance>>(
+      const response = await apiClient<ServiceResponse<AccountFinance[]>>(
         SUB_ENDPOINTS.ACCOUNT_FINANCE,
         undefined,
         undefined,
@@ -66,11 +67,11 @@ export const AccountService = {
   /**
    * สั่งซิงค์ข้อมูลการเทรดด้วยตัวเอง (Manual Sync)
    */
-  syncAccount: async (): Promise<ServiceResponse<{ message: string }>> => {
+  syncAccount: async (): Promise<ServiceResponse<SyncResult[]>> => {
     try {
       logger.info('Requesting manual account sync');
       
-      const response = await apiClient<ServiceResponse<{ message: string }>>(
+      const response = await apiClient<ServiceResponse<SyncResult[]>>(
         SUB_ENDPOINTS.ACCOUNT_SYNC,
         { method: 'POST' },
         undefined,

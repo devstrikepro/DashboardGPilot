@@ -27,7 +27,8 @@ export function useDashboardData(serviceBase?: string) {
       ]);
 
       if (!healthResponse.success || healthResponse.data?.status !== "ok") {
-        throw new Error(healthResponse.error || "System health check failed");
+        const errorMsg = typeof healthResponse.error === 'object' ? healthResponse.error?.message : healthResponse.error;
+        throw new Error(errorMsg || "System health check failed");
       }
 
       if (!dashResponse.success || !dashResponse.data) {

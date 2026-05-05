@@ -27,7 +27,7 @@ export const HealthService = {
       };
     } catch (e: unknown) {
       const errorMsg = e instanceof ApiError ? e.message : 'Cannot connect to API Server';
-      logger.error('API health check failed', { error: e instanceof Error ? e : String(e), serviceBase });
+      logger.error('API health check failed', e instanceof Error ? e : String(e), { serviceBase });
       
       return {
         success: false,

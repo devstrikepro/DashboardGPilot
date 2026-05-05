@@ -25,7 +25,7 @@ export const CashflowService = {
       const finalParams = Object.keys(mappedParams).length > 0 ? mappedParams : undefined;
 
       return await apiClient<ServiceResponse<CashflowSummary>>(
-        ENDPOINTS.CASHFLOW_SUMMARY,
+        '/dashboard/cashflow', // FIXME: This endpoint is not yet available in Connector-API
         undefined,
         finalParams,
       );

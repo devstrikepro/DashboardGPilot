@@ -35,7 +35,7 @@ describe('AccountService', () => {
 
   describe('getFinance', () => {
     it('getFinance_Successful_CallsApiClientWithCorrectEndpoint', async () => {
-      const mockFinance = {
+      const mockFinance = [{
         user_id: 'user-1',
         grossTradeProfit: 100,
         totalDeposits: 500,
@@ -45,7 +45,7 @@ describe('AccountService', () => {
         totalTrades: 5,
         equityCurve: [],
         updated_at: '2024-01-01'
-      };
+      }];
       vi.mocked(apiClient).mockResolvedValue({ success: true, data: mockFinance, error: null });
 
       const result = await AccountService.getFinance();
@@ -63,7 +63,8 @@ describe('AccountService', () => {
 
   describe('syncAccount', () => {
     it('syncAccount_Successful_CallsApiClientWithPost', async () => {
-      vi.mocked(apiClient).mockResolvedValue({ success: true, data: { message: 'Sync started' }, error: null });
+      const mockSyncResult = [{ mt5Id: 123, syncedCount: 10, success: true }];
+      vi.mocked(apiClient).mockResolvedValue({ success: true, data: mockSyncResult, error: null });
 
       const result = await AccountService.syncAccount();
 
@@ -74,6 +75,7 @@ describe('AccountService', () => {
         API_GATEWAY_SUB
       );
       expect(result.success).toBe(true);
+      expect(result.data).toEqual(mockSyncResult);
     });
   });
 });

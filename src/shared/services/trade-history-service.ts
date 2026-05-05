@@ -5,7 +5,9 @@ import type {
   ServiceResponse, 
   SyncedTrade, 
   ReferralSyncSummary,
-  TradeRequest 
+  TradeRequest,
+  GroupedTradesResponse,
+  SyncResult
 } from '@/shared/types/api';
 
 const logger = createLogger('TradeHistoryService');
@@ -18,11 +20,11 @@ export const TradeHistoryService = {
   /**
    * ดึงประวัติการเทรดของตัวเองที่ Sync แล้วจาก Backend-Sub
    */
-  getMySyncedHistory: async (params?: TradeRequest): Promise<ServiceResponse<SyncedTrade[]>> => {
+  getMySyncedHistory: async (params?: TradeRequest): Promise<ServiceResponse<GroupedTradesResponse[]>> => {
     try {
       logger.info('Fetching my synced trades from Backend-Sub', { params });
       
-      const response = await apiClient<ServiceResponse<SyncedTrade[]>>(
+      const response = await apiClient<ServiceResponse<GroupedTradesResponse[]>>(
         SUB_ENDPOINTS.TRADES,
         undefined,
         params as any,
@@ -68,10 +70,10 @@ export const TradeHistoryService = {
   /**
    * สั่ง Sync ข้อมูลการเทรดของตัวเอง (Manual)
    */
-  syncMyTrades: async (): Promise<ServiceResponse<number>> => {
+  syncMyTrades: async (): Promise<ServiceResponse<SyncResult[]>> => {
     try {
       logger.info('Requesting manual sync for own trades');
-      const response = await apiClient<ServiceResponse<number>>(
+      const response = await apiClient<ServiceResponse<SyncResult[]>>(
         SUB_ENDPOINTS.TRADES_SYNC_ME,
         { method: 'POST' },
         undefined,

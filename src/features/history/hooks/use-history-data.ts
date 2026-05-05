@@ -92,26 +92,31 @@ export function useHistoryData(serviceBase?: string) {
   const error = queryError instanceof Error ? queryError.message : null;
 
   // Process data for UI
-  const trades = data?.paginated?.list || [];
-  const totalCount = data?.totalTrades ?? 0;
+  const processedData = useMemo(() => {
+    if (!data) return null;
+    return Array.isArray(data) ? data[0] : data;
+  }, [data]);
+
+  const trades = processedData?.paginated?.list || [];
+  const totalCount = processedData?.totalTrades ?? 0;
   
   const apiTotals: HistoryTotals = useMemo(() => {
-    if (!data) return {
+    if (!processedData) return {
       volume: 0, grossProfit: 0, grossLoss: 0, netPL: 0,
       commission: 0, swap: 0, fee: 0, totalTrades: 0
     };
 
     return {
-      volume: data.totalVolume,
-      grossProfit: data.grossProfit,
-      grossLoss: data.grossLoss,
-      netPL: data.totalPL ?? (data as any)?.["totalP/L"] ?? data.netProfit ?? 0,
+      volume: processedData.totalVolume,
+      grossProfit: processedData.grossProfit,
+      grossLoss: processedData.grossLoss,
+      netPL: processedData.totalPL ?? (processedData as any)?.["totalP/L"] ?? processedData.netProfit ?? 0,
       commission: 0,
       swap: 0,
-      fee: data.fee,
-      totalTrades: data.totalTrades,
+      fee: processedData.fee,
+      totalTrades: processedData.totalTrades,
     };
-  }, [data]);
+  }, [processedData]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {

@@ -38,8 +38,8 @@ export function useAccountData(tableParams?: TradeRequest) {
       if (profileRes.success && profileRes.data && profileRes.data.length > 0) {
         setProfile(profileRes.data[0]);
       }
-      if (financeRes.success && financeRes.data) {
-        setFinance(financeRes.data);
+      if (financeRes.success && financeRes.data && financeRes.data.length > 0) {
+        setFinance(financeRes.data[0]);
       }
       
       if (!profileRes.success || !financeRes.success) {
@@ -68,7 +68,9 @@ export function useAccountData(tableParams?: TradeRequest) {
       }, API_GATEWAY_SUB);
 
       if (tradesRes.success && tradesRes.data) {
-        setTradesData(tradesRes.data);
+        // Handle both single object (Main-API) and array (Sub-API) responses
+        const data = Array.isArray(tradesRes.data) ? tradesRes.data[0] : tradesRes.data;
+        setTradesData(data);
       } else if (!tradesRes.success) {
         setError(tradesRes.error?.message || "Failed to fetch trades");
       }
