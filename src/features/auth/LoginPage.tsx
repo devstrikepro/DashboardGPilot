@@ -22,7 +22,7 @@ import {
   VisibilityOff as VisibilityOffIcon,
   Login as LoginIcon
 } from "@mui/icons-material";
-import { AuthService } from "@/shared/services/auth-service";
+import { loginAction } from "./auth-actions";
 import { useAuth } from "@/shared/providers/auth-provider";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -43,12 +43,20 @@ export function LoginPage() {
     setError(null);
 
     try {
-      const res = await AuthService.login({
+      // เรียกใช้ Server Action
+      const res = await loginAction({
         email: email,
         password: password
       });
 
       if (res.success && res.data) {
+        // อัปเดต Client-side Storage เพื่อความต่อเนื่องของ UI
+        localStorage.setItem('auth_token', res.data.accessToken);
+        if (res.data.refreshToken) {
+          localStorage.setItem('refresh_token', res.data.refreshToken);
+        }
+        localStorage.setItem('user_info', JSON.stringify(res.data.user));
+
         // อัปเดตสถานะใน AuthProvider
         authLogin(res.data);
 

@@ -5,14 +5,25 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/shared/providers/auth-provider";
 import { DashboardCard } from "./components";
 import { PRODUCTS } from "./constants/products";
+import type { LoginResponse } from "@/shared/types/auth";
 
-export function DashboardPage() {
+interface DashboardPageProps {
+  initialUser?: LoginResponse["user"] | null;
+}
+
+export function DashboardPage({ initialUser }: DashboardPageProps) {
     const router = useRouter();
-    const { user } = useAuth();
+    const { user: authUser } = useAuth();
+    
+    // ใช้ข้อมูลจาก Server (initialUser) หรือจาก Client Context (authUser)
+    const user = initialUser || authUser;
 
-    if (!user) return null; // สามารถเพิ่ม Loading Skeleton ที่นี่ได้
+    if (!user) return null;
 
-    const visibleProducts = user.menu.dashboard
+    // ใช้ Optional Chaining และ Fallback เป็น Array ว่างหากข้อมูล menu ไม่ถูกส่งมา
+    const dashboardMenu = user.menu?.dashboard || [];
+
+    const visibleProducts = dashboardMenu
         .map(key => PRODUCTS[key.toLowerCase()])
         .filter(Boolean);
 

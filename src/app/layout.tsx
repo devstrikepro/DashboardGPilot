@@ -1,3 +1,4 @@
+import type { Metadata, Viewport } from "next";
 import { Inter, Manrope } from "next/font/google";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { ThemeProvider } from "@/shared/ui/theme-provider";
@@ -18,9 +19,24 @@ const manrope = Manrope({
   display: "swap",
 });
 
-export const metadata = {
-  title: "GPilot Product",
-  description: "Advanced Trading Terminal",
+
+export const metadata: Metadata = {
+  title: {
+    template: "%s | GPilot",
+    default: "GPilot - Advanced Trading Terminal",
+  },
+  description: "Advanced Trading Terminal for multi-account management and performance tracking.",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: "#000000",
 };
 
 export default function RootLayout({

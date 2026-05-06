@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { AuthService } from "@/shared/services/auth-service";
+import { logoutAction } from "@/features/auth/auth-actions";
 import type { LoginResponse } from "@/shared/types/auth";
 
 interface AuthContextType {
@@ -44,8 +45,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem("auth_token");
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("user_info");
-    document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    window.location.href = "/login";
+    
+    // เรียก Server Action เพื่อลบ Cookie ฝั่ง Server
+    logoutAction().then(() => {
+      window.location.href = "/login";
+    });
   }, []);
 
   return (

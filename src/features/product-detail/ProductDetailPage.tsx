@@ -9,6 +9,7 @@ import { useProductDetailData } from "./hooks/use-product-detail-data";
 import { useSearchParams, useRouter } from "next/navigation";
 import { getMetricsData } from "./constants/metrics";
 import { ProductDetailHeader, ProductDetailTabs } from "./components";
+import type { ProductDetail } from "@/shared/types/api";
 
 // Dynamic imports to avoid barrel file pollution (Critical Request Chains)
 const EquityChart = dynamic(() => import("@/shared/ui/equity-chart").then((mod) => mod.EquityChart), {
@@ -31,7 +32,11 @@ const HistoryTab = dynamic(() => import("@/features/history/HistoryPage"), {
     ssr: false,
 });
 
-function ProductDetailContent() {
+interface ProductDetailProps {
+    initialData?: ProductDetail | null;
+}
+
+function ProductDetailContent({ initialData }: ProductDetailProps) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const productName = searchParams.get("name") ?? "Product Detail";
@@ -50,7 +55,7 @@ function ProductDetailContent() {
         profitWeek,
         profitMonth,
         formatCurrency,
-    } = useProductDetailData(serviceBase || undefined);
+    } = useProductDetailData(serviceBase || undefined, initialData);
 
     const balance = account?.balance ?? 0;
     const metrics = getMetricsData(balance, profitToday, profitWeek, profitMonth, formatCurrency);
@@ -129,10 +134,10 @@ function ProductDetailContent() {
     );
 }
 
-export default function ProductDetailPage() {
+export default function ProductDetailPage({ initialData }: ProductDetailProps) {
     return (
         <Suspense fallback={<Box sx={{ p: 3 }}><Skeleton variant="rectangular" height={200} sx={{ borderRadius: 3 }} /></Box>}>
-            <ProductDetailContent />
+            <ProductDetailContent initialData={initialData} />
         </Suspense>
     );
 }

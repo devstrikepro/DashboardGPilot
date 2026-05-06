@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AnalyticsService } from "@/shared/services/analytics-service";
 import { useApiHealth } from "@/shared/providers/api-health-provider";
-import type { GroupedDeal } from "@/shared/types/api";
+import type { GroupedDeal, GroupedTradesResponse } from "@/shared/types/api";
 
 export type SortField = "symbol" | "netProfit" | "volume" | "closeTime" | "type" | "time" | "balance";
 export type SortDirection = "asc" | "desc";
@@ -24,7 +24,7 @@ export interface HistoryTotals {
  * useHistoryData
  * ดึง Grouped Trades โดยใช้ TanStack Query เพื่อรองรับ Pagination, Sorting และ Filtering
  */
-export function useHistoryData(serviceBase?: string) {
+export function useHistoryData(serviceBase?: string, initialData?: GroupedTradesResponse | null) {
   const { isHealthy } = useApiHealth();
 
   // View States
@@ -67,6 +67,7 @@ export function useHistoryData(serviceBase?: string) {
       sortField, 
       sortDirection
     ],
+    initialData: initialData || undefined, // ใช้ข้อมูลจาก Server ถ้ามี
     queryFn: async () => {
       const response = await AnalyticsService.getGroupedTrades({
         page: page + 1,

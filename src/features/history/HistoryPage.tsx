@@ -3,8 +3,15 @@
 import { Box, Typography, Alert } from "@mui/material";
 import { DataTable } from "@/shared/ui";
 import { useHistoryData } from "@/features/history/hooks";
+import type { GroupedTradesResponse } from "@/shared/types/api";
 
-export default function HistoryPage({ serviceBase }: { serviceBase?: string }) {
+export default function HistoryPage({ 
+  serviceBase, 
+  initialData 
+}: { 
+  serviceBase?: string;
+  initialData?: GroupedTradesResponse | null;
+}) {
   const {
     loading,
     error,
@@ -28,7 +35,7 @@ export default function HistoryPage({ serviceBase }: { serviceBase?: string }) {
     typeFilter, setTypeFilter,
     startDate, setStartDate,
     endDate, setEndDate,
-  } = useHistoryData(serviceBase);
+  } = useHistoryData(serviceBase, initialData);
 
   return (
     <Box sx={{ p: { xs: 2, lg: 3 }, flex: 1 }}>

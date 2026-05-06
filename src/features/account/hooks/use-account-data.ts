@@ -9,20 +9,21 @@ import type {
   GroupedTradesResponse,
   TradeRequest
 } from "@/shared/types/api";
+import type { AccountInitialData } from "../AccountPage";
 
-export function useAccountData(tableParams?: TradeRequest) {
+export function useAccountData(tableParams?: TradeRequest, initialData?: AccountInitialData) {
   const { isHealthy } = useApiHealth();
 
-  const [profile, setProfile] = useState<AccountProfile | null>(null);
-  const [finance, setFinance] = useState<AccountFinance | null>(null);
-  const [tradesData, setTradesData] = useState<GroupedTradesResponse | null>(null);
+  const [profile, setProfile] = useState<AccountProfile | null>(initialData?.profile || null);
+  const [finance, setFinance] = useState<AccountFinance | null>(initialData?.finance || null);
+  const [tradesData, setTradesData] = useState<GroupedTradesResponse | null>(initialData?.tradesData || null);
   
   const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Use a ref to track if initial data has been fetched to avoid double calls
-  const isInitialFetched = useRef(false);
+  // If initialData is provided, mark as fetched
+  const isInitialFetched = useRef(!!initialData);
 
   // 1. Fetch Profile & Finance (Initial or Refresh)
   const fetchAccountInfo = useCallback(async () => {

@@ -49,12 +49,24 @@ const TX_META: Record<string, { icon: React.ReactNode; bg: string; color: string
   withdraw:{ icon: <ArrowUpwardIcon  sx={{ fontSize: 18 }} />, bg: "rgba(239,68,68,0.15)",    color: "#EF4444", label: "Withdraw" },
 };
 
+export interface WalletInitialData {
+    profitSharingBalance?: number;
+    transactions?: typeof TRANSACTIONS;
+}
+
+interface WalletPageProps {
+    initialData?: WalletInitialData;
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
-export function WalletPage() {
+export function WalletPage({ initialData }: WalletPageProps) {
   const router = useRouter();
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const profitSharingBalance = initialData?.profitSharingBalance ?? PROFIT_SHARING_BALANCE;
+  const transactions = initialData?.transactions ?? TRANSACTIONS;
 
   const FEE_RATE = 0.015;
   const parsed   = parseFloat(withdrawAmount) || 0;
@@ -123,7 +135,7 @@ export function WalletPage() {
                 mb: 0.5,
               }}
             >
-              {fmt(PROFIT_SHARING_BALANCE)}
+              {fmt(profitSharingBalance)}
             </Typography>
             <Typography variant="caption" sx={{ color: "text.disabled" }}>
               Last updated: Today, 17:30
@@ -266,7 +278,7 @@ export function WalletPage() {
               </Box>
 
               <Stack spacing={1}>
-                {TRANSACTIONS.map((tx) => {
+                {transactions.map((tx) => {
                   const meta = TX_META[tx.type];
                   return (
                     <Box

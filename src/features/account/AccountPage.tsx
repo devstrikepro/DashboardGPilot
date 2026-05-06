@@ -4,8 +4,19 @@ import { Box, Grid } from "@mui/material";
 import { useAccountViewModel } from "./hooks/use-account-view-model";
 import { ProfileCard, FinancialSummary, AccountHeader } from "./components";
 import { BalanceChart, DataTable } from "@/shared/ui";
+import type { AccountProfile, AccountFinance, GroupedTradesResponse } from "@/shared/types/api";
 
-export function AccountPage() {
+export interface AccountInitialData {
+    profile?: AccountProfile | null;
+    finance?: AccountFinance | null;
+    tradesData?: GroupedTradesResponse | null;
+}
+
+interface AccountPageProps {
+    initialData?: AccountInitialData;
+}
+
+export function AccountPage({ initialData }: AccountPageProps) {
     const {
         // State & Loading
         loading,
@@ -39,7 +50,7 @@ export function AccountPage() {
         setStartDate,
         endDate,
         setEndDate,
-    } = useAccountViewModel();
+    } = useAccountViewModel(initialData);
 
     return (
         <Box sx={{ p: { xs: 2, md: 4 }, pb: 8 }}>

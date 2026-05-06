@@ -218,16 +218,26 @@ function ClientCard({ client }: { client: (typeof MOCK_CLIENTS)[0] }) {
   );
 }
 
+export interface ClientsInitialData {
+    clients?: typeof MOCK_CLIENTS;
+}
+
+interface ClientsPageProps {
+    initialData?: ClientsInitialData;
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
-export function ClientsPage() {
+export function ClientsPage({ initialData }: ClientsPageProps) {
   const [search, setSearch] = useState("");
 
-  const filtered = MOCK_CLIENTS.filter((c) =>
+  const clients = initialData?.clients ?? MOCK_CLIENTS;
+
+  const filtered = clients.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const activeCount = MOCK_CLIENTS.filter((c) => c.status === "Active").length;
-  const totalPortfolio = MOCK_CLIENTS.reduce((s, c) => s + c.portfolio, 0);
+  const activeCount = clients.filter((c) => c.status === "Active").length;
+  const totalPortfolio = clients.reduce((s, c) => s + c.portfolio, 0);
 
   return (
     <Box sx={{ p: { xs: 2, lg: 3 }, flex: 1 }}>
@@ -241,7 +251,7 @@ export function ClientsPage() {
             My Clients
           </Typography>
           <Typography variant="body2" sx={{ color: "text.secondary", mt: 0.5 }}>
-            {activeCount} active · {MOCK_CLIENTS.length} total · {fmt(totalPortfolio)} AUM
+            {activeCount} active · {clients.length} total · {fmt(totalPortfolio)} AUM
           </Typography>
         </Box>
         <Button
@@ -276,10 +286,10 @@ export function ClientsPage() {
 
       {/* Summary chips */}
       <Stack direction="row" spacing={1} sx={{ mb: 3, flexWrap: "wrap", gap: 1 }}>
-        <Chip label={`All (${MOCK_CLIENTS.length})`} size="small" color="primary" />
+        <Chip label={`All (${clients.length})`} size="small" color="primary" />
         <Chip label={`Active (${activeCount})`} size="small" sx={{ bgcolor: "rgba(16,185,129,0.15)", color: "#10B981", fontWeight: 600 }} />
         <Chip
-          label={`Inactive (${MOCK_CLIENTS.length - activeCount})`}
+          label={`Inactive (${clients.length - activeCount})`}
           size="small"
           sx={{ bgcolor: "rgba(148,163,184,0.1)", color: "text.secondary", fontWeight: 600 }}
         />

@@ -1,1 +1,1 @@
-export { AccountPage } from "./AccountPage";
+export { AccountPage, type AccountInitialData } from "./AccountPage";

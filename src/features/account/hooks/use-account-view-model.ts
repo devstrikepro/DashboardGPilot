@@ -3,8 +3,9 @@
 import { useMemo } from "react";
 import { useAccountData } from "./use-account-data";
 import { useAccountTable, AccountTradeType } from "./use-account-table";
+import type { AccountInitialData } from "../AccountPage";
 
-export function useAccountViewModel() {
+export function useAccountViewModel(initialData?: AccountInitialData) {
     const tableState = useAccountTable();
 
     const tableParams = useMemo(
@@ -24,7 +25,7 @@ export function useAccountViewModel() {
         ]
     );
 
-    const accountData = useAccountData(tableParams);
+    const accountData = useAccountData(tableParams, initialData);
 
     const chartData = useMemo(() => {
         if (!accountData.equityCurve || accountData.equityCurve.length === 0) return [];

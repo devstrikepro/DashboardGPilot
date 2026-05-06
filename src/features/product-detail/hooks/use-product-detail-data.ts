@@ -10,7 +10,7 @@ import type { ProductDetail } from "@/shared/types/api";
  * useProductDetailData
  * ดึง Product Detail โดยใช้ TanStack Query เพื่อรองรับ Caching และ Revalidation
  */
-export function useProductDetailData(serviceBase?: string) {
+export function useProductDetailData(serviceBase?: string, initialData?: ProductDetail | null) {
   const { isHealthy } = useApiHealth();
 
   const { 
@@ -20,6 +20,7 @@ export function useProductDetailData(serviceBase?: string) {
     refetch: refreshData,
   } = useQuery({
     queryKey: ["product-detail", serviceBase],
+    initialData: initialData || undefined, // ใช้ข้อมูลจาก Server ถ้ามี
     queryFn: async () => {
       const response = await AnalyticsService.getProductDetail(undefined, serviceBase);
 
