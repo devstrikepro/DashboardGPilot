@@ -9,6 +9,10 @@ export const useRagnarok = () => {
     const [authLoading, setAuthLoading] = useState(false);
     const [uuid, setUuid] = useState<string | null>(null);
     const [accounts, setAccounts] = useState<any[]>([]);
+    const [portStats, setPortStats] = useState<any>(null);
+    const [supportCounts, setSupportCounts] = useState<any>(null);
+    const [pledgeLoading, setPledgeLoading] = useState(false);
+    const [pledgeMessage, setPledgeMessage] = useState<string | null>(null);
 
     const [pledgeData, setPledgeData] = useState({
         investorId: "",
@@ -26,59 +30,89 @@ export const useRagnarok = () => {
         "ODIN": "",
     };
 
-    const gods = [
-        {
-            name: "THOR",
-            type: "AGGRESSIVE",
-            roi: "450%",
-            winRate: "72%",
-            signature: "Lightning",
-            color: "#ef4444",
-            image: "/ror/thor.jpg",
-        },
-        {
-            name: "LOKI",
-            type: "TACTICAL",
-            roi: "389%",
-            winRate: "68%",
-            signature: "Smoke",
-            color: "#22c55e",
-            image: "/ror/logi.jpg",
-        },
-        {
-            name: "HEIMDALL",
-            type: "BALANCED",
-            roi: "290%",
-            winRate: "56%",
-            signature: "Bifrost Light",
-            color: "#38bdf8",
-            image: "/ror/humdal.jpg",
-        },
-        {
-            name: "ODIN",
-            type: "STRATEGIC",
-            roi: "510%",
-            winRate: "75%",
-            signature: "Runic",
-            color: "#a855f7",
-            image: "/ror/odin.jpg",
-        },
-    ];
+    const gods = useMemo(() => {
+        const baseGods = [
+            {
+                name: "THOR",
+                type: "AGGRESSIVE",
+                roi: "450%",
+                winRate: "72%",
+                signature: "Lightning",
+                color: "#ef4444",
+                image: "/ror/thor.jpg",
+            },
+            {
+                name: "LOKI",
+                type: "TACTICAL",
+                roi: "389%",
+                winRate: "68%",
+                signature: "Smoke",
+                color: "#22c55e",
+                image: "/ror/logi.jpg",
+            },
+            {
+                name: "HEIMDALL",
+                type: "BALANCED",
+                roi: "290%",
+                winRate: "56%",
+                signature: "Bifrost Light",
+                color: "#38bdf8",
+                image: "/ror/humdal.jpg",
+            },
+            {
+                name: "ODIN",
+                type: "STRATEGIC",
+                roi: "510%",
+                winRate: "75%",
+                signature: "Runic",
+                color: "#a855f7",
+                image: "/ror/odin.jpg",
+            },
+        ];
 
-    const rankingData = [
-        { rank: 1, god: "Odin", roi: 510, winRate: 50, followers: 2008, color: "#a855f7", avatar: "/ror/odin.jpg" },
-        { rank: 2, god: "Loki", roi: 380, winRate: 68, followers: 333, color: "#22c55e", avatar: "/ror/logi.jpg" },
-        {
-            rank: 3,
-            god: "Heimdall",
-            roi: 290,
-            winRate: 30,
-            followers: 129,
-            color: "#38bdf8",
-            avatar: "/ror/humdal.jpg",
-        },
-        { rank: 4, god: "Thor", roi: 236, winRate: 30, followers: 136, color: "#ef4444", avatar: "/ror/thor.jpg" },
-    ];
+        return baseGods.map(god => {
+            const portNo = parseInt(GOD_PORT_MAPPING[god.name]);
+            const stats = portStats?.data?.find((s: any) => s.port_no === portNo);
+            const counts = supportCounts?.data?.find((c: any) => c.main_port === portNo);
+
+            return {
+                ...god,
+                roi: stats ? `${stats.profit_percent.toFixed(2)}%` : god.roi,
+                winRate: stats ? `${stats.winrate.toFixed(2)}%` : god.winRate,
+                followers: counts ? counts.count : 0
+            };
+        });
+    }, [portStats, supportCounts]);
+
+    const rankingData = useMemo(() => {
+        const baseRanking = [
+            { rank: 1, god: "Odin", roi: 510, winRate: 50, followers: 2008, color: "#a855f7", avatar: "/ror/odin.jpg" },
+            { rank: 2, god: "Loki", roi: 380, winRate: 68, followers: 333, color: "#22c55e", avatar: "/ror/logi.jpg" },
+            {
+                rank: 3,
+                god: "Heimdall",
+                roi: 290,
+                winRate: 30,
+                followers: 129,
+                color: "#38bdf8",
+                avatar: "/ror/humdal.jpg",
+            },
+            { rank: 4, god: "Thor", roi: 236, winRate: 30, followers: 136, color: "#ef4444", avatar: "/ror/thor.jpg" },
+        ];
+
+        return baseRanking.map(row => {
+            const portNo = parseInt(GOD_PORT_MAPPING[row.god.toUpperCase()]);
+            const stats = portStats?.data?.find((s: any) => s.port_no === portNo);
+            const counts = supportCounts?.data?.find((c: any) => c.main_port === portNo);
+
+            return {
+                ...row,
+                roi: stats ? stats.profit_percent : row.roi,
+                winRate: stats ? stats.winrate : row.winRate,
+                followers: counts ? counts.count : row.followers
+            };
+        }).sort((a, b) => b.roi - a.roi).map((row, idx) => ({ ...row, rank: idx + 1 }));
+    }, [portStats, supportCounts]);
 
     const handlePledgeChange = (field: string, value: string) => {
         setPledgeData((prev) => {
@@ -113,6 +147,71 @@ export const useRagnarok = () => {
             console.log("ROR Accounts fetched:", res.data.data);
         }
     }, []);
+
+    const fetchRorInternalData = useCallback(async () => {
+        // ยิงคู่ขนาน
+        const [statsRes, countsRes] = await Promise.all([
+            RorService.getPortStats(),
+            RorService.getSupportCounts()
+        ]);
+
+        if (statsRes.success) setPortStats(statsRes.data);
+        if (countsRes.success) setSupportCounts(countsRes.data);
+    }, []);
+
+    const pledge = useCallback(async () => {
+        if (!pledgeData.investorId || !pledgeData.god) {
+            toast({
+                title: "Incomplete Data",
+                description: "Please select both a God and an Account.",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        try {
+            setPledgeLoading(true);
+            setPledgeMessage(null);
+            
+            const mainPort = parseInt(GOD_PORT_MAPPING[pledgeData.god]);
+            const slavePort = parseInt(pledgeData.investorId);
+
+            if (isNaN(mainPort) || isNaN(slavePort)) {
+                throw new Error("Invalid account information.");
+            }
+
+            const res = await RorService.addSupport({
+                main_port: mainPort,
+                slave_port: slavePort
+            });
+
+            if (res.success) {
+                const msg = res.data?.message || "Your pledge has been accepted.";
+                setPledgeMessage(msg);
+                toast({
+                    title: "Pledge Successful",
+                    description: msg,
+                });
+                // รีเฟรชข้อมูลจำนวน Support หลัง Pledge สำเร็จ
+                RorService.getSupportCounts().then(res => {
+                    if (res.success) setSupportCounts(res.data);
+                });
+            } else {
+                const errorMsg = res.error?.message || "Failed to pledge loyalty.";
+                setPledgeMessage(errorMsg);
+                toast({
+                    title: "Pledge Failed",
+                    description: errorMsg,
+                    variant: "destructive",
+                });
+            }
+        } catch (error) {
+            const errorMsg = error instanceof Error ? error.message : "An unexpected error occurred.";
+            setPledgeMessage(errorMsg);
+        } finally {
+            setPledgeLoading(false);
+        }
+    }, [pledgeData, toast]);
 
     const login = useCallback(async (email: string, pass: string) => {
         try {
@@ -160,8 +259,9 @@ export const useRagnarok = () => {
                         setIsLoggedIn(true);
                         setWorkflow(null);
                         
-                        // Fetch accounts immediately after successful login
+                        // Fetch accounts and internal data immediately after successful login
                         fetchAccounts();
+                        fetchRorInternalData();
 
                         toast({
                             title: "Welcome to Valhalla",
@@ -220,8 +320,9 @@ export const useRagnarok = () => {
                     setIsLoggedIn(true);
                     setWorkflow(null);
 
-                    // ดึงข้อมูลบัญชีทันทีหลังจาก 2FA สำเร็จ
+                    // ดึงข้อมูลบัญชีและสถิติทันทีหลังจาก 2FA สำเร็จ
                     fetchAccounts();
+                    fetchRorInternalData();
 
                     toast({
                         title: "Success",
@@ -268,8 +369,9 @@ export const useRagnarok = () => {
                     setIsLoggedIn(true);
                     setWorkflow(null);
 
-                    // ดึงข้อมูลบัญชีทันทีหลังจาก 2FA สำเร็จ
+                    // ดึงข้อมูลบัญชีและสถิติทันทีหลังจาก 2FA สำเร็จ
                     fetchAccounts();
+                    fetchRorInternalData();
 
                     toast({
                         title: "Success",
@@ -301,6 +403,7 @@ export const useRagnarok = () => {
         if (token) {
             setIsLoggedIn(true);
             fetchAccounts();
+            fetchRorInternalData();
         }
         
         // ดึง UUID ทันทีที่เข้าหน้าเว็บ
@@ -334,6 +437,12 @@ export const useRagnarok = () => {
         setError,
         accounts,
         filteredAccounts,
-        fetchAccounts
+        fetchAccounts,
+        portStats,
+        supportCounts,
+        pledge,
+        pledgeLoading,
+        pledgeMessage,
+        setPledgeMessage
     };
 };

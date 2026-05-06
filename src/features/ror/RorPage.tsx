@@ -27,7 +27,11 @@ export const RecordOfRagnarok: React.FC = () => {
         verify2faSms,
         error,
         setError,
-        filteredAccounts
+        filteredAccounts,
+        pledge,
+        pledgeLoading,
+        pledgeMessage,
+        setPledgeMessage
     } = useRagnarok();
 
 
@@ -63,6 +67,10 @@ export const RecordOfRagnarok: React.FC = () => {
                                     onPledgeChange={handlePledgeChange}
                                     gods={gods}
                                     accounts={filteredAccounts}
+                                    onPledge={pledge}
+                                    isLoading={pledgeLoading}
+                                    message={pledgeMessage}
+                                    onClearMessage={() => setPledgeMessage(null)}
                                 />
                             ) : (
                                 <LoginSection 

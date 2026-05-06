@@ -1,5 +1,5 @@
 import { apiClient } from '@/shared/api/client';
-import { ROR_ENDPOINTS, SERVICE_BASE_ROR } from '@/shared/api/endpoint';
+import { ROR_ENDPOINTS, SERVICE_BASE_ROR, ROR, SERVICE_BASE_ROR_INTERNAL } from '@/shared/api/endpoint';
 import { createLogger } from '@/shared/utils/logger';
 import { ApiError } from '@/shared/api/api-error';
 import type { ServiceResponse } from '@/shared/types/api';
@@ -211,6 +211,59 @@ export const RorService = {
         data: null,
         error: { code: 'ROR_ACCOUNTS_ERROR', message: 'ไม่สามารถดึงข้อมูลบัญชีได้' }
       };
+    }
+  },
+
+  /**
+   * ดึงสถิติรายพอร์ต (Internal API)
+   */
+  getPortStats: async (): Promise<ServiceResponse<any>> => {
+    try {
+      logger.info('Fetching ROR port stats');
+      const result = await apiClient<any>(ROR.PORT_STATS, {
+        method: 'GET',
+      }, undefined, SERVICE_BASE_ROR_INTERNAL);
+
+      return { success: true, data: result, error: null };
+    } catch (error) {
+      logger.error('Failed to fetch port stats', error instanceof Error ? error : String(error));
+      return { success: false, data: null, error: { code: 'STATS_ERROR', message: 'ไม่สามารถดึงข้อมูลสถิติได้' } };
+    }
+  },
+
+  /**
+   * ดึงข้อมูลจำนวนการ Support (Internal API)
+   */
+  getSupportCounts: async (): Promise<ServiceResponse<any>> => {
+    try {
+      logger.info('Fetching ROR support counts');
+      const result = await apiClient<any>(ROR.SUPPORT_COUNTS, {
+        method: 'GET',
+      }, undefined, SERVICE_BASE_ROR_INTERNAL);
+
+      return { success: true, data: result, error: null };
+    } catch (error) {
+      logger.error('Failed to fetch support counts', error instanceof Error ? error : String(error));
+      return { success: false, data: null, error: { code: 'SUPPORT_COUNTS_ERROR', message: 'ไม่สามารถดึงข้อมูลการ Support ได้' } };
+    }
+  },
+
+  /**
+   * บันทึกข้อมูล Support ใหม่ (Internal API)
+   */
+  addSupport: async (data: { slave_port: number; main_port: number }): Promise<ServiceResponse<any>> => {
+    try {
+      logger.info('Adding ROR support', data);
+      const result = await apiClient<any>(ROR.SUPPORT_ADD, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }, undefined, SERVICE_BASE_ROR_INTERNAL);
+
+      return { success: true, data: result, error: null };
+    } catch (error) {
+      logger.error('Failed to add support', error instanceof Error ? error : String(error));
+      return { success: false, data: null, error: { code: 'SUPPORT_ADD_ERROR', message: 'ไม่สามารถบันทึกข้อมูลการ Support ได้' } };
     }
   }
 };

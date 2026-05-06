@@ -10,7 +10,11 @@ import {
     MenuItem,
     Avatar,
     alpha,
+    CircularProgress,
+    Alert,
+    IconButton,
 } from "@mui/material";
+import { Close as CloseIcon } from "@mui/icons-material";
 import { GlassPaper, ActionButton } from "./StyledComponents";
 
 interface God {
@@ -27,9 +31,22 @@ interface TheAltarProps {
     onPledgeChange: (field: string, value: string) => void;
     gods: God[];
     accounts: any[];
+    onPledge: () => void;
+    isLoading: boolean;
+    message: string | null;
+    onClearMessage: () => void;
 }
 
-export const TheAltar: React.FC<TheAltarProps> = ({ pledgeData, onPledgeChange, gods, accounts }) => {
+export const TheAltar: React.FC<TheAltarProps> = ({ 
+    pledgeData, 
+    onPledgeChange, 
+    gods, 
+    accounts,
+    onPledge,
+    isLoading,
+    message,
+    onClearMessage
+}) => {
     return (
         <Grid size={{ xs: 12, md: 4 }}>
             <Box textAlign="center" mb={2}>
@@ -144,12 +161,35 @@ export const TheAltar: React.FC<TheAltarProps> = ({ pledgeData, onPledgeChange, 
                     </Select>
                 </FormControl>
 
-                <ActionButton fullWidth variant="contained" sx={{ py: 1.5 }}>
-                    PLEDGE NOW (LOCK CHOICE)
+                {message && (
+                    <Alert 
+                        severity={message.toLowerCase().includes("error") || message.toLowerCase().includes("fail") ? "error" : "success"}
+                        variant="filled"
+                        onClose={onClearMessage}
+                        sx={{ 
+                            mb: 2, 
+                            backgroundColor: alpha(pledgeData.god ? gods.find(g => g.name === pledgeData.god)?.color || "#d4af37" : "#d4af37", 0.2),
+                            color: "#fff",
+                            border: `1px solid ${alpha("#fff", 0.1)}`,
+                            "& .MuiAlert-icon": { color: "#fff" }
+                        }}
+                    >
+                        {message}
+                    </Alert>
+                )}
+
+                <ActionButton 
+                    fullWidth 
+                    variant="contained" 
+                    sx={{ py: 1.5 }}
+                    onClick={onPledge}
+                    disabled={isLoading || !pledgeData.investorId || !pledgeData.god}
+                >
+                    {isLoading ? <CircularProgress size={24} color="inherit" /> : "PLEDGE NOW (LOCK CHOICE)"}
                 </ActionButton>
 
                 <Typography variant="caption" sx={{ mt: 2, textAlign: "center", color: "#8b949e", display: "block" }}>
-                    Validation elements of your validation
+                    Your choice is sacred. Once pledged, it cannot be undone.
                 </Typography>
             </GlassPaper>
         </Grid>
