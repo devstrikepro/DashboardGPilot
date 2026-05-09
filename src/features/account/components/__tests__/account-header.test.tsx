@@ -5,7 +5,7 @@ import { AccountHeader } from '../account-header';
 describe('AccountHeader', () => {
     it('renders correctly', () => {
         render(<AccountHeader onRefresh={vi.fn()} loading={false} />);
-        expect(screen.getByText('Account & Profile')).toBeDefined();
+        expect(screen.getByText('My Portfolio')).toBeDefined();
         expect(screen.getByText(/Manage your MT5 account settings/i)).toBeDefined();
     });
 

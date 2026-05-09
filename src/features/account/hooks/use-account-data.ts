@@ -141,6 +141,7 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
     profile,
     finance,
     profiles, // Expose for tabs
+    finances, // Expose all financial data
     activePortIndex,
     setActivePortIndex,
     trades: tradesData?.paginated?.list || [],

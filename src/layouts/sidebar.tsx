@@ -8,7 +8,7 @@ import { useThemeMode } from "@/shared/ui";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: Dashboard },
-  { label: "My account", href: "/account", icon: Person },
+  { label: "My Portfolio", href: "/account", icon: Person },
   { label: "Wallet", href: "/wallet", icon: Wallet },
 ];
 
