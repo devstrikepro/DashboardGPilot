@@ -65,6 +65,8 @@ export const SUB_ENDPOINTS = {
   ACCOUNT_TRADES: `/account/trades`,
   /** สั่ง Sync ข้อมูลการเทรดของตัวเอง (Manual) */
   ACCOUNT_SYNC: `/account/sync`,
+  /** ดึงข้อมูลบัญชี MT5 เบื้องต้น (mt5Id, balance, netProfit, supportGroup) */
+  ACCOUNT_INFO: `/account/info`,
   
   // Referral Endpoints (Team Data)
   /** ดึงข้อมูลเทรดที่ Sync แล้ว (ของ Referral) */

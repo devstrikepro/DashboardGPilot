@@ -6,14 +6,16 @@ import { useApiHealth } from "@/shared/providers/api-health-provider";
 import type { 
   AccountProfile, 
   AccountFinance, 
+  AccountInfo,
   GroupedTradesResponse,
   TradeRequest
 } from "@/shared/types/api";
 import type { AccountInitialData } from "../AccountPage";
 
-export function useAccountData(tableParams?: TradeRequest, initialData?: AccountInitialData) {
+export function useAccountData(tableParams?: TradeRequest, initialData?: AccountInitialData, mt5Id?: number) {
   const { isHealthy } = useApiHealth();
 
+  const [accountInfoList, setAccountInfoList] = useState<AccountInfo[]>(initialData?.info || []);
   const [profiles, setProfiles] = useState<AccountProfile[]>(() => {
     if (!initialData?.profile) return [];
     return Array.isArray(initialData.profile) ? initialData.profile : [initialData.profile];
@@ -36,15 +38,34 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
   // If initialData is provided, mark as fetched
   const isInitialFetched = useRef(!!initialData && Object.keys(initialData).length > 0);
 
-  // 1. Fetch Profile & Finance (Initial or Refresh)
-  const fetchAccountInfo = useCallback(async () => {
+  // 1. Fetch Account Info List (Listing Page)
+  const fetchAccountInfoList = useCallback(async () => {
+    if (!isHealthy) return;
+    setLoading(true);
+    try {
+      const res = await AccountService.getInfo();
+      if (res.success && res.data) {
+        setAccountInfoList(res.data);
+      } else if (!res.success) {
+        setError(res.error?.message || "Failed to fetch account list");
+      }
+    } catch (err) {
+      setError("An unexpected error occurred while fetching account list.");
+    } finally {
+      setLoading(false);
+      isInitialFetched.current = true;
+    }
+  }, [isHealthy]);
+
+  // 2. Fetch Detail Data (Detail Page)
+  const fetchDetailInfo = useCallback(async (targetMt5Id: number) => {
     if (!isHealthy) return;
     
     setLoading(true);
     try {
       const [profileRes, financeRes] = await Promise.all([
-        AccountService.getProfile(),
-        AccountService.getFinance(),
+        AccountService.getProfile(targetMt5Id),
+        AccountService.getFinance(targetMt5Id),
       ]);
 
       if (profileRes.success && profileRes.data) {
@@ -67,13 +88,14 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
     }
   }, [isHealthy]);
 
-  // 2. Fetch Trades (Independent)
-  const fetchTrades = useCallback(async () => {
+  // 3. Fetch Trades (Independent)
+  const fetchTrades = useCallback(async (targetMt5Id?: number) => {
     if (!isHealthy) return;
 
     setTableLoading(true);
     try {
       const tradesRes = await AnalyticsService.getGroupedTrades({
+        mt5Id: targetMt5Id,
         page: tableParams?.page || 1,
         limit: tableParams?.limit || 10,
         type: tableParams?.type || null,
@@ -98,16 +120,30 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
   // Initial load
   useEffect(() => {
     if (!isInitialFetched.current && isHealthy) {
-      fetchAccountInfo();
+      if (mt5Id) {
+        fetchDetailInfo(mt5Id);
+      } else {
+        fetchAccountInfoList();
+      }
     }
-  }, [isHealthy, fetchAccountInfo]);
+  }, [isHealthy, mt5Id, fetchDetailInfo, fetchAccountInfoList]);
 
-  // Table update load
+  // Table update load (Only in Detail View)
   useEffect(() => {
-    if (isHealthy) {
-      fetchTrades();
+    if (isHealthy && mt5Id) {
+      fetchTrades(mt5Id);
     }
-  }, [isHealthy, fetchTrades]);
+  }, [isHealthy, mt5Id, fetchTrades]);
+  
+  // 3. Sync activePortIndex with mt5Id from URL
+  useEffect(() => {
+    if (mt5Id && profiles.length > 0) {
+      const index = profiles.findIndex(p => p.mt5Id === mt5Id);
+      if (index !== -1 && index !== activePortIndex) {
+        setActivePortIndex(index);
+      }
+    }
+  }, [mt5Id, profiles, activePortIndex]);
 
   const profile = profiles[activePortIndex] || null;
   const finance = finances[activePortIndex] || null;
@@ -142,6 +178,7 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
     finance,
     profiles, // Expose for tabs
     finances, // Expose all financial data
+    accountInfoList, // Expose for listing page
     activePortIndex,
     setActivePortIndex,
     trades: tradesData?.paginated?.list || [],
@@ -170,8 +207,12 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
         // 1. First trigger manual sync
         await AccountService.syncAccount();
         
-        // 2. Then fetch updated data in parallel
-        await Promise.all([fetchAccountInfo(), fetchTrades()]);
+        // 2. Then fetch updated data based on view
+        if (mt5Id) {
+          await Promise.all([fetchDetailInfo(mt5Id), fetchTrades(mt5Id)]);
+        } else {
+          await fetchAccountInfoList();
+        }
       } catch (err) {
         setError("Failed to sync and refresh data.");
       } finally {

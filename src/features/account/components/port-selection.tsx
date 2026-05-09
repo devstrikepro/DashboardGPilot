@@ -2,16 +2,15 @@
 
 import { Box, Grid, Card, CardContent, Typography, Avatar, CardActionArea, Skeleton } from "@mui/material";
 import { Person as PersonIcon, AccountBalanceWallet as WalletIcon, ArrowForward as ArrowForwardIcon } from "@mui/icons-material";
-import type { AccountProfile, AccountFinance } from "@/shared/types/api";
+import type { AccountInfo } from "@/shared/types/api";
 
 interface PortSelectionProps {
-    readonly ports: AccountProfile[];
-    readonly finances?: AccountFinance[];
+    readonly ports: AccountInfo[];
     readonly onSelect: (index: number) => void;
     readonly loading: boolean;
 }
 
-export function PortSelection({ ports, finances, onSelect, loading }: Readonly<PortSelectionProps>) {
+export function PortSelection({ ports, onSelect, loading }: Readonly<PortSelectionProps>) {
     if (loading && ports.length === 0) {
         return (
             <Grid container spacing={3}>
@@ -78,19 +77,19 @@ export function PortSelection({ ports, finances, onSelect, loading }: Readonly<P
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                             <Typography variant="body2" sx={{ color: 'text.secondary' }}>Supported Group</Typography>
                                             <Typography variant="body2" sx={{ fontWeight: 600, color: 'primary.main' }}>
-                                                {port.mt5Id % 2 === 0 ? "GPilot" : "PPVP"}
+                                                {port.supportGroup}
                                             </Typography>
                                         </Box>
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                             <Typography variant="body2" sx={{ color: 'text.secondary' }}>Net Profit</Typography>
                                             <Typography variant="body2" sx={{ 
                                                 fontWeight: 600, 
-                                                color: (finances?.[index]?.netProfit ?? 0) >= 0 ? 'success.main' : 'error.main' 
+                                                color: port.netProfit >= 0 ? 'success.main' : 'error.main' 
                                             }}>
                                                 {new Intl.NumberFormat("en-US", {
                                                     style: "currency",
-                                                    currency: port.currency || "USD",
-                                                }).format(finances?.[index]?.netProfit ?? 0)}
+                                                    currency: "USD",
+                                                }).format(port.netProfit)}
                                             </Typography>
                                         </Box>
                                         <Box 
@@ -111,7 +110,7 @@ export function PortSelection({ ports, finances, onSelect, loading }: Readonly<P
                                             <Typography variant="subtitle1" sx={{ fontWeight: 800, color: 'primary.main' }}>
                                                 {new Intl.NumberFormat("en-US", {
                                                     style: "currency",
-                                                    currency: port.currency || "USD",
+                                                    currency: "USD",
                                                 }).format(port.balance)}
                                             </Typography>
                                         </Box>

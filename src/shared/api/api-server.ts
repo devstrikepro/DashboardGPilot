@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { ApiError } from "./api-error";
 import { API_GATEWAY_MAIN, API_GATEWAY_SUB } from "./endpoint";
 
@@ -13,6 +14,15 @@ const SERVER_GATEWAY_MAP: Record<string, string> = {
   "/api/gateway/ror": "https://api.strikeprofx.com",
   "/api/gateway/ror-internal": "http://103.91.191.171:8002",
 };
+
+/**
+ * ตรวจสอบว่าเป็น Error ที่เกิดจากการสั่ง redirect() ของ Next.js หรือไม่
+ */
+export function isRedirectError(error: any): boolean {
+  if (!error || typeof error !== 'object') return false;
+  const digest = error.digest || (error as any).message;
+  return typeof digest === 'string' && digest.startsWith('NEXT_REDIRECT');
+}
 
 /**
  * apiServer
@@ -81,9 +91,21 @@ export async function apiServer<T>(
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const errorMsg = errorData.error || errorData.detail || response.statusText;
+      // ปฏิบัติตาม Layer Separation และ Standard Response
+      const errorDetail = errorData.error || errorData.detail || errorData;
+      const errorMsg = typeof errorDetail === "string" 
+        ? errorDetail 
+        : (errorDetail?.message || response.statusText);
+
+      const errorCode = errorData?.error?.code || errorData?.code;
+
+      // Global Authentication Handling: ถ้า Token หมดอายุ หรือไม่ถูกต้อง ให้ Redirect ไปหน้า Login
+      if (response.status === 401 || errorCode === "SYS_001") {
+        redirect("/login");
+      }
+
       throw new ApiError(
-        typeof errorMsg === "string" ? errorMsg : JSON.stringify(errorMsg),
+        errorMsg,
         response.status,
         errorData
       );
@@ -91,6 +113,7 @@ export async function apiServer<T>(
 
     return (await response.json()) as T;
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     if (error instanceof ApiError) throw error;
     throw new ApiError(error instanceof Error ? error.message : "Network error", 500);
   }

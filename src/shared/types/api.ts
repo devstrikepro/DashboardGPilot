@@ -60,6 +60,7 @@ export interface TradeRequest {
   limit?: number;    // Pagination Alias
   order_by?: string | null;   // Sorting
   order_dir?: 'ASC' | 'DESC'; // Sorting
+  mt5Id?: number;             // สำหรับระบุพอร์ต
 }
 
 // ---------------------------------------------
@@ -205,6 +206,16 @@ export interface AccountFinance {
   readonly totalTrades: number;
   readonly equityCurve: EquityPoint[];
   readonly updated_at: string;
+}
+
+/**
+ * ข้อมูลบัญชี MT5 เบื้องต้น (จาก Backend-Sub /account/info)
+ */
+export interface AccountInfo {
+  readonly mt5Id: number;
+  readonly balance: number;
+  readonly netProfit: number;
+  readonly supportGroup: string;
 }
 
 // ---------------------------------------------

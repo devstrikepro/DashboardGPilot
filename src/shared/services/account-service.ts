@@ -5,6 +5,7 @@ import type {
   ServiceResponse, 
   AccountProfile, 
   AccountFinance,
+  AccountInfo,
   SyncResult
 } from '@/shared/types/api';
 
@@ -17,14 +18,14 @@ export const AccountService = {
   /**
    * ดึงข้อมูลสรุปรายพอร์ตทั้งหมดที่ผู้ใช้ถือครอง
    */
-  getProfile: async (): Promise<ServiceResponse<AccountProfile[]>> => {
+  getProfile: async (mt5Id?: number): Promise<ServiceResponse<AccountProfile | AccountProfile[]>> => {
     try {
-      logger.info('Fetching account profiles from Backend-Sub');
+      logger.info('Fetching account profile(s) from Backend-Sub', { mt5Id });
       
-      const response = await apiClient<ServiceResponse<AccountProfile[]>>(
+      const response = await apiClient<ServiceResponse<AccountProfile | AccountProfile[]>>(
         SUB_ENDPOINTS.ACCOUNT_PROFILE,
         undefined,
-        undefined,
+        mt5Id ? { mt5Id } : undefined,
         API_GATEWAY_SUB
       );
 
@@ -42,14 +43,14 @@ export const AccountService = {
   /**
    * ดึงข้อมูลการเงินและสถิติภาพรวม (Finance, Equity Curve)
    */
-  getFinance: async (): Promise<ServiceResponse<AccountFinance[]>> => {
+  getFinance: async (mt5Id?: number): Promise<ServiceResponse<AccountFinance | AccountFinance[]>> => {
     try {
-      logger.info('Fetching account finance from Backend-Sub');
+      logger.info('Fetching account finance from Backend-Sub', { mt5Id });
       
-      const response = await apiClient<ServiceResponse<AccountFinance[]>>(
+      const response = await apiClient<ServiceResponse<AccountFinance | AccountFinance[]>>(
         SUB_ENDPOINTS.ACCOUNT_FINANCE,
         undefined,
-        undefined,
+        mt5Id ? { mt5Id } : undefined,
         API_GATEWAY_SUB
       );
 
@@ -60,6 +61,31 @@ export const AccountService = {
         success: false,
         data: null,
         error: { code: 'FETCH_ERROR', message: 'ไม่สามารถดึงข้อมูลสถิติการเงินได้' }
+      };
+    }
+  },
+
+  /**
+   * ดึงข้อมูลบัญชี MT5 เบื้องต้น (Listing page)
+   */
+  getInfo: async (): Promise<ServiceResponse<AccountInfo[]>> => {
+    try {
+      logger.info('Fetching account info list from Backend-Sub');
+      
+      const response = await apiClient<ServiceResponse<AccountInfo[]>>(
+        SUB_ENDPOINTS.ACCOUNT_INFO,
+        undefined,
+        undefined,
+        API_GATEWAY_SUB
+      );
+
+      return response;
+    } catch (e) {
+      logger.error('Failed to fetch account info', e instanceof Error ? e : String(e));
+      return {
+        success: false,
+        data: null,
+        error: { code: 'FETCH_ERROR', message: 'ไม่สามารถดึงข้อมูลรายการบัญชีได้' }
       };
     }
   },

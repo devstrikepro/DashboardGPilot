@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import ProductDetailPage from "@/features/product-detail/ProductDetailPage";
-import { apiServer } from "@/shared/api/api-server";
+import { apiServer, isRedirectError } from "@/shared/api/api-server";
 import { ENDPOINTS, API_GATEWAY_SUB } from "@/shared/api/endpoint";
 import type { ServiceResponse, ProductDetail } from "@/shared/types/api";
 
@@ -36,6 +36,7 @@ export default async function Page({ searchParams }: PageProps) {
       initialData = response.data;
     }
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Failed to fetch product detail on server:", error);
   }
 

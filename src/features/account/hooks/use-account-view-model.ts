@@ -5,7 +5,7 @@ import { useAccountData } from "./use-account-data";
 import { useAccountTable, AccountTradeType } from "./use-account-table";
 import type { AccountInitialData } from "../AccountPage";
 
-export function useAccountViewModel(initialData?: AccountInitialData) {
+export function useAccountViewModel(initialData?: AccountInitialData, mt5Id?: number) {
     const tableState = useAccountTable();
 
     const tableParams = useMemo(
@@ -25,7 +25,7 @@ export function useAccountViewModel(initialData?: AccountInitialData) {
         ]
     );
 
-    const accountData = useAccountData(tableParams, initialData);
+    const accountData = useAccountData(tableParams, initialData, mt5Id);
 
     const chartData = useMemo(() => {
         if (!accountData.equityCurve || accountData.equityCurve.length === 0) return [];

@@ -122,13 +122,35 @@ Hooks use `useQuery` to wrap async service calls, returning a standardized inter
 
 ---
 
+## 🏗 Dual-Layer Data Fetching (Server & Client)
+
+ในโปรเจกต์นี้เราเลือกใช้แนวทาง Hybrid เพื่อดึงจุดเด่นของแต่ละส่วนมาใช้:
+
+1. **Server-side (apiServer)**:
+   - **First Load Speed**: ใช้ดึงข้อมูลเริ่มต้น (Initial Data) เพื่อให้ผู้ใช้เห็นเนื้อหาทันทีที่เปิดหน้าเว็บ ลดการเห็น Skeleton หรือหน้าว่าง (SSR)
+   - **SEO**: ช่วยให้ Search Engine สามารถเก็บข้อมูลหน้าเว็บได้ครบถ้วน
+   - **Security**: การจัดการ Token ผ่าน Server-to-Server ช่วยลดความเสี่ยงจากการถูกโจมตีฝั่ง Client ในช่วงโหลดหน้าแรก
+
+2. **Client-side (apiClient)**:
+   - **Interactivity**: ใช้จัดการ Action ต่างๆ (เช่น กดปุ่ม, ส่งฟอร์ม) โดยไม่ต้องรีโหลดหน้าเว็บทั้งหมด (SPA Experience)
+   - **Seamless UX**: รองรับระบบ Refresh Token เบื้องหลัง ทำให้ผู้ใช้ที่กำลังใช้งานอยู่ไม่ถูกขัดจังหวะด้วยการ Redirect
+   - **Real-time Updates**: ใช้ดึงข้อมูลที่ต้องมีการอัปเดตบ่อยๆ (เช่น สถิติการเทรด) หลังจากหน้าเว็บโหลดเสร็จแล้ว เพื่อให้ข้อมูลทันสมัยเสมอ
+
+---
+
 ## 🔐 Token Lifecycle (Reactive Auth)
 
-เราใช้ระบบ **Silent Refresh** เพื่อจัดการ Session ของผู้ใช้:
-1. **Access Token**: อายุสั้น (เช่น 15-60 นาที) เก็บใน Memory/Cookie
-2. **Refresh Token**: อายุยาว (เช่น 7 วัน) เก็บใน LocalStorage/Secure Cookie
-3. **apiClient Interceptor**: เมื่อเจอ `401 Unauthorized` ระบบจะหยุด Request นั้นไว้ชั่วคราว และเรียก `/auth/refresh` อัตโนมัติ
-4. เมื่อได้ Token ใหม่มา ระบบจะทำการ **Retry** Request เดิมให้ทันที โดยที่ผู้ใช้ไม่รู้สึกตัว (Seamless UX)
+เราใช้ระบบ **Silent Refresh** ร่วมกับ **Server-side Redirection** เพื่อจัดการ Session ของผู้ใช้:
+
+### 1. Client-side Handling (apiClient)
+- **apiClient Interceptor**: เมื่อเจอ `401 Unauthorized` ระบบจะหยุด Request นั้นไว้ชั่วคราว และเรียก `/auth/refresh` อัตโนมัติ (ผ่าน `AuthService.refreshToken()`)
+- **Seamless Retry**: เมื่อได้ Token ใหม่มา ระบบจะทำการ **Retry** Request เดิมให้ทันที โดยที่ผู้ใช้ไม่รู้สึกตัว
+- **Final Fallback**: หาก Refresh Token หมดอายุหรือล้มเหลว ระบบจะส่ง Error 401 กลับไปให้ UI แสดงผลหรือสั่ง Logout
+
+### 2. Server-side Handling (apiServer)
+- **Direct Redirect**: เมื่อเรียก API จาก Server Components (SSR) แล้วเจอ 401 ระบบจะทำการสั่ง **`redirect("/login")` ทันที** โดยไม่มีการลอง Refresh Token
+- **Error Handling**: มีการใช้ตัวช่วย `isRedirectError` เพื่อป้องกันไม่ให้ error ของการ redirect ถูกดักจับโดยบล็อก `try-catch` ทั่วไป ซึ่งช่วยให้ Next.js สามารถประมวลผลการเปลี่ยนหน้าเว็บได้อย่างถูกต้อง
+- **เหตุผล**: การจัดการ State และ Cookie Refresh บน Server มีความซับซ้อนสูง การบังคับ Redirect จึงเป็นวิธีที่เสถียรที่สุดสำหรับ SSR ในปัจจุบัน
 
 ---
 

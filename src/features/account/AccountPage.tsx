@@ -4,10 +4,12 @@ import { useState } from "react";
 import { Box, Grid } from "@mui/material";
 import { useAccountViewModel } from "./hooks/use-account-view-model";
 import { ProfileCard, FinancialSummary, AccountHeader, PortSelection } from "./components";
+import { useRouter } from "next/navigation";
 import { BalanceChart, DataTable } from "@/shared/ui";
-import type { AccountProfile, AccountFinance, GroupedTradesResponse } from "@/shared/types/api";
+import type { AccountProfile, AccountFinance, GroupedTradesResponse, AccountInfo } from "@/shared/types/api";
 
 export interface AccountInitialData {
+    info?: AccountInfo[] | null;
     profile?: AccountProfile | AccountProfile[] | null;
     finance?: AccountFinance | AccountFinance[] | null;
     tradesData?: GroupedTradesResponse | GroupedTradesResponse[] | null;
@@ -15,17 +17,18 @@ export interface AccountInitialData {
 
 interface AccountPageProps {
     initialData?: AccountInitialData;
+    mt5Id?: number;
 }
 
-export function AccountPage({ initialData }: AccountPageProps) {
-    const [isDetailView, setIsDetailView] = useState(false);
+export function AccountPage({ initialData, mt5Id }: AccountPageProps) {
+    const router = useRouter();
+    const isDetailView = !!mt5Id;
     
     const {
-        // State & Loading
+        // ... (rest of viewModel remains the same)
         loading,
         tableLoading,
         summary,
-        // Financials
         realBalance,
         grossTradeProfit,
         totalDeposits,
@@ -33,20 +36,16 @@ export function AccountPage({ initialData }: AccountPageProps) {
         totalProfitSharing,
         netProfit,
         growthPercent,
-        // Charts & Tables
         chartData,
         trades,
         totalTrades,
         tradesTotals,
         typeOptions,
-        // Actions
         refreshData,
         formatCurrency,
-        // Multi-Port
-        setActivePortIndex,
         profiles,
         finances,
-        // Table State
+        accountInfoList,
         page,
         setPage,
         rowsPerPage,
@@ -57,11 +56,17 @@ export function AccountPage({ initialData }: AccountPageProps) {
         setStartDate,
         endDate,
         setEndDate,
-    } = useAccountViewModel(initialData);
+    } = useAccountViewModel(initialData, mt5Id);
 
     const handleSelectPort = (index: number) => {
-        setActivePortIndex(index);
-        setIsDetailView(true);
+        const port = accountInfoList[index];
+        if (port) {
+            router.push(`/account/${port.mt5Id}`);
+        }
+    };
+
+    const handleBack = () => {
+        router.push("/account");
     };
 
     return (
@@ -69,13 +74,12 @@ export function AccountPage({ initialData }: AccountPageProps) {
             <AccountHeader 
                 onRefresh={refreshData} 
                 loading={loading} 
-                onBack={isDetailView ? () => setIsDetailView(false) : undefined}
+                onBack={isDetailView ? handleBack : undefined}
             />
 
             {!isDetailView ? (
                 <PortSelection 
-                    ports={profiles} 
-                    finances={finances}
+                    ports={accountInfoList} 
                     onSelect={handleSelectPort} 
                     loading={loading} 
                 />

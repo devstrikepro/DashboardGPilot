@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import HistoryPage from "@/features/history/HistoryPage";
-import { apiServer } from "@/shared/api/api-server";
+import { apiServer, isRedirectError } from "@/shared/api/api-server";
 import { SUB_ENDPOINTS, API_GATEWAY_SUB } from "@/shared/api/endpoint";
 import type { ServiceResponse, GroupedTradesResponse } from "@/shared/types/api";
 
@@ -25,6 +25,7 @@ export default async function Page() {
       initialData = Array.isArray(response.data) ? response.data[0] : response.data;
     }
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Failed to fetch history initial data on server:", error);
   }
 
