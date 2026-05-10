@@ -181,17 +181,21 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
     accountInfoList, // Expose for listing page
     activePortIndex,
     setActivePortIndex,
-    trades: tradesData?.paginated?.list || [],
-    totalTrades: tradesData?.total_trades || 0,
+    trades: (tradesData?.paginated?.list || []).map((deal: any) => ({
+      ...deal,
+      net_profit: deal.net_profit ?? deal.netProfit ?? 0,
+      close_time: deal.close_time ?? deal.time ?? "",
+    })),
+    totalTrades: (tradesData as any)?.totalTrades ?? tradesData?.total_trades ?? 0,
     tradesTotals: {
-      volume: tradesData?.total_volume || 0,
-      grossProfit: tradesData?.gross_profit || 0,
-      grossLoss: tradesData?.gross_loss || 0,
-      netPL: (tradesData as any)?.totalPL ?? (tradesData as any)?.["totalP/L"] ?? tradesData?.net_profit ?? 0,
+      volume: (tradesData as any)?.totalVolume ?? tradesData?.total_volume ?? 0,
+      grossProfit: (tradesData as any)?.grossProfit ?? tradesData?.gross_profit ?? 0,
+      grossLoss: (tradesData as any)?.grossLoss ?? tradesData?.gross_loss ?? 0,
+      netPL: (tradesData as any)?.totalPL ?? (tradesData as any)?.["totalP/L"] ?? tradesData?.net_profit ?? (tradesData as any)?.netProfit ?? 0,
       commission: 0,
       swap: 0,
-      fee: tradesData?.fee || 0,
-      totalTrades: tradesData?.total_trades || 0
+      fee: tradesData?.fee ?? 0,
+      totalTrades: (tradesData as any)?.totalTrades ?? tradesData?.total_trades ?? 0
     },
     realBalance: (finance as any)?.totalBalance ?? profile?.balance ?? 0,
     grossTradeProfit: finance?.grossTradeProfit ?? 0,
