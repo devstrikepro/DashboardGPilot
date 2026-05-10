@@ -6,7 +6,7 @@ interface SymbolStat {
   symbol: string;
   trades: number;
   profit: number;
-  winRate: number;
+  win_rate: number;
 }
 
 interface SymbolPerformanceProps {
@@ -90,13 +90,13 @@ export function SymbolPerformance({ loading, stats, totalTrades }: Readonly<Symb
                   fontWeight: 500,
                 }}
               >
-                {item.winRate.toFixed(2)}%
+                {item.win_rate.toFixed(2)}%
               </Typography>
             </Box>
           </Box>
           <LinearProgress
             variant="determinate"
-            value={item.winRate}
+            value={item.win_rate}
             sx={{
               height: 8,
               borderRadius: 4,

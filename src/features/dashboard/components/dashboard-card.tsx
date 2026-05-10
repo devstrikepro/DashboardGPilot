@@ -21,8 +21,8 @@ export function DashboardCard({ product, onCardClick }: DashboardCardProps) {
             <ProductCard
                 title={product.title}
                 initials={product.initials}
-                avgMonthProfit={summary?.avgProfitMonth ?? 0}
-                percentDD={summary?.DD ?? 0}
+                avgMonthProfit={summary?.avg_profit_month ?? 0}
+                percentDD={summary?.drawdown ?? 0}
                 loading={loading}
                 formatCurrency={formatCurrency}
                 onClick={() => onCardClick(product.title, product.serviceBase)}

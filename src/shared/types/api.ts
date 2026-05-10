@@ -74,25 +74,25 @@ export interface EquityPoint {
 }
 
 export interface PerformanceStats {
-  readonly totalTrades: number;
+  readonly total_trades: number;
   readonly wins: number;
   readonly losses: number;
-  readonly winRate: number;
-  readonly riskRewardRatio: number;
-  readonly avgWin: number;
-  readonly avgLoss: number;
-  readonly profitFactor: number;
-  readonly grossProfit: number;
-  readonly grossLoss: number;
-  readonly totalVolume: number;
-  readonly netProfit: number;
+  readonly win_rate: number;
+  readonly risk_reward_ratio: number;
+  readonly avg_win: number;
+  readonly avg_loss: number;
+  readonly profit_factor: number;
+  readonly gross_profit: number;
+  readonly gross_loss: number;
+  readonly total_volume: number;
+  readonly net_profit: number;
   readonly fee: number;
-  readonly sharpeRatio: number;
-  readonly maxDrawdownPct: number;
-  readonly maxDrawdownAmount: number;
-  readonly recoveryFactor: number;
-  readonly healthScore: number;
-  readonly equityCurve: readonly EquityPoint[];
+  readonly sharpe_ratio: number;
+  readonly max_drawdown_pct: number;
+  readonly max_drawdown_amount: number;
+  readonly recovery_factor: number;
+  readonly health_score: number;
+  readonly equity_curve: readonly EquityPoint[];
 }
 
 // ---------------------------------------------
@@ -103,7 +103,7 @@ export interface SymbolStat {
   readonly symbol: string;
   readonly trades: number;
   readonly profit: number;
-  readonly winRate: number;
+  readonly win_rate: number;
 }
 
 export interface ProductDetailRecentTransaction {
@@ -114,22 +114,22 @@ export interface ProductDetailRecentTransaction {
 }
 
 export interface DashboardSummary {
-  readonly DD: number;
-  readonly avgProfitMonth: number;
+  readonly drawdown: number;
+  readonly avg_profit_month: number;
 }
 
 export interface ProductDetail {
   readonly balance: number;
-  readonly profitToday: number;
-  readonly avgProfitWeek: number;
-  readonly avgProfitMonth: number;
-  readonly winrate: number;
-  readonly recoveryFactor: number;
-  readonly maxdd: number;
-  readonly profitFactor: number;
-  readonly equityCurve: readonly EquityPoint[];
-  readonly symbolStats: {
-    readonly totaltrades: number;
+  readonly profit_today: number;
+  readonly avg_profit_week: number;
+  readonly avg_profit_month: number;
+  readonly win_rate: number;
+  readonly recovery_factor: number;
+  readonly max_drawdown: number;
+  readonly profit_factor: number;
+  readonly equity_curve: readonly EquityPoint[];
+  readonly symbol_statistics: {
+    readonly total_trades: number;
     readonly list: readonly SymbolStat[];
   };
 }
@@ -171,11 +171,11 @@ export interface AccountSummary {
   readonly leverage: number;
   readonly currency: string;
   
-  readonly grossTradeProfit: number;
-  readonly totalDeposits: number;
-  readonly totalWithdrawals: number;
-  readonly totalProfitSharing: number;
-  readonly netProfit: number;
+  readonly gross_trade_profit: number;
+  readonly total_deposits: number;
+  readonly total_withdrawals: number;
+  readonly total_profit_sharing: number;
+  readonly net_profit: number;
 }
 
 /**
@@ -230,48 +230,46 @@ export interface AccountInfo {
 export interface GroupedDeal {
   readonly time: string;
   readonly type: string;
-  readonly netProfit: number;
+  readonly net_profit: number;
   readonly balance: number;
   // Optional fields — Backend-Main full trade data only
   readonly ticket?: number;
-  readonly positionId?: number;
+  readonly position_id?: number;
   readonly symbol?: string;
   readonly entry?: string | null;
   readonly volume?: number;
-  readonly openPrice?: number;
-  readonly closePrice?: number;
+  readonly open_price?: number;
+  readonly close_price?: number;
   readonly profit?: number;
   readonly commission?: number;
   readonly swap?: number;
   readonly fee?: number;
   readonly reason?: string;
   readonly comment?: string;
-  readonly openTime?: string;
-  readonly closeTime?: string;
+  readonly open_time?: string;
+  readonly close_time?: string;
 }
 
 /**
  * โครงสร้าง Response สำหรับรายการเทรดแบบกลุ่ม (พร้อมสถิติสรุป)
  */
 export interface GroupedTradesPage {
-  readonly pageTrades: number;
-  readonly pageTotalPL: number;   // alias: "pagetotalP/L"
-  readonly pageVolume: number;
-  readonly pageGrossProfit: number;
-  readonly pageGrossLoss: number;
-  readonly pageNetProfit: number;
-  readonly pageFee: number;
+  readonly page_trades: number;
+  readonly page_volume: number;
+  readonly page_gross_profit: number;
+  readonly page_gross_loss: number;
+  readonly page_net_profit: number;
+  readonly page_fee: number;
   readonly list: GroupedDeal[];
 }
 
 export interface GroupedTradesResponse {
   readonly mt5Id?: number;
-  readonly totalTrades: number;
-  readonly totalVolume: number;
-  readonly totalPL: number;       // alias: "totalP/L"
-  readonly grossProfit: number;
-  readonly grossLoss: number;
-  readonly netProfit: number;
+  readonly total_trades: number;
+  readonly total_volume: number;
+  readonly gross_profit: number;
+  readonly gross_loss: number;
+  readonly net_profit: number;
   readonly fee: number;
   readonly paginated: GroupedTradesPage;
 }

@@ -182,16 +182,16 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
     activePortIndex,
     setActivePortIndex,
     trades: tradesData?.paginated?.list || [],
-    totalTrades: tradesData?.totalTrades || 0,
+    totalTrades: tradesData?.total_trades || 0,
     tradesTotals: {
-      volume: tradesData?.totalVolume || 0,
-      grossProfit: tradesData?.grossProfit || 0,
-      grossLoss: tradesData?.grossLoss || 0,
-      netPL: tradesData?.totalPL ?? (tradesData as any)?.["totalP/L"] ?? tradesData?.netProfit ?? 0,
+      volume: tradesData?.total_volume || 0,
+      grossProfit: tradesData?.gross_profit || 0,
+      grossLoss: tradesData?.gross_loss || 0,
+      netPL: (tradesData as any)?.totalPL ?? (tradesData as any)?.["totalP/L"] ?? tradesData?.net_profit ?? 0,
       commission: 0,
       swap: 0,
       fee: tradesData?.fee || 0,
-      totalTrades: tradesData?.totalTrades || 0
+      totalTrades: tradesData?.total_trades || 0
     },
     realBalance: (finance as any)?.totalBalance ?? profile?.balance ?? 0,
     grossTradeProfit: finance?.grossTradeProfit ?? 0,

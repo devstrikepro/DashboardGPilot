@@ -6,7 +6,7 @@ import { AnalyticsService } from "@/shared/services/analytics-service";
 import { useApiHealth } from "@/shared/providers/api-health-provider";
 import type { GroupedDeal, GroupedTradesResponse } from "@/shared/types/api";
 
-export type SortField = "symbol" | "netProfit" | "volume" | "closeTime" | "type" | "time" | "balance";
+export type SortField = "symbol" | "net_profit" | "volume" | "close_time" | "type" | "time" | "balance";
 export type SortDirection = "asc" | "desc";
 
 export interface HistoryTotals {
@@ -30,7 +30,7 @@ export function useHistoryData(serviceBase?: string, initialData?: GroupedTrades
   // View States
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [sortField, setSortField] = useState<SortField>("closeTime");
+  const [sortField, setSortField] = useState<SortField>("close_time");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   // Filtering States
@@ -99,7 +99,7 @@ export function useHistoryData(serviceBase?: string, initialData?: GroupedTrades
   }, [data]);
 
   const trades = processedData?.paginated?.list || [];
-  const totalCount = processedData?.totalTrades ?? 0;
+  const totalCount = processedData?.total_trades ?? 0;
   
   const apiTotals: HistoryTotals = useMemo(() => {
     if (!processedData) return {
@@ -108,14 +108,14 @@ export function useHistoryData(serviceBase?: string, initialData?: GroupedTrades
     };
 
     return {
-      volume: processedData.totalVolume,
-      grossProfit: processedData.grossProfit,
-      grossLoss: processedData.grossLoss,
-      netPL: processedData.totalPL ?? (processedData as any)?.["totalP/L"] ?? processedData.netProfit ?? 0,
+      volume: processedData.total_volume,
+      grossProfit: processedData.gross_profit,
+      grossLoss: processedData.gross_loss,
+      netPL: (processedData as any)?.totalPL ?? (processedData as any)?.["totalP/L"] ?? processedData.net_profit ?? 0,
       commission: 0,
       swap: 0,
       fee: processedData.fee,
-      totalTrades: processedData.totalTrades,
+      totalTrades: processedData.total_trades,
     };
   }, [processedData]);
 

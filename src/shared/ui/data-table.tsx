@@ -143,13 +143,14 @@ export function DataTable({
   const pageTotals = useMemo(() => {
     return deals.reduce((acc, d) => ({
       totalTrades: acc.totalTrades + 1,
-      netPL: acc.netPL + d.netProfit,
+      netPL: acc.netPL + (d.net_profit || 0),
     }), { totalTrades: 0, netPL: 0 });
   }, [deals]);
 
   const getDealProfitColor = (profit: number) => {
-    if (profit > 0) return "success.main";
-    if (profit < 0) return "error.main";
+    const val = profit || 0;
+    if (val > 0) return "success.main";
+    if (val < 0) return "error.main";
     return "text.primary";
   };
 
@@ -332,9 +333,9 @@ export function DataTable({
               <TableRow>
                 <TableCell sx={{ color: "text.secondary", fontWeight: 500, borderColor: theme.palette.divider }}>
                   <TableSortLabel
-                    active={sortField === "time" || sortField === "closeTime"}
-                    direction={(sortField === "time" || sortField === "closeTime") ? sortDirection : "asc"}
-                    onClick={() => onSort(variant === "compact" ? "time" : "closeTime")}
+                    active={sortField === "time" || sortField === "close_time"}
+                    direction={(sortField === "time" || sortField === "close_time") ? sortDirection : "asc"}
+                    onClick={() => onSort(variant === "compact" ? "time" : "close_time")}
                   >
                     Time
                   </TableSortLabel>
@@ -378,9 +379,9 @@ export function DataTable({
 
                 <TableCell align="right" sx={{ color: "text.secondary", fontWeight: 500, borderColor: theme.palette.divider }}>
                   <TableSortLabel
-                    active={sortField === "netProfit"}
-                    direction={sortField === "netProfit" ? sortDirection : "asc"}
-                    onClick={() => onSort("netProfit")}
+                    active={sortField === "net_profit"}
+                    direction={sortField === "net_profit" ? sortDirection : "asc"}
+                    onClick={() => onSort("net_profit")}
                   >
                     Net Profit
                   </TableSortLabel>
@@ -397,13 +398,13 @@ export function DataTable({
               {deals.map((deal, idx) => {
                 return (
                   <TableRow
-                    key={deal.ticket || `${deal.time}-${deal.netProfit}-${idx}`}
+                    key={deal.ticket || `${deal.time}-${deal.net_profit}-${idx}`}
                     sx={{
                       "&:hover": { bgcolor: isDark ? "rgba(148, 163, 184, 0.05)" : "rgba(15, 23, 42, 0.02)" },
                     }}
                   >
                     <TableCell sx={{ fontFamily: '"Inter", monospace', fontSize: "0.75rem", color: "text.secondary", borderColor: theme.palette.divider }}>
-                      {formatDateTime(variant === "compact" ? deal.time : deal.closeTime)}
+                      {formatDateTime(variant === "compact" ? deal.time : deal.close_time)}
                     </TableCell>
 
                     {variant === "full" && (
@@ -419,10 +420,10 @@ export function DataTable({
                     {variant === "full" && (
                       <>
                         <TableCell align="right" sx={{ fontFamily: '"Inter", monospace', fontSize: "0.8rem", borderColor: theme.palette.divider }}>
-                          {deal.openPrice?.toFixed(5) ?? "-"}
+                          {deal.open_price?.toFixed(5) ?? "-"}
                         </TableCell>
                         <TableCell align="right" sx={{ fontFamily: '"Inter", monospace', fontSize: "0.8rem", borderColor: theme.palette.divider }}>
-                          {deal.closePrice?.toFixed(5) ?? "-"}
+                          {deal.close_price?.toFixed(5) ?? "-"}
                         </TableCell>
                         <TableCell align="right" sx={{ fontFamily: '"Inter", monospace', color: "text.primary", borderColor: theme.palette.divider }}>
                           {deal.volume?.toFixed(2) ?? "0.00"}
@@ -435,11 +436,11 @@ export function DataTable({
                       sx={{
                         fontFamily: '"Inter", monospace',
                         fontWeight: 600,
-                        color: getDealProfitColor(deal.netProfit),
+                        color: getDealProfitColor(deal.net_profit),
                         borderColor: theme.palette.divider,
                       }}
                     >
-                      {deal.netProfit > 0 ? "+" : ""}${deal.netProfit.toFixed(2)}
+                      {(deal.net_profit || 0) > 0 ? "+" : ""}${(deal.net_profit || 0).toFixed(2)}
                     </TableCell>
 
                     {variant === "compact" && (
@@ -479,8 +480,9 @@ export function DataTable({
         {/* Mobile Card View */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1.5 }}>
           {deals.map((deal, idx) => {
-            const isPositive = deal.netProfit > 0;
-            const isNegative = deal.netProfit < 0;
+            const profit = deal.net_profit || 0;
+            const isPositive = profit > 0;
+            const isNegative = profit < 0;
             
             let profitColor = "text.primary";
             if (isPositive) profitColor = "success.main";
@@ -488,7 +490,7 @@ export function DataTable({
 
             return (
               <Paper
-                key={deal.ticket || `${deal.time}-${deal.netProfit}-${idx}`}
+                key={deal.ticket || `${deal.time}-${deal.net_profit}-${idx}`}
                 elevation={0}
                 sx={{
                   p: 2,
@@ -506,7 +508,7 @@ export function DataTable({
                     )}
                     <Box sx={{ mb: 0.5 }}>{renderDealTypeChip(deal.type)}</Box>
                     <Typography variant="caption" sx={{ color: "text.secondary", fontFamily: '"Inter", monospace' }}>
-                      {formatDateTime(variant === "compact" ? deal.time : deal.closeTime)}
+                      {formatDateTime(variant === "compact" ? deal.time : deal.close_time)}
                     </Typography>
                   </Box>
                   <Box sx={{ textAlign: 'right' }}>
@@ -518,7 +520,7 @@ export function DataTable({
                         color: profitColor
                       }}
                     >
-                      {isPositive ? "+" : ""}${deal.netProfit.toFixed(2)}
+                      {isPositive ? "+" : ""}${(deal.net_profit || 0).toFixed(2)}
                     </Typography>
                     {variant === "compact" && (
                       <Typography variant="caption" sx={{ color: "text.secondary", display: 'block' }}>
@@ -540,11 +542,11 @@ export function DataTable({
                     <Grid container spacing={1}>
                       <Grid size={4}>
                         <Typography variant="caption" sx={{ color: "text.secondary", display: 'block' }}>Open</Typography>
-                        <Typography variant="body2" sx={{ fontSize: '0.8rem' }}>{deal.openPrice?.toFixed(5) ?? "-"}</Typography>
+                        <Typography variant="body2" sx={{ fontSize: '0.8rem' }}>{deal.open_price?.toFixed(5) ?? "-"}</Typography>
                       </Grid>
                       <Grid size={4}>
                         <Typography variant="caption" sx={{ color: "text.secondary", display: 'block' }}>Close</Typography>
-                        <Typography variant="body2" sx={{ fontSize: '0.8rem' }}>{deal.closePrice?.toFixed(5) ?? "-"}</Typography>
+                        <Typography variant="body2" sx={{ fontSize: '0.8rem' }}>{deal.close_price?.toFixed(5) ?? "-"}</Typography>
                       </Grid>
                       <Grid size={4} sx={{ textAlign: 'right' }}>
                         <Typography variant="caption" sx={{ color: "text.secondary", display: 'block' }}>Ticket</Typography>

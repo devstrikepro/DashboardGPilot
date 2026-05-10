@@ -40,7 +40,7 @@ export function useProductDetailData(serviceBase?: string, initialData?: Product
   // Format equity curve สำหรับ chart
   const equityData = useMemo(() => {
     if (!summary) return [];
-    return summary.equityCurve.map((point) => ({
+    return summary.equity_curve.map((point: any) => ({
       date: new Date(point.time).toLocaleDateString("en-US", {
         day: "2-digit",
         month: "short",
@@ -62,21 +62,21 @@ export function useProductDetailData(serviceBase?: string, initialData?: Product
     error,
     account: { balance: summary?.balance ?? 0 },
     equityData,
-    symbolStats: summary?.symbolStats?.list ?? [],
+    symbolStats: summary?.symbol_statistics?.list ?? [],
     recent: [], 
     volumeStats: {
-      tradeCount: summary?.symbolStats?.totaltrades ?? 0,
+      tradeCount: summary?.symbol_statistics?.total_trades ?? 0,
     },
     performance: {
-      winRate: summary?.winrate ?? 0,
-      recoveryFactor: summary?.recoveryFactor ?? 0,
-      maxDrawdown: summary?.maxdd ?? 0,
-      profitFactor: summary?.profitFactor ?? 0,
+      winRate: summary?.win_rate ?? 0,
+      recoveryFactor: summary?.recovery_factor ?? 0,
+      maxDrawdown: summary?.max_drawdown ?? 0,
+      profitFactor: summary?.profit_factor ?? 0,
       sharpeRatio: 0, 
     },
-    profitToday: summary?.profitToday ?? 0,
-    profitWeek: summary?.avgProfitWeek ?? 0,
-    profitMonth: summary?.avgProfitMonth ?? 0,
+    profitToday: summary?.profit_today ?? 0,
+    profitWeek: summary?.avg_profit_week ?? 0,
+    profitMonth: summary?.avg_profit_month ?? 0,
     formatCurrency,
     refreshData,
   };
