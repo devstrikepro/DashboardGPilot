@@ -61,7 +61,7 @@ export function AccountPage({ initialData, mt5Id }: AccountPageProps) {
     const handleSelectPort = (index: number) => {
         const port = accountInfoList[index];
         if (port) {
-            router.push(`/account/${port.mt5Id}`);
+            router.push(`/account/${port.mt5_id}`);
         }
     };
 

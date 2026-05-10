@@ -3,8 +3,8 @@
  */
 export interface RegistrationRequest {
   email: string;
-  mt5Id: number;
-  mt5PasswordEncrypted: string;
+  mt5_id: number;
+  mt5_password_encrypted: string;
 }
 
 /**
@@ -14,7 +14,6 @@ export interface RegistrationResponse {
   id: string;
   email: string;
   defaultPassword?: string;
-  message: string;
 }
 
 /**
@@ -29,14 +28,14 @@ export interface LoginRequest {
  * ผลลัพธ์จากการเข้าสู่ระบบ
  */
 export interface LoginResponse {
-  accessToken: string;
-  refreshToken?: string;
-  tokenType: string;
+  access_token: string;
+  refresh_token?: string;
+  token_type: string;
   user: {
     id: string;
     email: string;
-    role: string;
-    requirePasswordChange?: boolean;
+    role_id: string;
+    require_password_change?: boolean;
     menu: {
       dashboard: string[];
       setting: {
@@ -57,7 +56,7 @@ export interface UserSession {
     id: string;
     email: string;
     role: string;
-    requirePasswordChange?: boolean;
+    require_password_change?: boolean;
     menu: {
       dashboard: string[];
       setting: {

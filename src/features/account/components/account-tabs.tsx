@@ -35,9 +35,9 @@ export function AccountTabs({ activeTab, onChange, ports }: AccountTabsProps) {
                     }
                 }}
             >
-                {ports.map((port) => (
+                {ports.map((port, index) => (
                     <Tab
-                        key={port.mt5Id}
+                        key={`${port.mt5Id}-${index}`}
                         icon={<AccountBalanceWalletIcon sx={{ fontSize: 18 }} />}
                         iconPosition="start"
                         label={`Port: ${port.caption || port.mt5Id}`}

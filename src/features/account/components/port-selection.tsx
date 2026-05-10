@@ -30,7 +30,7 @@ export function PortSelection({ ports, onSelect, loading }: Readonly<PortSelecti
             </Typography>
             <Grid container spacing={3} justifyContent="flex-start">
                 {ports.map((port, index) => (
-                    <Grid key={port.mt5Id} size={{ xs: 12, md: 4 }}>
+                    <Grid key={`${port.mt5_id}-${index}`} size={{ xs: 12, md: 4 }}>
                         <Card 
                             sx={{ 
                                 borderRadius: 4, 
@@ -60,7 +60,7 @@ export function PortSelection({ ports, onSelect, loading }: Readonly<PortSelecti
                                         </Avatar>
                                         <Box sx={{ flex: 1 }}>
                                             <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
-                                                {port.mt5Id}
+                                                {port.mt5_id}
                                             </Typography>
                                         </Box>
                                         <ArrowForwardIcon 
@@ -77,19 +77,19 @@ export function PortSelection({ ports, onSelect, loading }: Readonly<PortSelecti
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                             <Typography variant="body2" sx={{ color: 'text.secondary' }}>Supported Group</Typography>
                                             <Typography variant="body2" sx={{ fontWeight: 600, color: 'primary.main' }}>
-                                                {port.supportGroup}
+                                                {port.support_group}
                                             </Typography>
                                         </Box>
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                             <Typography variant="body2" sx={{ color: 'text.secondary' }}>Net Profit</Typography>
                                             <Typography variant="body2" sx={{ 
                                                 fontWeight: 600, 
-                                                color: port.netProfit >= 0 ? 'success.main' : 'error.main' 
+                                                color: port.net_profit >= 0 ? 'success.main' : 'error.main' 
                                             }}>
                                                 {new Intl.NumberFormat("en-US", {
                                                     style: "currency",
                                                     currency: "USD",
-                                                }).format(port.netProfit)}
+                                                }).format(port.net_profit)}
                                             </Typography>
                                         </Box>
                                         <Box 

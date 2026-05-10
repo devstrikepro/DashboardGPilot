@@ -26,7 +26,7 @@ export const AuthService = {
    * @throws CONFIG_ERROR หากไม่ได้ตั้งค่า Encryption Key
    */
   register: async (
-    data: Omit<RegistrationRequest, 'mt5PasswordEncrypted'> & { mt5_password_plain: string }
+    data: Omit<RegistrationRequest, 'mt5_password_encrypted'> & { mt5_password_plain: string }
   ): Promise<ServiceResponse<RegistrationResponse>> => {
     try {
       logger.info('Registering new user', { email: data.email });
@@ -48,8 +48,8 @@ export const AuthService = {
       // 3. เตรียมข้อมูลส่งให้ Backend-Sub
       const requestData: RegistrationRequest = {
         email: data.email,
-        mt5Id: data.mt5Id,
-        mt5PasswordEncrypted: encryptedPassword
+        mt5_id: data.mt5_id,
+        mt5_password_encrypted: encryptedPassword
       };
 
       // 4. ส่งข้อมูลผ่าน Gateway Proxy
@@ -60,7 +60,12 @@ export const AuthService = {
       
       // จัดการกับ ServiceResponse (ห่อตามมาตรฐาน)
       if (!response.success || !response.data) {
-        return response;
+        return {
+          success: false,
+          data: null,
+          error_code: response.error_code || 'REGISTRATION_ERROR',
+          message: response.message || 'เกิดข้อผิดพลาดในการลงทะเบียน'
+        };
       }
 
       logger.info('User registered successfully', { email: data.email });
@@ -73,7 +78,8 @@ export const AuthService = {
       return {
         success: false,
         data: null,
-        error: { code: 'REGISTRATION_ERROR', message: errorMsg }
+        error_code: 'REGISTRATION_ERROR',
+        message: errorMsg
       };
     }
   },
@@ -113,7 +119,12 @@ export const AuthService = {
       }, undefined, API_GATEWAY_SUB, true);
 
       if (!response.success || !response.data) {
-        return response;
+        return {
+          success: false,
+          data: null,
+          error_code: response.error_code || 'LOGIN_ERROR',
+          message: response.message || 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง'
+        };
       }
 
       const result = response.data;
@@ -121,11 +132,11 @@ export const AuthService = {
       
       // เก็บ Token ใน Cookies/LocalStorage
       if (typeof window !== 'undefined') {
-        localStorage.setItem('auth_token', result.accessToken);
-        if (result.refreshToken) {
-          localStorage.setItem('refresh_token', result.refreshToken);
+        localStorage.setItem('auth_token', result.access_token);
+        if (result.refresh_token) {
+          localStorage.setItem('refresh_token', result.refresh_token);
         }
-        document.cookie = `auth_token=${result.accessToken}; path=/; max-age=86400; SameSite=Strict`;
+        document.cookie = `auth_token=${result.access_token}; path=/; max-age=86400; SameSite=Strict`;
       }
 
       return response;
@@ -137,7 +148,8 @@ export const AuthService = {
       return {
         success: false,
         data: null,
-        error: { code: 'LOGIN_ERROR', message: errorMsg }
+        error_code: 'LOGIN_ERROR',
+        message: errorMsg
       };
     }
   },
@@ -170,16 +182,24 @@ export const AuthService = {
         body: JSON.stringify({ new_password: passwordToSend }),
       }, undefined, API_GATEWAY_SUB);
 
-      if (!response.success) return { success: false, data: undefined, error: response.error };
+      if (!response.success) {
+        return {
+          success: false,
+          data: undefined,
+          error_code: response.error_code || 'UPDATE_PASSWORD_ERROR',
+          message: response.message || 'ไม่สามารถเปลี่ยนรหัสผ่านได้'
+        };
+      }
       
-      return { success: true, data: undefined, error: null };
+      return { success: true, data: undefined };
     } catch (error) {
       const errorMsg = error instanceof ApiError ? error.message : 'ไม่สามารถเปลี่ยนรหัสผ่านได้';
       logger.error('Update password failed', error instanceof Error ? error : String(error));
       return { 
         success: false, 
-        data: null, 
-        error: { code: 'UPDATE_PASSWORD_ERROR', message: errorMsg } 
+        data: null as any, 
+        error_code: 'UPDATE_PASSWORD_ERROR',
+        message: errorMsg 
       };
     }
   },
@@ -203,22 +223,30 @@ export const AuthService = {
           };
       }
 
-      const encryptedPassword = await CryptoUtils.encrypt(newPlainPassword, encryptionKey);
+      const encrypted_password = await CryptoUtils.encrypt(newPlainPassword, encryptionKey);
       const response = await apiClient<ServiceResponse<{ message: string }>>(SUB_ENDPOINTS.AUTH_UPDATE_MT5_PASSWORD, {
         method: 'PATCH',
-        body: JSON.stringify({ mt5Id, encryptedPassword }),
+        body: JSON.stringify({ mt5_id: mt5Id, encrypted_password }),
       }, undefined, API_GATEWAY_SUB);
 
-      if (!response.success) return { success: false, data: undefined, error: response.error };
+      if (!response.success) {
+        return {
+          success: false,
+          data: undefined,
+          error_code: response.error_code || 'UPDATE_MT5_PASSWORD_ERROR',
+          message: response.message || 'ไม่สามารถเปลี่ยนรหัสผ่าน MT5 ได้'
+        };
+      }
 
-      return { success: true, data: undefined, error: null };
+      return { success: true, data: undefined };
     } catch (error) {
       const errorMsg = error instanceof ApiError ? error.message : 'ไม่สามารถเปลี่ยนรหัสผ่าน MT5 ได้';
       logger.error('Update MT5 password failed', error instanceof Error ? error : String(error));
       return { 
         success: false, 
-        data: null, 
-        error: { code: 'UPDATE_MT5_PASSWORD_ERROR', message: errorMsg } 
+        data: null as any, 
+        error_code: 'UPDATE_MT5_PASSWORD_ERROR',
+        message: errorMsg 
       };
     }
   },
@@ -246,12 +274,12 @@ export const AuthService = {
       // เรียก API โดยตรงเพื่อเลี่ยง Infinite Loop ใน apiClient
       const response = await apiClient<ServiceResponse<LoginResponse>>(SUB_ENDPOINTS.AUTH_REFRESH, {
         method: 'POST',
-        body: JSON.stringify({ refreshToken: refreshToken }),
+        body: JSON.stringify({ refresh_token: refreshToken }),
       }, undefined, API_GATEWAY_SUB, true);
 
       if (!response.success || !response.data) {
         // ถ้า Refresh ไม่ผ่าน ให้ล้าง Token และ Logout
-        logger.error('Token refresh failed', response.error?.message || 'Session expired', { error: response.error });
+        logger.error('Token refresh failed', response.message || 'Session expired', { error_code: response.error_code });
         localStorage.removeItem('auth_token');
         localStorage.removeItem('refresh_token');
         document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
@@ -259,11 +287,11 @@ export const AuthService = {
       }
 
       const result = response.data;
-      localStorage.setItem('auth_token', result.accessToken);
-      if (result.refreshToken) {
-        localStorage.setItem('refresh_token', result.refreshToken);
+      localStorage.setItem('auth_token', result.access_token);
+      if (result.refresh_token) {
+        localStorage.setItem('refresh_token', result.refresh_token);
       }
-      document.cookie = `auth_token=${result.accessToken}; path=/; max-age=86400; SameSite=Strict`;
+      document.cookie = `auth_token=${result.access_token}; path=/; max-age=86400; SameSite=Strict`;
 
       logger.info('Token refreshed successfully');
       return response;
@@ -273,7 +301,8 @@ export const AuthService = {
       return {
         success: false,
         data: null,
-        error: { code: 'REFRESH_TOKEN_EXCEPTION', message: 'เกิดข้อผิดพลาดในการต่ออายุเซสชัน' }
+        error_code: 'REFRESH_TOKEN_EXCEPTION',
+        message: 'เกิดข้อผิดพลาดในการต่ออายุเซสชัน'
       };
     }
   }

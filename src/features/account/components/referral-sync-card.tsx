@@ -109,9 +109,9 @@ export function ReferralSyncCard() {
     const headers = ["วันที่", "Account ID", "Email", "ยอดที่หัก (USD)", "สถานะ", "หมายเหตุ"];
     const rows = data.map(t => [
       formatDate(t.time),
-      t.accountId,
-      t.userEmail ?? '',
-      Math.abs(t.netProfit).toFixed(2),
+      t.mt_id,
+      t.user_email ?? '',
+      Math.abs(t.net_profit).toFixed(2),
       'สำเร็จ',
       t.comment ?? ''
     ]);
@@ -242,7 +242,7 @@ export function ReferralSyncCard() {
                   COMMISSION THIS WEEK
                 </Typography>
                 <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5, color: 'text.primary' }}>
-                  ${(Array.isArray(data) ? data : []).reduce((acc, curr) => acc + Math.abs(curr.netProfit), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  ${(Array.isArray(data) ? data : []).reduce((acc, curr) => acc + Math.abs(curr.net_profit), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </Typography>
               </Box>
               <Box sx={{ 
@@ -276,11 +276,11 @@ export function ReferralSyncCard() {
                       <TableRow key={`${trade.ticket}-${index}`} hover>
                         <TableCell>
                           <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {trade.accountId.replace('MT5_', '')}
+                            {String(trade.mt_id).replace('MT5_', '')}
                           </Typography>
-                          {trade.userEmail && (
+                          {trade.user_email && (
                             <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>
-                              {trade.userEmail}
+                              {trade.user_email}
                             </Typography>
                           )}
                         </TableCell>
@@ -293,7 +293,7 @@ export function ReferralSyncCard() {
                         )}
                         <TableCell align="right">
                           <Typography variant="body2" sx={{ fontWeight: 700, color: 'success.main' }}>
-                            ${Math.abs(trade.netProfit).toFixed(2)}
+                            ${Math.abs(trade.net_profit).toFixed(2)}
                           </Typography>
                         </TableCell>
                         <TableCell align="center">

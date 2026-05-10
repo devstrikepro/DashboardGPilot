@@ -25,9 +25,18 @@ export const AccountService = {
       const response = await apiClient<ServiceResponse<AccountProfile | AccountProfile[]>>(
         SUB_ENDPOINTS.ACCOUNT_PROFILE,
         undefined,
-        mt5Id ? { mt5Id } : undefined,
+        mt5Id ? { mt5_id: mt5Id } : undefined,
         API_GATEWAY_SUB
       );
+
+      if (!response.success) {
+        return {
+          success: false,
+          data: null,
+          error_code: response.error_code || 'FETCH_ERROR',
+          message: response.message || 'ไม่สามารถดึงข้อมูลโปรไฟล์บัญชีได้'
+        };
+      }
 
       return response;
     } catch (e) {
@@ -35,7 +44,8 @@ export const AccountService = {
       return {
         success: false,
         data: null,
-        error: { code: 'FETCH_ERROR', message: 'ไม่สามารถดึงข้อมูลโปรไฟล์บัญชีได้' }
+        error_code: 'FETCH_ERROR',
+        message: 'ไม่สามารถดึงข้อมูลโปรไฟล์บัญชีได้'
       };
     }
   },
@@ -50,9 +60,18 @@ export const AccountService = {
       const response = await apiClient<ServiceResponse<AccountFinance | AccountFinance[]>>(
         SUB_ENDPOINTS.ACCOUNT_FINANCE,
         undefined,
-        mt5Id ? { mt5Id } : undefined,
+        mt5Id ? { mt5_id: mt5Id } : undefined,
         API_GATEWAY_SUB
       );
+
+      if (!response.success) {
+        return {
+          success: false,
+          data: null,
+          error_code: response.error_code || 'FETCH_ERROR',
+          message: response.message || 'ไม่สามารถดึงข้อมูลสถิติการเงินได้'
+        };
+      }
 
       return response;
     } catch (e) {
@@ -60,7 +79,8 @@ export const AccountService = {
       return {
         success: false,
         data: null,
-        error: { code: 'FETCH_ERROR', message: 'ไม่สามารถดึงข้อมูลสถิติการเงินได้' }
+        error_code: 'FETCH_ERROR',
+        message: 'ไม่สามารถดึงข้อมูลสถิติการเงินได้'
       };
     }
   },
@@ -79,13 +99,23 @@ export const AccountService = {
         API_GATEWAY_SUB
       );
 
+      if (!response.success) {
+        return {
+          success: false,
+          data: null,
+          error_code: response.error_code || 'FETCH_ERROR',
+          message: response.message || 'ไม่สามารถดึงข้อมูลรายการบัญชีได้'
+        };
+      }
+
       return response;
     } catch (e) {
       logger.error('Failed to fetch account info', e instanceof Error ? e : String(e));
       return {
         success: false,
         data: null,
-        error: { code: 'FETCH_ERROR', message: 'ไม่สามารถดึงข้อมูลรายการบัญชีได้' }
+        error_code: 'FETCH_ERROR',
+        message: 'ไม่สามารถดึงข้อมูลรายการบัญชีได้'
       };
     }
   },
@@ -104,13 +134,23 @@ export const AccountService = {
         API_GATEWAY_SUB
       );
 
+      if (!response.success) {
+        return {
+          success: false,
+          data: null,
+          error_code: response.error_code || 'SYNC_ERROR',
+          message: response.message || 'การซิงค์ข้อมูลล้มเหลว'
+        };
+      }
+
       return response;
     } catch (e) {
       logger.error('Manual sync failed', e instanceof Error ? e : String(e));
       return {
         success: false,
         data: null,
-        error: { code: 'SYNC_ERROR', message: 'การซิงค์ข้อมูลล้มเหลว' }
+        error_code: 'SYNC_ERROR',
+        message: 'การซิงค์ข้อมูลล้มเหลว'
       };
     }
   }

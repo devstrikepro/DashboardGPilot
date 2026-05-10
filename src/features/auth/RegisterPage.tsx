@@ -51,7 +51,7 @@ function RegisterContent() {
     try {
       const res = await AuthService.register({
         email,
-        mt5Id: Number(mt5Id),
+        mt5_id: Number(mt5Id),
         mt5_password_plain: investorPassword
       });
 

@@ -12,19 +12,31 @@ export interface ErrorDetail {
 }
 
 /**
- * มาตรฐานการตอบกลับจาก Backend
+ * มาตรฐานการตอบกลับจาก Backend (AntiGravity Standard)
  * @template T ประเภทของข้อมูลที่อยู่ในฟิลด์ data
  */
 export interface ServiceResponse<T> {
   readonly success: boolean;
+  readonly message?: string;
   readonly data: T | null;
-  readonly error: ErrorDetail | null;
+  readonly error?: ErrorDetail | null;
+  readonly error_code?: string | null;
   readonly meta?: {
     total: number;
     page?: number;
     limit?: number;
-    totalPage?:number;
+    total_pages?: number;
   } | null;
+}
+
+/**
+ * Standard API response wrapper (Matching Backend-Sub StandardResponse)
+ */
+export interface StandardResponse<T> {
+  readonly success: boolean;
+  readonly message: string;
+  readonly data: T | null;
+  readonly error_code?: string | null;
 }
 
 
@@ -60,7 +72,7 @@ export interface TradeRequest {
   limit?: number;    // Pagination Alias
   order_by?: string | null;   // Sorting
   order_dir?: 'ASC' | 'DESC'; // Sorting
-  mt5Id?: number;             // สำหรับระบุพอร์ต
+  mt5_id?: number;             // สำหรับระบุพอร์ต
 }
 
 // ---------------------------------------------
@@ -182,29 +194,29 @@ export interface AccountSummary {
  * ข้อมูลสรุปรายพอร์ต (จาก Backend-Sub /account/profile)
  */
 export interface AccountProfile {
-  readonly mt5Id: number;
+  readonly mt5_id: number;
   readonly name: string;
   readonly server: string;
   readonly currency: string;
   readonly balance: number;
   readonly leverage: number;
-  readonly updatedAt: string;
+  readonly updated_at: string;
 }
 
 /**
  * ข้อมูลสถิติและการเงินภาพรวม (จาก Backend-Sub /account/finance)
  */
 export interface AccountFinance {
-  readonly mt5Id?: number;
+  readonly mt5_id?: number;
   readonly user_id: string;
-  readonly grossTradeProfit: number;
-  readonly totalDeposits: number;
-  readonly totalWithdrawals: number;
-  readonly totalProfitSharing: number;
-  readonly netProfit: number;
-  readonly totalBalance: number;
-  readonly totalTrades: number;
-  readonly equityCurve: EquityPoint[];
+  readonly gross_trade_profit: number;
+  readonly total_deposits: number;
+  readonly total_withdrawals: number;
+  readonly total_profit_sharing: number;
+  readonly net_profit: number;
+  readonly total_balance: number;
+  readonly total_trades: number;
+  readonly equity_curve: EquityPoint[];
   readonly updated_at: string;
 }
 
@@ -212,10 +224,10 @@ export interface AccountFinance {
  * ข้อมูลบัญชี MT5 เบื้องต้น (จาก Backend-Sub /account/info)
  */
 export interface AccountInfo {
-  readonly mt5Id: number;
+  readonly mt5_id: number;
   readonly balance: number;
-  readonly netProfit: number;
-  readonly supportGroup: string;
+  readonly net_profit: number;
+  readonly support_group: string;
 }
 
 // ---------------------------------------------
@@ -264,7 +276,7 @@ export interface GroupedTradesPage {
 }
 
 export interface GroupedTradesResponse {
-  readonly mt5Id?: number;
+  readonly mt5_id?: number;
   readonly total_trades: number;
   readonly total_volume: number;
   readonly gross_profit: number;
@@ -279,8 +291,8 @@ export interface GroupedTradesResponse {
 // ---------------------------------------------
 
 export interface ReferralSyncSummary {
-  readonly successCount: number;
-  readonly failedUsers: { email: string; error: string }[];
+  readonly success_count: number;
+  readonly failed_users: { email: string; error: string }[];
 }
 
 export interface ReferralSyncRequest {
@@ -292,8 +304,8 @@ export interface ReferralSyncRequest {
  * ผลลัพธ์การ Sync รายพอร์ต (Backend-Sub /account/sync)
  */
 export interface SyncResult {
-  readonly mt5Id: number;
-  readonly syncedCount: number;
+  readonly mt5_id: number;
+  readonly synced_count: number;
   readonly success: boolean;
   readonly message?: string | null;
 }

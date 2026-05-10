@@ -51,9 +51,9 @@ export function LoginPage() {
 
       if (res.success && res.data) {
         // อัปเดต Client-side Storage เพื่อความต่อเนื่องของ UI
-        localStorage.setItem('auth_token', res.data.accessToken);
-        if (res.data.refreshToken) {
-          localStorage.setItem('refresh_token', res.data.refreshToken);
+        localStorage.setItem('auth_token', res.data.access_token);
+        if (res.data.refresh_token) {
+          localStorage.setItem('refresh_token', res.data.refresh_token);
         }
         localStorage.setItem('user_info', JSON.stringify(res.data.user));
 
@@ -62,7 +62,7 @@ export function LoginPage() {
 
         // ตรวจสอบว่าต้องเปลี่ยนรหัสผ่านหรือไม่
         const isPasswordChangeRequired = 
-          res.data.user.requirePasswordChange || 
+          res.data.user.require_password_change || 
           res.error?.code === "AUTH_PASSWORD_CHANGE_REQUIRED";
 
         if (isPasswordChangeRequired) {

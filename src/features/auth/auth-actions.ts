@@ -24,11 +24,11 @@ export async function loginAction(data: LoginRequest): Promise<ServiceResponse<L
     );
 
     if (response.success && response.data) {
-      const { accessToken, refreshToken } = response.data;
+      const { access_token, refresh_token } = response.data;
       const cookieStore = await cookies();
 
       // บันทึก Token ลงใน Cookie ฝั่ง Server
-      cookieStore.set("auth_token", accessToken, {
+      cookieStore.set("auth_token", access_token, {
         path: "/",
         maxAge: 86400, // 1 day
         httpOnly: true, // เพิ่มความปลอดภัย
@@ -36,8 +36,8 @@ export async function loginAction(data: LoginRequest): Promise<ServiceResponse<L
         sameSite: "strict",
       });
 
-      if (refreshToken) {
-        cookieStore.set("refresh_token", refreshToken, {
+      if (refresh_token) {
+        cookieStore.set("refresh_token", refresh_token, {
           path: "/",
           maxAge: 604800, // 7 days
           httpOnly: true,

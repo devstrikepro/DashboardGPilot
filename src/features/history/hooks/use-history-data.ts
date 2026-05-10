@@ -81,7 +81,7 @@ export function useHistoryData(serviceBase?: string, initialData?: GroupedTrades
       }, serviceBase);
 
       if (!response.success || !response.data) {
-        throw new Error(response.error?.message ?? "Failed to fetch trade history");
+        throw new Error(response.message ?? "Failed to fetch trade history");
       }
 
       return response.data;
@@ -111,7 +111,7 @@ export function useHistoryData(serviceBase?: string, initialData?: GroupedTrades
       volume: processedData.total_volume,
       grossProfit: processedData.gross_profit,
       grossLoss: processedData.gross_loss,
-      netPL: (processedData as any)?.totalPL ?? (processedData as any)?.["totalP/L"] ?? processedData.net_profit ?? 0,
+      netPL: processedData.net_profit ?? 0,
       commission: 0,
       swap: 0,
       fee: processedData.fee,

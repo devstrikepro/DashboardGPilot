@@ -29,6 +29,7 @@ export const AnalyticsService = {
       if (params?.to_date) mappedParams.end_date = params.to_date;
       if (params?.pageNumber) mappedParams.page = params.pageNumber;
       if (params?.pageSize) mappedParams.limit = params.pageSize;
+      if (params?.mt5_id) mappedParams.mt5_id = params.mt5_id;
 
       const endpoint = serviceBase?.includes('/sub') ? SUB_ENDPOINTS.TRADES : ENDPOINTS.TRADES_GROUPED;
       
@@ -49,7 +50,7 @@ export const AnalyticsService = {
     } catch (e: unknown) {
       const errorMsg = e instanceof ApiError ? e.message : 'เกิดข้อผิดพลาดในการดึง grouped trades';
       logger.error('Failed to fetch grouped trades', e instanceof Error ? e : String(e));
-      return { success: false, data: null, error: { code: 'FETCH_ERROR', message: errorMsg } };
+      return { success: false, data: null, error_code: 'FETCH_ERROR', message: errorMsg };
     }
   },
 
@@ -69,7 +70,7 @@ export const AnalyticsService = {
     } catch (e: unknown) {
       const errorMsg = e instanceof ApiError ? e.message : 'เกิดข้อผิดพลาดในการดึง dashboard summary';
       logger.error('Failed to fetch dashboard summary', e instanceof Error ? e : String(e));
-      return { success: false, data: null, error: { code: 'FETCH_ERROR', message: errorMsg } };
+      return { success: false, data: null, error_code: 'FETCH_ERROR', message: errorMsg };
     }
   },
 
@@ -89,7 +90,7 @@ export const AnalyticsService = {
     } catch (e: unknown) {
       const errorMsg = e instanceof ApiError ? e.message : 'เกิดข้อผิดพลาดในการดึง product detail';
       logger.error('Failed to fetch product detail', e instanceof Error ? e : String(e));
-      return { success: false, data: null, error: { code: 'FETCH_ERROR', message: errorMsg } };
+      return { success: false, data: null, error_code: 'FETCH_ERROR', message: errorMsg };
     }
   },
 };

@@ -47,7 +47,7 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
       if (res.success && res.data) {
         setAccountInfoList(res.data);
       } else if (!res.success) {
-        setError(res.error?.message || "Failed to fetch account list");
+        setError(res.message || "Failed to fetch account list");
       }
     } catch (err) {
       setError("An unexpected error occurred while fetching account list.");
@@ -78,7 +78,7 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
       }
       
       if (!profileRes.success || !financeRes.success) {
-        setError(profileRes.error?.message || financeRes.error?.message || "Failed to fetch account info");
+        setError(profileRes.message || financeRes.message || "Failed to fetch account info");
       }
     } catch (err) {
       setError("An unexpected error occurred while fetching account info.");
@@ -95,7 +95,7 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
     setTableLoading(true);
     try {
       const tradesRes = await AnalyticsService.getGroupedTrades({
-        mt5Id: targetMt5Id,
+        mt5_id: targetMt5Id,
         page: tableParams?.page || 1,
         limit: tableParams?.limit || 10,
         type: tableParams?.type || null,
@@ -108,7 +108,7 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
         const dataList = Array.isArray(tradesRes.data) ? tradesRes.data : [tradesRes.data];
         setAllTradesData(dataList);
       } else if (!tradesRes.success) {
-        setError(tradesRes.error?.message || "Failed to fetch trades");
+        setError(tradesRes.message || "Failed to fetch trades");
       }
     } catch (err) {
       setError("An unexpected error occurred while fetching trades.");
@@ -138,7 +138,7 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
   // 3. Sync activePortIndex with mt5Id from URL
   useEffect(() => {
     if (mt5Id && profiles.length > 0) {
-      const index = profiles.findIndex(p => p.mt5Id === mt5Id);
+      const index = profiles.findIndex(p => p.mt5_id === mt5Id);
       if (index !== -1 && index !== activePortIndex) {
         setActivePortIndex(index);
       }
@@ -160,7 +160,7 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
     if (!profile) return null;
     return {
       name: profile.name,
-      login: profile.mt5Id,
+      login: profile.mt5_id,
       server: profile.server,
       leverage: profile.leverage,
       currency: profile.currency,
@@ -183,27 +183,27 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
     setActivePortIndex,
     trades: (tradesData?.paginated?.list || []).map((deal: any) => ({
       ...deal,
-      net_profit: deal.net_profit ?? deal.netProfit ?? 0,
+      net_profit: deal.net_profit ?? 0,
       close_time: deal.close_time ?? deal.time ?? "",
     })),
-    totalTrades: (tradesData as any)?.totalTrades ?? tradesData?.total_trades ?? 0,
+    totalTrades: tradesData?.total_trades ?? 0,
     tradesTotals: {
-      volume: (tradesData as any)?.totalVolume ?? tradesData?.total_volume ?? 0,
-      grossProfit: (tradesData as any)?.grossProfit ?? tradesData?.gross_profit ?? 0,
-      grossLoss: (tradesData as any)?.grossLoss ?? tradesData?.gross_loss ?? 0,
-      netPL: (tradesData as any)?.totalPL ?? (tradesData as any)?.["totalP/L"] ?? tradesData?.net_profit ?? (tradesData as any)?.netProfit ?? 0,
+      volume: tradesData?.total_volume ?? 0,
+      grossProfit: tradesData?.gross_profit ?? 0,
+      grossLoss: tradesData?.gross_loss ?? 0,
+      netPL: tradesData?.net_profit ?? 0,
       commission: 0,
       swap: 0,
       fee: tradesData?.fee ?? 0,
-      totalTrades: (tradesData as any)?.totalTrades ?? tradesData?.total_trades ?? 0
+      totalTrades: tradesData?.total_trades ?? 0
     },
-    realBalance: (finance as any)?.totalBalance ?? profile?.balance ?? 0,
-    grossTradeProfit: finance?.grossTradeProfit ?? 0,
-    totalDeposits: finance?.totalDeposits ?? 0,
-    totalWithdrawals: finance?.totalWithdrawals ?? 0,
-    totalProfitSharing: finance?.totalProfitSharing ?? 0,
-    netProfit: finance?.netProfit ?? 0,
-    equityCurve: finance?.equityCurve || [],
+    realBalance: finance?.total_balance ?? profile?.balance ?? 0,
+    grossTradeProfit: finance?.gross_trade_profit ?? 0,
+    totalDeposits: finance?.total_deposits ?? 0,
+    totalWithdrawals: finance?.total_withdrawals ?? 0,
+    totalProfitSharing: finance?.total_profit_sharing ?? 0,
+    netProfit: finance?.net_profit ?? 0,
+    equityCurve: finance?.equity_curve || [],
     formatCurrency,
     refreshData: async () => {
       setLoading(true);
