@@ -44,10 +44,14 @@ const withBeAuth = async <T>(fn: (token: string) => Promise<T>): Promise<T> => {
 };
 
 export interface RorTokenRefreshResponse {
+  code: number;
   data: {
-    accessToken: { token: string; expiresIn: number };
-    refreshToken: { token: string; expiresIn: number } | null;
+    accessToken: { token: string; createdAt: string; expiresAt: string };
+    refreshToken: { token: string; createdAt: string; expiresAt: string } | null;
   };
+  done: boolean;
+  uuid: string;
+  workflow: string;
 }
 
 /**
@@ -72,7 +76,7 @@ const withRorAuth = async <T>(fn: (token: string) => Promise<T>): Promise<T> => 
       let refreshResult: RorTokenRefreshResponse;
       try {
         refreshResult = await apiClient<RorTokenRefreshResponse>(
-          ROR_ENDPOINTS.AUTH_REFRESH_REFRESH,
+          ROR_ENDPOINTS.AUTH_REFRESH,
           {
             method: "POST",
             headers: { "Content-Type": "application/json", Accept: "application/json" },
@@ -81,11 +85,13 @@ const withRorAuth = async <T>(fn: (token: string) => Promise<T>): Promise<T> => 
           undefined,
           SERVICE_BASE_ROR
         );
-      } catch {
+      } catch (refreshError) {
         if (typeof window !== "undefined") {
           ["ror_auth_token", "ror_refresh_token", "ror_device_fingerprint"].forEach((k) => localStorage.removeItem(k));
         }
-        throw new ApiError("Session expired. Please login again.", 401);
+        const msg = refreshError instanceof ApiError ? refreshError.message : "Session expired. Please login again.";
+        console.error("[ROR] Token refresh failed:", msg, refreshError);
+        throw new ApiError(msg, 401);
       }
 
       const newAccessToken = refreshResult.data.accessToken.token;
@@ -328,32 +334,17 @@ export const RorService = {
   },
 
   /**
-   * ดึงสถิติรายพอร์ต (Internal API) — ใช้ BE Token พร้อม Auto-Refresh
+   * ดึงสถิติรายพอร์ต (Winrate, Profit, Balance) (Internal API) — ใช้ BE Token พร้อม Auto-Refresh
    */
-  getPortStats: async (): Promise<ServiceResponse<any>> => {
+  getPortGods: async (): Promise<ServiceResponse<any>> => {
     try {
       const result = await withBeAuth((token) =>
-        apiClient<any>(ROR.PORT_STATS, { method: "GET", headers: { Authorization: `Bearer ${token}` } }, undefined, SERVICE_BASE_ROR_INTERNAL)
+        apiClient<any>(ROR.PORT_GODS, { method: "GET", headers: { Authorization: `Bearer ${token}` } }, undefined, SERVICE_BASE_ROR_INTERNAL)
       );
 
-      return { success: true, data: result, error: null };
+      return { success: true, data: result.data, error: null };
     } catch (error) {
-      return { success: false, data: null, error: { code: "STATS_ERROR", message: "ไม่สามารถดึงข้อมูลสถิติได้" } };
-    }
-  },
-
-  /**
-   * ดึงข้อมูลจำนวนการ Support (Internal API) — ใช้ BE Token พร้อม Auto-Refresh
-   */
-  getSupportCounts: async (): Promise<ServiceResponse<any>> => {
-    try {
-      const result = await withBeAuth((token) =>
-        apiClient<any>(ROR.SUPPORT_COUNTS, { method: "GET", headers: { Authorization: `Bearer ${token}` } }, undefined, SERVICE_BASE_ROR_INTERNAL)
-      );
-
-      return { success: true, data: result, error: null };
-    } catch (error) {
-      return { success: false, data: null, error: { code: "SUPPORT_COUNTS_ERROR", message: "ไม่สามารถดึงข้อมูลการ Support ได้" } };
+      return { success: false, data: null, error: { code: "PORT_GODS_ERROR", message: "ไม่สามารถดึงข้อมูลสถิติพอร์ตได้" } };
     }
   },
 

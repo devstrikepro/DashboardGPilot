@@ -82,20 +82,21 @@ export const SUB_ENDPOINTS = {
 
 /**
  * รายการ Endpoint ของ Record of Ragnarok (Dedicated Service)
+ * อ้างอิง: B2Broker Front-Office API v2
  */
 export const ROR_ENDPOINTS = {
-  /** Wizard สำหรับดึง UUID */
+  /** Step 1: ดึง UUID สำหรับ signin wizard */
   WIZARD: `/api/v2/my/signin/wizard`,
-  /** เข้าสู่ระบบเฉพาะ ROR (B2Broker/STKPRO) */
+  /** Step 2: เข้าสู่ระบบด้วย email + password + deviceFingerprint */
   AUTH_LOGIN: `/api/v2/my/signin`,
-  /** Refresh Access Token (B2Broker) */
-  AUTH_REFRESH: `/api/v2/my/refresh`,
-  /** Refresh tokens using a refresh token (B2Broker) */
-  AUTH_REFRESH_REFRESH: `/api/v2/my/auth/refresh`,
-  /** ยืนยันรหัส 2FA Google */
+  /** Refresh Access Token ด้วย refreshToken + deviceFingerprint */
+  AUTH_REFRESH: `/api/v2/my/auth/refresh`,
+  /** ยืนยันรหัส 2FA Google Authenticator */
   AUTH_2FA_GOOGLE: `/api/v2/my/2fa/google`,
   /** ยืนยันรหัส 2FA SMS */
   AUTH_2FA_SMS: `/api/v2/my/2fa/sms`,
+  /** ยืนยันรหัส 2FA Email */
+  AUTH_2FA_EMAIL: `/api/v2/my/2fa/email`,
   /** ดึงข้อมูลบัญชีเทรด */
   ACCOUNTS: "/api/v2/my/accounts",
 } as const;
@@ -112,9 +113,7 @@ export const ROR = {
   /** เช็คสถานะ API และ Database */
   HEALTH: `/api/v1/health`,
   /** ดึงสถิติรายพอร์ต (Winrate, Profit, Balance) */
-  PORT_STATS: `/api/v1/ports/stats`,
-  /** ดึงข้อมูล Support Counts (Active/Expired) */
-  SUPPORT_COUNTS: `/api/v1/ports/counts`,
+  PORT_GODS: `/api/v1/ports/gods`,
   /** บันทึกข้อมูล Support ใหม่ */
   SUPPORT_ADD: `/api/v1/support`,
   /** ดึงข้อมูล Support Info รายพอร์ต */
