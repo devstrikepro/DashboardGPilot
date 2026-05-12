@@ -9,7 +9,7 @@ import { useThemeMode } from "@/shared/ui";
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: Dashboard },
   { label: "My Portfolio", href: "/account", icon: Person },
-  { label: "Wallet", href: "/wallet", icon: Wallet },
+  // { label: "Wallet", href: "/wallet", icon: Wallet },
 ];
 
 export function Sidebar() {
