@@ -18,7 +18,7 @@ const nextConfig = {
       },
       {
         source: '/api/gateway/ror-internal/:path*',
-        destination: 'http://103.91.191.171:8002/:path*',
+        destination: 'http://123.253.62.147:8000/:path*',
       },
       {
         source: '/api/gateway/:account/:path*',

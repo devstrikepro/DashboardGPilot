@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   --font-inter: 'Inter', sans-serif;
   --font-manrope: 'Manrope', sans-serif;

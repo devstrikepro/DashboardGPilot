@@ -9,7 +9,6 @@ export const SERVICE_BASE_GOLDENBOY = "/api/gateway/goldenboy";
 export const SERVICE_BASE_ROR = "/api/gateway/ror";
 export const SERVICE_BASE_ROR_INTERNAL = "/api/gateway/ror-internal";
 
-
 /**
  * กำหนด Base Paths สำหรับ API Gateway
  */
@@ -43,7 +42,7 @@ export const MAIN_ENDPOINTS = {
 export const SUB_ENDPOINTS = {
   /** เช็คสถานะ API และ Database */
   HEALTH: `/health`,
-  
+
   // Auth Endpoints
   /** ลงทะเบียนผู้ใช้ใหม่ */
   AUTH_REGISTER: `/auth/register`,
@@ -55,7 +54,7 @@ export const SUB_ENDPOINTS = {
   AUTH_UPDATE_PASSWORD: `/auth/password`,
   /** เปลี่ยนรหัสผ่าน MT5 */
   AUTH_UPDATE_MT5_PASSWORD: `/auth/mt5-password`,
-  
+
   // Account Endpoints (Own Data)
   /** ดึงข้อมูลสรุปบัญชี (Balance, Server, Currency) */
   ACCOUNT_PROFILE: `/account/profile`,
@@ -67,7 +66,7 @@ export const SUB_ENDPOINTS = {
   ACCOUNT_SYNC: `/account/sync`,
   /** ดึงข้อมูลบัญชี MT5 เบื้องต้น (mt5Id, balance, netProfit, supportGroup) */
   ACCOUNT_INFO: `/account/info`,
-  
+
   // Referral Endpoints (Team Data)
   /** ดึงข้อมูลเทรดที่ Sync แล้ว (ของ Referral) */
   REFERRAL_TRADES: `/referral/trades`,
@@ -89,12 +88,16 @@ export const ROR_ENDPOINTS = {
   WIZARD: `/api/v2/my/signin/wizard`,
   /** เข้าสู่ระบบเฉพาะ ROR (B2Broker/STKPRO) */
   AUTH_LOGIN: `/api/v2/my/signin`,
+  /** Refresh Access Token (B2Broker) */
+  AUTH_REFRESH: `/api/v2/my/refresh`,
+  /** Refresh tokens using a refresh token (B2Broker) */
+  AUTH_REFRESH_REFRESH: `/api/v2/my/auth/refresh`,
   /** ยืนยันรหัส 2FA Google */
   AUTH_2FA_GOOGLE: `/api/v2/my/2fa/google`,
   /** ยืนยันรหัส 2FA SMS */
   AUTH_2FA_SMS: `/api/v2/my/2fa/sms`,
   /** ดึงข้อมูลบัญชีเทรด */
-  ACCOUNTS: '/api/v2/my/accounts',
+  ACCOUNTS: "/api/v2/my/accounts",
 } as const;
 
 /**
@@ -102,17 +105,21 @@ export const ROR_ENDPOINTS = {
  * หมายเหตุ: ใช้สำหรับเก็บข้อมูลที่ Sync มาจาก ROR
  */
 export const ROR = {
+  /** Login **/
+  LOGIN_BE: `/api/v1/auth/login`,
+  /** Refresh Token **/
+  REFRESH_TOKEN_BE: `/api/v1/auth/refreshtoken`,
   /** เช็คสถานะ API และ Database */
   HEALTH: `/api/v1/health`,
   /** ดึงสถิติรายพอร์ต (Winrate, Profit, Balance) */
   PORT_STATS: `/api/v1/ports/stats`,
   /** ดึงข้อมูล Support Counts (Active/Expired) */
-  SUPPORT_COUNTS: `/api/v1/support/counts`,
+  SUPPORT_COUNTS: `/api/v1/ports/counts`,
   /** บันทึกข้อมูล Support ใหม่ */
   SUPPORT_ADD: `/api/v1/support`,
+  /** ดึงข้อมูล Support Info รายพอร์ต */
+  SUPPORT_INFO: `/api/v1/support/info`,
 } as const;
-
-
 
 /**
  * Legacy Support (For backward compatibility)
