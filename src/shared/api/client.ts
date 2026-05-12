@@ -238,7 +238,9 @@ export const apiClient = async <T>(
 
   const url = `${finalEndpoint}${queryString}`;
 
-  console.log(`[API Client] Calling: ${url} (Service: ${accountId})`);
+  if (process.env.NEXT_PUBLIC_ENABLE_LOGGING === 'true') {
+    console.log(`[API Client] Calling: ${url} (Service: ${accountId})`);
+  }
 
   // ถ้าเป็น ROR Service ให้ข้าม Header ภายในโดยอัตโนมัติ เพื่อไม่ให้ API ภายนอกพัง
   const skipInternalHeaders = isRorService;

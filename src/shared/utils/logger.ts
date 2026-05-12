@@ -17,6 +17,8 @@ class Logger {
   }
 
   private formatMessage(level: LogLevel, message: string, context: LogContext = {}) {
+    if (process.env.NEXT_PUBLIC_ENABLE_LOGGING !== 'true') return;
+
     const timestamp = new Date().toISOString();
     const logData = {
       timestamp,
