@@ -342,7 +342,7 @@ export const RorService = {
         apiClient<any>(ROR.PORT_GODS, { method: "GET", headers: { Authorization: `Bearer ${token}` } }, undefined, SERVICE_BASE_ROR_INTERNAL)
       );
 
-      return { success: true, data: result.data, error: null };
+      return { success: true, data: result, error: null };
     } catch (error) {
       return { success: false, data: null, error: { code: "PORT_GODS_ERROR", message: "ไม่สามารถดึงข้อมูลสถิติพอร์ตได้" } };
     }
@@ -449,7 +449,7 @@ export const RorService = {
   getSupportInfo: async (data: SupportInfoRequest): Promise<ServiceResponse<SupportInfoResponse>> => {
     try {
       const result = await withBeAuth((token) =>
-        apiClient<SupportInfoResponse>(
+        apiClient<{ data: SupportInfoResponse }>(
           ROR.SUPPORT_INFO,
           {
             method: "POST",
@@ -461,7 +461,7 @@ export const RorService = {
         )
       );
 
-      return { success: true, data: { subscribe_list: { thor: ["12345"], odin: ["4567"] } }, error: null };
+      return { success: true, data: result.data, error: null };
     } catch (error) {
       return {
         success: false,

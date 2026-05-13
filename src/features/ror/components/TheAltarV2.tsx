@@ -78,6 +78,42 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
           LOYALTY
         </h3>
 
+        {/* God Select — uses gods prop directly so dropdown is always available */}
+        <FormControl fullWidth size="small">
+          <Select
+            value={pledgeData.god}
+            onChange={(e) => onPledgeChange("god", e.target.value)}
+            displayEmpty
+            sx={selectSx}
+            disabled={Date.now() >= new Date("2026-05-25T00:00:00+07:00").getTime()}
+            renderValue={(val) => {
+              if (!val) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Select God</span>;
+              const god = gods.find((g) => g.name === val);
+              return (
+                <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  {god && (
+                    <img src={god.image} alt="" style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }} />
+                  )}
+                  <span style={{ fontWeight: 700 }}>Pledge: {val}</span>
+                </span>
+              );
+            }}
+          >
+            <MenuItem value="" disabled>
+              Select God
+            </MenuItem>
+            {gods
+              // .filter((god) => Object.keys(supportInfo?.subscribe_list || {}).includes(god.name.toLowerCase()))
+              .filter((god) => supportInfo?.subscribe_list.some((list) => Object.keys(list)?.[0]?.includes(god.name.toLowerCase())))
+              .map((god) => (
+                <MenuItem key={god.name} value={god.name} sx={{ display: "flex", gap: 1.5, py: 1 }}>
+                  <img src={god.image} alt="" style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }} />
+                  <span>{god.name}</span>
+                </MenuItem>
+              ))}
+          </Select>
+        </FormControl>
+
         {/* Investor Account ID — auto-filled from subscribe_list via investorId state */}
         <TextField
           fullWidth
@@ -89,44 +125,7 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
           sx={inputSx}
         />
 
-        {/* God Select — uses gods prop directly so dropdown is always available */}
-        <FormControl fullWidth size="small">
-          <Select
-            value={pledgeData.god}
-            onChange={(e) => onPledgeChange("god", e.target.value)}
-            displayEmpty
-            sx={selectSx}
-            renderValue={(val) => {
-              if (!val) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Select God</span>;
-              const god = gods.find((g) => g.name === val);
-              return (
-                <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  {god && (
-                    <img src={god.image} alt="" style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }} />
-                  )}
-                  <span style={{ fontWeight: 700 }}>{val}</span>
-                </span>
-              );
-            }}
-          >
-            <MenuItem value="" disabled>
-              Select God
-            </MenuItem>
-            {gods
-              .filter((god) => Object.keys(supportInfo?.subscribe_list || {}).includes(god.name.toLowerCase()))
-              .map((god) => (
-                <MenuItem key={god.name} value={god.name} sx={{ display: "flex", gap: 1.5, py: 1 }}>
-                  <img src={god.image} alt="" style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }} />
-                  <span>{god.name}</span>
-                </MenuItem>
-              ))}
-          </Select>
-        </FormControl>
-
-        <FormControlLabel
-          control={<Checkbox checked={validated} onChange={(e) => setValidated(e.target.checked)} size="small" sx={checkboxSx} />}
-          label={<span className="text-white text-xs">Validate our validation</span>}
-        />
+        <span className="text-white text-xs">Validate our validation</span>
 
         {message && (
           <div

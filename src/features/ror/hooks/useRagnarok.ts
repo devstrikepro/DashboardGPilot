@@ -24,13 +24,6 @@ export const useRagnarok = () => {
   const [tfaProviders, setTfaProviders] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const GOD_PORT_MAPPING: Record<string, number> = {
-    THOR: 2121988411,
-    LOKI: 2121988410,
-    HEIMDALL: 2121988412,
-    ODIN: 2121988409,
-  };
-
   const BASE_GODS = [
     { name: "THOR", type: "AGGRESSIVE", signature: "Lightning", color: "#ef4444", image: "/ror/thor.jpg" },
     { name: "LOKI", type: "TACTICAL", signature: "Smoke", color: "#22c55e", image: "/ror/logi.jpg" },
@@ -50,9 +43,11 @@ export const useRagnarok = () => {
       const live = portGods?.find((s: any) => s.god_name === god.name);
       return {
         ...god,
-        roi: live ? `${(live.roi as number).toFixed(2)}%` : "0%",
+        // name: live.name,
+        roi: live ? `${(live.roi as number).toFixed(2)}%` : 0,
         winRate: live ? `${(live.winrate as number).toFixed(2)}%` : "0%",
         followers: live ? (live.god_support as number) : 0,
+        port: live ? live.god_port : undefined,
       };
     });
   }, [portGods]);
@@ -86,11 +81,18 @@ export const useRagnarok = () => {
   const filteredAccounts = useMemo(() => {
     if (!accounts) return [];
 
-    const targetPort = GOD_PORT_MAPPING[pledgeData.god];
-    if (!targetPort) return [];
+    console.log(
+      "account: ",
+      accounts.filter((acc) => {
+        const isPammInvestor = acc.group?.type === "mamInvestor";
+        const hasEnoughBalance = parseFloat(acc.statement?.currentBalance || "0") >= 100;
+
+        return isPammInvestor && hasEnoughBalance;
+      })
+    );
 
     return accounts.filter((acc) => {
-      const isPammInvestor = acc.group?.type === "pammInvestor";
+      const isPammInvestor = acc.group?.type === "mamInvestor";
       const hasEnoughBalance = parseFloat(acc.statement?.currentBalance || "0") >= 100;
 
       return isPammInvestor && hasEnoughBalance;
@@ -103,8 +105,10 @@ export const useRagnarok = () => {
       const fetchedAccounts = res.data.data;
       setAccounts(fetchedAccounts);
 
+      console.log("fetchedAccounts: ", fetchedAccounts);
+
       const qualified = fetchedAccounts.filter((acc: any) => {
-        const isPammInvestor = acc.group?.type === "pammInvestor";
+        const isPammInvestor = acc.group?.type === "mamInvestor";
         const hasEnoughBalance = parseFloat(acc.statement?.currentBalance || "0") >= 100;
         return isPammInvestor && hasEnoughBalance;
       });
@@ -115,6 +119,8 @@ export const useRagnarok = () => {
         if (loginRes.success) {
           const ports = qualified.map((acc: any) => String(acc.accountNumber));
           const infoRes = await RorService.getSupportInfo({ ports });
+
+          console.log("support info: ", infoRes);
           if (infoRes.success && infoRes.data) {
             setSupportInfo(infoRes.data);
           }
@@ -125,7 +131,8 @@ export const useRagnarok = () => {
 
   const fetchRorInternalData = useCallback(async () => {
     const godsRes = await RorService.getPortGods();
-    if (godsRes.success) setPortGods(godsRes.data);
+    console.log("god: ", godsRes);
+    if (godsRes.success) setPortGods(godsRes.data.data);
   }, []);
 
   const pledge = useCallback(async () => {
@@ -142,8 +149,7 @@ export const useRagnarok = () => {
       setPledgeLoading(true);
       setPledgeMessage(null);
 
-      const liveGod = portGods?.data?.find((g: any) => g.god_name === pledgeData.god);
-      const mainPort = liveGod?.god_port ?? GOD_PORT_MAPPING[pledgeData.god];
+      const mainPort = parseInt(pledgeData.investorId);
       if (!mainPort) {
         throw new Error(`${pledgeData.god} is not available for pledging yet.`);
       }
