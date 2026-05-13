@@ -392,8 +392,9 @@ export const useRagnarok = () => {
     if (token) {
       setIsLoggedIn(true);
       fetchAccounts();
-      fetchRorInternalData();
     }
+
+    fetchRorInternalData();
 
     // ดึง UUID ทันทีที่เข้าหน้าเว็บ
     const initWizard = async () => {

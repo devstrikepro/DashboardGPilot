@@ -338,9 +338,7 @@ export const RorService = {
    */
   getPortGods: async (): Promise<ServiceResponse<any>> => {
     try {
-      const result = await withBeAuth((token) =>
-        apiClient<any>(ROR.PORT_GODS, { method: "GET", headers: { Authorization: `Bearer ${token}` } }, undefined, SERVICE_BASE_ROR_INTERNAL)
-      );
+      const result = await apiClient<any>(ROR.PORT_GODS, { method: "GET" }, undefined, SERVICE_BASE_ROR_INTERNAL);
 
       return { success: true, data: result, error: null };
     } catch (error) {

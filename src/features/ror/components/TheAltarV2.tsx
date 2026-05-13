@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button, Select, MenuItem, FormControl, Checkbox, FormControlLabel, CircularProgress } from "@mui/material";
+import { TextField, Button, Select, MenuItem, FormControl, Checkbox, FormControlLabel, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { God } from "./GodsPantheonV2";
 import { SupportInfoResponse } from "@/shared/services/ror-service";
 
@@ -127,16 +127,30 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
 
         <span className="text-white text-xs">Validate our validation</span>
 
-        {message && (
-          <div
-            className={`flex items-start gap-2 rounded-lg px-3 py-2 text-xs ${isError ? "bg-red-500/20 border border-red-500/40 text-red-300" : "bg-green-500/20 border border-green-500/40 text-green-300"}`}
-          >
-            <span className="flex-1">{message}</span>
-            <button onClick={onClearMessage} className="opacity-60 hover:opacity-100 cursor-pointer leading-none">
-              ✕
-            </button>
-          </div>
-        )}
+        <Dialog
+          open={!!message}
+          onClose={onClearMessage}
+          slotProps={{
+            paper: {
+              sx: {
+                backgroundColor: "#0f172a",
+                border: `1px solid ${isError ? "rgba(239,68,68,0.4)" : "rgba(212,175,55,0.4)"}`,
+                borderRadius: 2,
+                minWidth: 300,
+              },
+            },
+          }}
+        >
+          <DialogTitle sx={{ color: isError ? "#f87171" : "#d4af37", fontWeight: 800, fontSize: "0.9rem", letterSpacing: "0.05em", pb: 1 }}>
+            {isError ? "PLEDGE FAILED" : "PLEDGE SUCCESSFUL"}
+          </DialogTitle>
+          <DialogContent sx={{ color: "#cbd5e1", fontSize: "0.8rem" }}>{message}</DialogContent>
+          <DialogActions sx={{ px: 2, pb: 2 }}>
+            <Button onClick={onClearMessage} variant="contained" size="small" sx={pledgeBtnSx}>
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
 
         <Button fullWidth variant="contained" disabled={!canPledge} onClick={onPledge} sx={pledgeBtnSx}>
           {isLoading ? <CircularProgress size={20} sx={{ color: "#000" }} /> : "PLEDGE NOW (LOCK CHOICE)"}
