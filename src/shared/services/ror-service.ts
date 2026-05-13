@@ -489,7 +489,7 @@ export interface SupportInfoRequest {
 }
 
 export interface SupportInfoResponse {
-  subscribe_list: Record<string, string[]>;
+  subscribe_list: Record<string, string[]>[];
 }
 
 export interface RorAccountsResponse {

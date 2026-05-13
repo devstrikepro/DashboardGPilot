@@ -24,47 +24,34 @@ export const useRagnarok = () => {
   const [tfaProviders, setTfaProviders] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const BASE_GODS = [
-    { name: "THOR", type: "AGGRESSIVE", signature: "Lightning", color: "#ef4444", image: "/ror/thor.jpg" },
-    { name: "LOKI", type: "TACTICAL", signature: "Smoke", color: "#22c55e", image: "/ror/logi.jpg" },
-    { name: "HEIMDALL", type: "BALANCED", signature: "Bifrost Light", color: "#38bdf8", image: "/ror/humdal.jpg" },
-    { name: "ODIN", type: "STRATEGIC", signature: "Runic", color: "#a855f7", image: "/ror/odin.jpg" },
-  ];
-
-  const BASE_RANKING = [
-    { god: "Odin", color: "#a855f7", avatar: "/ror/odin.jpg" },
-    { god: "Loki", color: "#22c55e", avatar: "/ror/logi.jpg" },
-    { god: "Heimdall", color: "#38bdf8", avatar: "/ror/humdal.jpg" },
-    { god: "Thor", color: "#ef4444", avatar: "/ror/thor.jpg" },
-  ];
-
   const gods = useMemo(() => {
-    return BASE_GODS.map((god) => {
-      const live = portGods?.find((s: any) => s.god_name === god.name);
-      return {
-        ...god,
-        // name: live.name,
-        roi: live ? `${(live.roi as number).toFixed(2)}%` : 0,
-        winRate: live ? `${(live.winrate as number).toFixed(2)}%` : "0%",
-        followers: live ? (live.god_support as number) : 0,
-        port: live ? live.god_port : undefined,
-      };
-    });
+    if (!Array.isArray(portGods)) return [];
+    return portGods.map((live: any) => ({
+      name: live.god_name,
+      type: live.god_type,
+      signature: live.god_signature,
+      color: live.god_color,
+      image: live.god_img,
+      roi: `${(live.roi as number).toFixed(2)}%`,
+      winRate: `${(live.winrate as number).toFixed(2)}%`,
+      followers: live.god_support as number,
+      port: live.god_port,
+    }));
   }, [portGods]);
 
   const rankingData = useMemo(() => {
-    return BASE_RANKING.map((row) => {
-      const live = portGods?.data?.find((s: any) => s.god_name === row.god.toUpperCase());
-      return {
-        ...row,
-        rank: 0,
-        roi: live ? (live.roi as number) : 0,
-        winRate: live ? (live.winrate as number) : 0,
-        followers: live ? (live.god_support as number) : 0,
-      };
-    })
-      .sort((a, b) => b.roi - a.roi)
-      .map((row, idx) => ({ ...row, rank: idx + 1 }));
+    if (!Array.isArray(portGods)) return [];
+    return [...portGods]
+      .sort((a: any, b: any) => b.roi - a.roi)
+      .map((live: any, idx: number) => ({
+        rank: idx + 1,
+        god: live.god_name,
+        color: live.god_color,
+        avatar: live.god_img,
+        roi: live.roi as number,
+        winRate: live.winrate as number,
+        followers: live.god_support as number,
+      }));
   }, [portGods]);
 
   const handlePledgeChange = (field: string, value: string) => {
@@ -81,16 +68,6 @@ export const useRagnarok = () => {
   const filteredAccounts = useMemo(() => {
     if (!accounts) return [];
 
-    console.log(
-      "account: ",
-      accounts.filter((acc) => {
-        const isPammInvestor = acc.group?.type === "mamInvestor";
-        const hasEnoughBalance = parseFloat(acc.statement?.currentBalance || "0") >= 100;
-
-        return isPammInvestor && hasEnoughBalance;
-      })
-    );
-
     return accounts.filter((acc) => {
       const isPammInvestor = acc.group?.type === "mamInvestor";
       const hasEnoughBalance = parseFloat(acc.statement?.currentBalance || "0") >= 100;
@@ -105,8 +82,6 @@ export const useRagnarok = () => {
       const fetchedAccounts = res.data.data;
       setAccounts(fetchedAccounts);
 
-      console.log("fetchedAccounts: ", fetchedAccounts);
-
       const qualified = fetchedAccounts.filter((acc: any) => {
         const isPammInvestor = acc.group?.type === "mamInvestor";
         const hasEnoughBalance = parseFloat(acc.statement?.currentBalance || "0") >= 100;
@@ -120,7 +95,6 @@ export const useRagnarok = () => {
           const ports = qualified.map((acc: any) => String(acc.accountNumber));
           const infoRes = await RorService.getSupportInfo({ ports });
 
-          console.log("support info: ", infoRes);
           if (infoRes.success && infoRes.data) {
             setSupportInfo(infoRes.data);
           }
@@ -131,7 +105,6 @@ export const useRagnarok = () => {
 
   const fetchRorInternalData = useCallback(async () => {
     const godsRes = await RorService.getPortGods();
-    console.log("god: ", godsRes);
     if (godsRes.success) setPortGods(godsRes.data.data);
   }, []);
 
@@ -149,7 +122,7 @@ export const useRagnarok = () => {
       setPledgeLoading(true);
       setPledgeMessage(null);
 
-      const mainPort = parseInt(pledgeData.investorId);
+      const mainPort = parseInt(gods.find((god) => pledgeData.god.includes(god.name))?.port);
       if (!mainPort) {
         throw new Error(`${pledgeData.god} is not available for pledging yet.`);
       }
@@ -159,10 +132,13 @@ export const useRagnarok = () => {
         throw new Error("Invalid account information.");
       }
 
-      const res = await RorService.addSupport({
-        main_port: mainPort,
-        slave_port: slavePort,
-      });
+      console.log("main: ", mainPort);
+      console.log("slave: ", slavePort);
+
+      // const res = await RorService.addSupport({
+      //   main_port: mainPort,
+      //   slave_port: slavePort,
+      // });
 
       if (res.success) {
         const msg = res.data?.message || "Your pledge has been accepted.";

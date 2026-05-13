@@ -1,18 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button, Select, MenuItem, FormControl, Checkbox, FormControlLabel, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import { Button, Select, MenuItem, FormControl, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { God } from "./GodsPantheonV2";
 import { SupportInfoResponse } from "@/shared/services/ror-service";
-
-const inputSx = {
-  "& .MuiOutlinedInput-root": {
-    color: "#fff",
-    backgroundColor: "rgba(255,255,255,0.05)",
-    "& fieldset": { borderColor: "rgba(255,255,255,0.2)" },
-    "&:hover fieldset": { borderColor: "#d4af37" },
-    "&.Mui-focused fieldset": { borderColor: "#d4af37" },
-  },
-  "& input::placeholder": { color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" },
-} as const;
 
 const selectSx = {
   color: "#fff",
@@ -34,12 +23,11 @@ const pledgeBtnSx = {
   "&.Mui-disabled": { backgroundColor: "rgba(212,175,55,0.2)", color: "rgba(255,255,255,0.3)" },
 } as const;
 
-const checkboxSx = { color: "#d4af37", "&.Mui-checked": { color: "#d4af37" } } as const;
-
 // subscribe_list keys are lowercase ("thor"), pledgeData.god is uppercase ("THOR")
 const getSubscribedPort = (subscribeList: SupportInfoResponse["subscribe_list"] | undefined, godName: string): string => {
   if (!subscribeList || !godName) return "";
-  return subscribeList[godName.toLowerCase()]?.[0] ?? "";
+  const godKey = godName;
+  return subscribeList.find((g) => godKey in g)?.[godKey]?.[0] ?? "";
 };
 
 export interface TheAltarV2Props {
@@ -54,16 +42,10 @@ export interface TheAltarV2Props {
 }
 
 export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPledge, isLoading, message, onClearMessage }: TheAltarV2Props) => {
-  const [validated, setValidated] = useState(false);
-  const isError = message?.toLowerCase().includes("error") || message?.toLowerCase().includes("fail") || message?.toLowerCase().includes("invalid");
+  const isError = message?.includes("error") || message?.includes("fail") || message?.toLowerCase().includes("invalid");
 
-  // Auto-fill (or clear) investorId when god selection or supportInfo changes
-  useEffect(() => {
-    const port = getSubscribedPort(supportInfo?.subscribe_list, pledgeData.god);
-    onPledgeChange("investorId", port);
-  }, [pledgeData.god, supportInfo]);
-
-  const canPledge = !isLoading && !!pledgeData.god && !!pledgeData.investorId && validated;
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const canPledge = !isLoading && !!pledgeData.god && !!pledgeData.investorId;
 
   return (
     <div className="flex flex-col gap-3">
@@ -102,30 +84,48 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
             <MenuItem value="" disabled>
               Select God
             </MenuItem>
-            {gods
-              // .filter((god) => Object.keys(supportInfo?.subscribe_list || {}).includes(god.name.toLowerCase()))
-              .filter((god) => supportInfo?.subscribe_list.some((list) => Object.keys(list)?.[0]?.includes(god.name.toLowerCase())))
-              .map((god) => (
-                <MenuItem key={god.name} value={god.name} sx={{ display: "flex", gap: 1.5, py: 1 }}>
-                  <img src={god.image} alt="" style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }} />
-                  <span>{god.name}</span>
-                </MenuItem>
-              ))}
+            {!supportInfo ? (
+              <MenuItem key={"loading"} value={"loading"} disabled sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1.5, py: 1 }}>
+                <CircularProgress size={20} sx={{ color: "rgba(255,255,255,0.4)" }} />
+              </MenuItem>
+            ) : (
+              gods
+                .filter((god) => !supportInfo || supportInfo.subscribe_list.some((list) => Object.keys(list)?.[0]?.includes(god.name)))
+                .map((god) => (
+                  <MenuItem key={god.name} value={god.name} sx={{ display: "flex", alignItems: "center", gap: 1.5, py: 1 }}>
+                    <img src={god.image} alt="" style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }} />
+                    <span>{god.name}</span>
+                  </MenuItem>
+                ))
+            )}
           </Select>
         </FormControl>
 
-        {/* Investor Account ID — auto-filled from subscribe_list via investorId state */}
-        <TextField
-          fullWidth
-          size="small"
-          placeholder="[Enter Investor Account ID] (e.g., MT5 ID)"
-          value={pledgeData.investorId}
-          variant="outlined"
-          disabled
-          sx={inputSx}
-        />
-
-        <span className="text-white text-xs">Validate our validation</span>
+        {/* Investor Account ID — selectable from subscribe_list for the chosen god */}
+        <FormControl fullWidth size="small">
+          <Select
+            value={pledgeData.investorId}
+            onChange={(e) => onPledgeChange("investorId", e.target.value)}
+            displayEmpty
+            disabled={isLoading}
+            sx={selectSx}
+            IconComponent={isLoading ? () => <CircularProgress size={14} sx={{ color: "rgba(255,255,255,0.4)", mr: 1 }} /> : undefined}
+            renderValue={(val) => {
+              if (isLoading) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Loading...</span>;
+              if (!val) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Select Investor Account ID (e.g., MT5 ID)</span>;
+              return <span style={{ fontWeight: 700 }}>{val}</span>;
+            }}
+          >
+            <MenuItem value="" disabled>
+              Select Investor Account ID
+            </MenuItem>
+            {(supportInfo?.subscribe_list.find((g) => pledgeData.god in g)?.[pledgeData.god] ?? []).map((id) => (
+              <MenuItem key={id} value={id}>
+                {id}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
         <Dialog
           open={!!message}
@@ -152,9 +152,54 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
           </DialogActions>
         </Dialog>
 
-        <Button fullWidth variant="contained" disabled={!canPledge} onClick={onPledge} sx={pledgeBtnSx}>
+        <Button fullWidth variant="contained" disabled={!canPledge} onClick={() => setConfirmOpen(true)} sx={pledgeBtnSx}>
           {isLoading ? <CircularProgress size={20} sx={{ color: "#000" }} /> : "PLEDGE NOW (LOCK CHOICE)"}
         </Button>
+
+        <Dialog
+          open={confirmOpen}
+          onClose={() => setConfirmOpen(false)}
+          slotProps={{
+            paper: {
+              sx: {
+                backgroundColor: "#0f172a",
+                border: "1px solid rgba(212,175,55,0.4)",
+                borderRadius: 2,
+                minWidth: 300,
+              },
+            },
+          }}
+        >
+          <DialogTitle sx={{ color: "#d4af37", fontWeight: 800, fontSize: "0.9rem", letterSpacing: "0.05em", pb: 1 }}>ยืนยันการบูชา?</DialogTitle>
+          <DialogContent sx={{ color: "#cbd5e1", fontSize: "0.8rem", display: "flex", flexDirection: "column", gap: 1 }}>
+            <span>
+              คุณกำลังจะบูชา <strong style={{ color: "#d4af37" }}>{pledgeData.god}</strong> ด้วยบัญชี{" "}
+              <strong style={{ color: "#d4af37" }}>{pledgeData.investorId}</strong>
+            </span>
+            <span style={{ color: "rgba(255,100,100,0.9)" }}>⚠ เมื่อยืนยันแล้ว จะไม่สามารถเปลี่ยนแปลงหรือแก้ไขการเลือกได้อีก</span>
+          </DialogContent>
+          <DialogActions sx={{ px: 2, pb: 2, gap: 1 }}>
+            <Button
+              onClick={() => setConfirmOpen(false)}
+              variant="outlined"
+              size="small"
+              sx={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)", "&:hover": { borderColor: "#fff" } }}
+            >
+              CANCEL
+            </Button>
+            <Button
+              onClick={() => {
+                setConfirmOpen(false);
+                onPledge();
+              }}
+              variant="contained"
+              size="small"
+              sx={pledgeBtnSx}
+            >
+              CONFIRM
+            </Button>
+          </DialogActions>
+        </Dialog>
 
         <p className="text-slate-500 text-[10px] text-center">Validation elements of our validation</p>
       </div>
