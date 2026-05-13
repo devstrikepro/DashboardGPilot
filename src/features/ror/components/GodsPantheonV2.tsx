@@ -56,18 +56,29 @@ const GodCard = ({ god }: { god: God }) => {
 
 interface GodsPantheonV2Props {
   gods: God[];
+  isLoading?: boolean;
 }
 
-export const GodsPantheonV2 = ({ gods }: GodsPantheonV2Props) => (
+export const GodsPantheonV2 = ({ gods, isLoading }: GodsPantheonV2Props) => (
   <div className="w-full">
     <div className="text-center my-4!">
       <h2 className="text-[#d4af37] font-bold text-xl">THE GODS</h2>
       <p className="text-[#d4af37] text-xs">(THE PANTHEON)</p>
     </div>
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      {gods.map((god) => (
-        <GodCard key={god.name} god={god} />
-      ))}
+      {isLoading
+        ? Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="rounded-xl border border-white/10 bg-black/60 overflow-hidden flex flex-col animate-pulse">
+              <div className="w-full aspect-3/4 bg-white/10" />
+              <div className="p-3 flex flex-col gap-2">
+                <div className="h-4 bg-white/10 rounded w-2/3 mx-auto" />
+                <div className="h-3 bg-white/5 rounded w-full" />
+                <div className="h-3 bg-white/5 rounded w-3/4 mx-auto" />
+                <div className="h-2 bg-white/5 rounded w-1/2 mx-auto" />
+              </div>
+            </div>
+          ))
+        : gods.map((god) => <GodCard key={god.name} god={god} />)}
     </div>
   </div>
 );

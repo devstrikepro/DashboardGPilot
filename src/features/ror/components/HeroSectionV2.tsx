@@ -56,17 +56,17 @@ const STEPS = [
 ];
 
 export const HeroSectionV2 = () => (
-  <div className="w-full mb-8">
-    <p className="text-center text-lg font-bold tracking-[6px] text-[#d4af37] uppercase py-4!">HERO &amp; RULES</p>
-    <div className="relative w-full overflow-hidden aspect-4/3 sm:aspect-video md:aspect-21/9 min-h-80">
+  <div className="w-full">
+    <p className="text-center text-sm font-bold tracking-[6px] text-[#d4af37] uppercase py-3">HERO &amp; RULES</p>
+    <div className="relative w-full overflow-hidden">
       <img src="/ror/bg.png" alt="" className="absolute inset-0 w-full h-full object-cover object-top" />
       <div className="absolute inset-0 bg-linear-to-b from-black/30 via-black/50 to-black/80" />
-      <div className="relative z-10 flex flex-col items-center justify-center px-6 py-10 gap-6 h-full">
+      <div className="relative z-10 flex flex-col items-center justify-center px-8 py-8 gap-4 sm:px-12 sm:py-12 sm:gap-6">
         <div className="text-center">
           <p
-            className="text-[#d4af37] font-bold tracking-[8px] uppercase"
+            className="text-[#d4af37] font-bold tracking-[6px] sm:tracking-[8px] uppercase"
             style={{
-              fontSize: "clamp(1.25rem, 6vw, 3rem)",
+              fontSize: "clamp(0.9rem, 4vw, 3rem)",
               textShadow: "0 0 40px rgba(212,175,55,0.9), 0 0 80px rgba(212,175,55,0.4)",
               fontFamily: "'Playfair Display', serif",
             }}
@@ -74,29 +74,29 @@ export const HeroSectionV2 = () => (
             Record of
           </p>
           <h1
-            className="text-[#d4af37] font-black uppercase leading-none tracking-[10px]"
+            className="text-[#d4af37] font-black uppercase leading-none tracking-[6px] sm:tracking-[10px]"
             style={{
-              fontSize: "clamp(2.5rem, 8vw, 5rem)",
+              fontSize: "clamp(2rem, 8vw, 5rem)",
               textShadow: "0 0 40px rgba(212,175,55,0.9), 0 0 80px rgba(212,175,55,0.4)",
               fontFamily: "'Playfair Display', serif",
             }}
           >
             Ragnarok
           </h1>
-          <p className="text-white/70 mt-2 tracking-widest text-lg">Choose Your God. Witness the Battle. Claim the Glory.</p>
+          <p className="text-white/70 mt-1 tracking-widest text-xs sm:text-lg">Choose Your God. Witness the Battle. Claim the Glory.</p>
         </div>
 
         <div className="w-full max-w-2xl">
-          <p className="text-center text-white font-bold text-lg mb-3! tracking-wider">How to Play</p>
+          <p className="text-center text-white font-bold text-sm sm:text-lg mb-2! sm:mb-3! tracking-wider">How to Play</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {STEPS.map((step, i) => (
               <div
                 key={i}
-                className="flex flex-col items-center gap-1 rounded-lg p-3! border border-white/10 bg-white/5 backdrop-blur-sm hover:border-[#d4af37]/60 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+                className="flex flex-col items-center gap-0.5 rounded-lg p-1.5! sm:p-3! border border-white/10 bg-white/5 backdrop-blur-sm hover:border-[#d4af37]/60 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
               >
-                <span className="w-14 h-14 block [&>svg]:w-full [&>svg]:h-full">{step.icon}</span>
-                <span className="text-white font-bold text-center leading-tight">{step.label}</span>
-                {step.sub && <span className="text-[#d4af37]">{step.sub}</span>}
+                <span className="w-7 h-7 sm:w-14 sm:h-14 block [&>svg]:w-full [&>svg]:h-full">{step.icon}</span>
+                <span className="text-white font-semibold text-[9px] sm:text-sm text-center leading-tight">{step.label}</span>
+                {step.sub && <span className="text-[#d4af37] text-[8px] sm:text-sm">{step.sub}</span>}
               </div>
             ))}
           </div>

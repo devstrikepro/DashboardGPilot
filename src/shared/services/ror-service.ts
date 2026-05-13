@@ -490,6 +490,8 @@ export interface SupportInfoRequest {
 
 export interface SupportInfoResponse {
   subscribe_list: Record<string, string[]>[];
+  main_port: number;
+  slave_port: number;
 }
 
 export interface RorAccountsResponse {

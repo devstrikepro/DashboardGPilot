@@ -47,6 +47,8 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
   const [confirmOpen, setConfirmOpen] = useState(false);
   const canPledge = !isLoading && !!pledgeData.god && !!pledgeData.investorId;
 
+  console.log("support info: ", supportInfo);
+
   return (
     <div className="flex flex-col gap-3">
       <div className="text-center">
@@ -67,8 +69,10 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
             onChange={(e) => onPledgeChange("god", e.target.value)}
             displayEmpty
             sx={selectSx}
-            disabled={Date.now() >= new Date("2026-05-25T00:00:00+07:00").getTime()}
+            disabled={!supportInfo || Date.now() >= new Date("2026-05-25T00:00:00+07:00").getTime() || !!supportInfo?.main_port || !!supportInfo?.slave_port}
+            IconComponent={!supportInfo ? () => <CircularProgress size={14} sx={{ color: "rgba(255,255,255,0.4)", mr: 1 }} /> : undefined}
             renderValue={(val) => {
+              if (!supportInfo) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Loading...</span>;
               if (!val) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Select God</span>;
               const god = gods.find((g) => g.name === val);
               return (
@@ -84,20 +88,14 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
             <MenuItem value="" disabled>
               Select God
             </MenuItem>
-            {!supportInfo ? (
-              <MenuItem key={"loading"} value={"loading"} disabled sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1.5, py: 1 }}>
-                <CircularProgress size={20} sx={{ color: "rgba(255,255,255,0.4)" }} />
-              </MenuItem>
-            ) : (
-              gods
-                .filter((god) => !supportInfo || supportInfo.subscribe_list.some((list) => Object.keys(list)?.[0]?.includes(god.name)))
-                .map((god) => (
-                  <MenuItem key={god.name} value={god.name} sx={{ display: "flex", alignItems: "center", gap: 1.5, py: 1 }}>
-                    <img src={god.image} alt="" style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }} />
-                    <span>{god.name}</span>
-                  </MenuItem>
-                ))
-            )}
+            {gods
+              .filter((god) => supportInfo?.subscribe_list.some((list) => Object.keys(list)?.[0]?.includes(god.name)))
+              .map((god) => (
+                <MenuItem key={god.name} value={god.name} sx={{ display: "flex", alignItems: "center", gap: 1.5, py: 1 }}>
+                  <img src={god.image} alt="" style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }} />
+                  <span>{god.name}</span>
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
 
@@ -107,7 +105,7 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
             value={pledgeData.investorId}
             onChange={(e) => onPledgeChange("investorId", e.target.value)}
             displayEmpty
-            disabled={isLoading}
+            disabled={isLoading || pledgeData.god.length === 0 || !!supportInfo?.main_port || !!supportInfo?.slave_port}
             sx={selectSx}
             IconComponent={isLoading ? () => <CircularProgress size={14} sx={{ color: "rgba(255,255,255,0.4)", mr: 1 }} /> : undefined}
             renderValue={(val) => {
@@ -142,9 +140,8 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
           }}
         >
           <DialogTitle sx={{ color: isError ? "#f87171" : "#d4af37", fontWeight: 800, fontSize: "0.9rem", letterSpacing: "0.05em", pb: 1 }}>
-            {isError ? "PLEDGE FAILED" : "PLEDGE SUCCESSFUL"}
+            {isError ? "บูชาไม่สำเร็จ" : "บูชาสำเร็จ"}
           </DialogTitle>
-          <DialogContent sx={{ color: "#cbd5e1", fontSize: "0.8rem" }}>{message}</DialogContent>
           <DialogActions sx={{ px: 2, pb: 2 }}>
             <Button onClick={onClearMessage} variant="contained" size="small" sx={pledgeBtnSx}>
               OK
@@ -152,7 +149,13 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
           </DialogActions>
         </Dialog>
 
-        <Button fullWidth variant="contained" disabled={!canPledge} onClick={() => setConfirmOpen(true)} sx={pledgeBtnSx}>
+        <Button
+          fullWidth
+          variant="contained"
+          disabled={!canPledge || !!supportInfo?.main_port || !!supportInfo?.slave_port}
+          onClick={() => setConfirmOpen(true)}
+          sx={pledgeBtnSx}
+        >
           {isLoading ? <CircularProgress size={20} sx={{ color: "#000" }} /> : "PLEDGE NOW (LOCK CHOICE)"}
         </Button>
 
@@ -183,7 +186,7 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
               onClick={() => setConfirmOpen(false)}
               variant="outlined"
               size="small"
-              sx={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)", "&:hover": { borderColor: "#fff" } }}
+              sx={{ py: 1.25, color: "#fff", borderColor: "rgba(255,255,255,0.2)", "&:hover": { borderColor: "#fff" } }}
             >
               CANCEL
             </Button>
@@ -194,7 +197,7 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
               }}
               variant="contained"
               size="small"
-              sx={pledgeBtnSx}
+              sx={{ ...pledgeBtnSx }}
             >
               CONFIRM
             </Button>

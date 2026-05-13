@@ -13,6 +13,7 @@ export const RecordOfRagnarok: React.FC = () => {
   const {
     gods,
     rankingData,
+    godsLoading,
     isLoggedIn,
     authLoading,
     error,
@@ -37,8 +38,8 @@ export const RecordOfRagnarok: React.FC = () => {
     <div className="min-h-screen flex flex-col text-white">
       <HeroSectionV2 />
 
-      <div className="flex-1 flex flex-col w-full mx-auto px-20! gap-10 pb-8! bg-[#0F172A]">
-        <GodsPantheonV2 gods={gods} />
+      <div className="flex-1 flex flex-col w-full mx-auto px-4! sm:px-8! lg:px-20! gap-10 pb-8! bg-[#0F172A]">
+        <GodsPantheonV2 gods={gods} isLoading={godsLoading} />
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6 py-4!">
           <div className="md:col-span-2">
@@ -68,7 +69,7 @@ export const RecordOfRagnarok: React.FC = () => {
             )}
           </div>
           <div className="md:col-span-3">
-            <ValhallaBoardV2 rankingData={rankingData} />
+            <ValhallaBoardV2 rankingData={rankingData} isLoading={godsLoading} />
           </div>
         </div>
       </div>

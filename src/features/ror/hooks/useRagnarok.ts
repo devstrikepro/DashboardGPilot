@@ -12,7 +12,9 @@ export const useRagnarok = () => {
   const [portGods, setPortGods] = useState<any>(null);
   const [supportInfo, setSupportInfo] = useState<SupportInfoResponse | null>(null);
   const [pledgeLoading, setPledgeLoading] = useState(false);
+  const [godsLoading, setGodsLoading] = useState(true);
   const [pledgeMessage, setPledgeMessage] = useState<string | null>(null);
+  const [pledgeSuccess, setPledgeSuccess] = useState(true);
 
   const [pledgeData, setPledgeData] = useState({
     investorId: "",
@@ -104,8 +106,10 @@ export const useRagnarok = () => {
   }, []);
 
   const fetchRorInternalData = useCallback(async () => {
+    setGodsLoading(true);
     const godsRes = await RorService.getPortGods();
     if (godsRes.success) setPortGods(godsRes.data.data);
+    setGodsLoading(false);
   }, []);
 
   const pledge = useCallback(async () => {
@@ -145,7 +149,7 @@ export const useRagnarok = () => {
           description: msg,
         });
 
-        if (res.data?.data) setPortGods(res.data);
+        if (res.data?.data) setPledgeSuccess(true);
       } else {
         const errorMsg = res.error?.message || "Failed to pledge loyalty.";
         setPledgeMessage(errorMsg);
@@ -418,6 +422,7 @@ export const useRagnarok = () => {
     supportInfo,
     pledge,
     pledgeLoading,
+    godsLoading,
     pledgeMessage,
     setPledgeMessage,
   };
