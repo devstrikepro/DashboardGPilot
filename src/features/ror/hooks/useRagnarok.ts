@@ -14,7 +14,7 @@ export const useRagnarok = () => {
   const [pledgeLoading, setPledgeLoading] = useState(false);
   const [godsLoading, setGodsLoading] = useState(true);
   const [pledgeMessage, setPledgeMessage] = useState<string | null>(null);
-  const [pledgeSuccess, setPledgeSuccess] = useState(true);
+  const [pledgeSuccess, setPledgeSuccess] = useState(false);
 
   const [pledgeData, setPledgeData] = useState({
     investorId: "",
@@ -363,6 +363,12 @@ export const useRagnarok = () => {
     },
     [uuid, toast, fetchAccounts]
   );
+
+  useEffect(() => {
+    if (!pledgeSuccess) return;
+    fetchAccounts();
+    setPledgeSuccess(false);
+  }, [pledgeSuccess, fetchAccounts]);
 
   useEffect(() => {
     const token = localStorage.getItem("ror_auth_token");

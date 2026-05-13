@@ -47,8 +47,6 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
   const [confirmOpen, setConfirmOpen] = useState(false);
   const canPledge = !isLoading && !!pledgeData.god && !!pledgeData.investorId;
 
-  console.log("support info: ", supportInfo);
-
   return (
     <div className="flex flex-col gap-3">
       <div className="text-center">
@@ -65,8 +63,8 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
         {/* God Select — uses gods prop directly so dropdown is always available */}
         <FormControl fullWidth size="small">
           <Select
-            value={pledgeData.god}
-            onChange={(e) => onPledgeChange("god", e.target.value)}
+            value={pledgeData.god || supportInfo?.main_port}
+            onChange={(e) => onPledgeChange("god", e.target.value.toString())}
             displayEmpty
             sx={selectSx}
             disabled={!supportInfo || Date.now() >= new Date("2026-05-25T00:00:00+07:00").getTime() || !!supportInfo?.main_port || !!supportInfo?.slave_port}
@@ -102,8 +100,8 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
         {/* Investor Account ID — selectable from subscribe_list for the chosen god */}
         <FormControl fullWidth size="small">
           <Select
-            value={pledgeData.investorId}
-            onChange={(e) => onPledgeChange("investorId", e.target.value)}
+            value={pledgeData.investorId || supportInfo?.slave_port}
+            onChange={(e) => onPledgeChange("investorId", e.target.value.toString())}
             displayEmpty
             disabled={isLoading || pledgeData.god.length === 0 || !!supportInfo?.main_port || !!supportInfo?.slave_port}
             sx={selectSx}
