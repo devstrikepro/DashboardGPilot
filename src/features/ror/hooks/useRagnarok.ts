@@ -38,6 +38,7 @@ export const useRagnarok = () => {
       winRate: `${(live.winrate as number).toFixed(2)}%`,
       followers: live.god_support as number,
       port: live.god_port,
+      last_update: live.last_update,
     }));
   }, [portGods]);
 
@@ -53,10 +54,11 @@ export const useRagnarok = () => {
         roi: live.roi as number,
         winRate: live.winrate as number,
         followers: live.god_support as number,
+        last_update: live.last_update,
       }));
   }, [portGods]);
 
-  const handlePledgeChange = (field: string, value: string) => {
+  const handlePledgeChange = (field: string, value: number) => {
     setPledgeData((prev) => {
       const newData = { ...prev, [field]: value };
       // ล้างค่า investorId เมื่อมีการเปลี่ยนเทพ
@@ -126,7 +128,7 @@ export const useRagnarok = () => {
       setPledgeLoading(true);
       setPledgeMessage(null);
 
-      const mainPort = parseInt(gods.find((god) => pledgeData.god.includes(god.name))?.port);
+      const mainPort = parseInt(pledgeData.god);
       if (!mainPort) {
         throw new Error(`${pledgeData.god} is not available for pledging yet.`);
       }

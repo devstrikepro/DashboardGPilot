@@ -34,7 +34,7 @@ export interface TheAltarV2Props {
   gods: God[];
   supportInfo: SupportInfoResponse | null;
   pledgeData: { investorId: string; god: string };
-  onPledgeChange: (field: string, value: string) => void;
+  onPledgeChange: (field: string, value: number) => void;
   onPledge: () => void;
   isLoading: boolean;
   message: string | null;
@@ -46,6 +46,10 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const canPledge = !isLoading && !!pledgeData.god && !!pledgeData.investorId;
+
+  console.log(
+    supportInfo?.subscribe_list.find((g) => gods.find((f) => f.port === pledgeData.god)?.name in g)?.[gods.find((f) => f.port === pledgeData.god)?.name] ?? []
+  );
 
   return (
     <div className="flex flex-col gap-3">
@@ -63,8 +67,8 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
         {/* God Select — uses gods prop directly so dropdown is always available */}
         <FormControl fullWidth size="small">
           <Select
-            value={pledgeData.god || supportInfo?.main_port}
-            onChange={(e) => onPledgeChange("god", e.target.value.toString())}
+            value={pledgeData.god || supportInfo?.main_port || ""}
+            onChange={(e) => onPledgeChange("god", Number(e.target.value))}
             displayEmpty
             sx={selectSx}
             disabled={!supportInfo || Date.now() >= new Date("2026-05-25T00:00:00+07:00").getTime() || !!supportInfo?.main_port || !!supportInfo?.slave_port}
@@ -72,13 +76,13 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
             renderValue={(val) => {
               if (!supportInfo) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Loading...</span>;
               if (!val) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Select God</span>;
-              const god = gods.find((g) => g.name === val);
+              const god = gods.find((g) => g.port === val);
               return (
                 <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   {god && (
                     <img src={god.image} alt="" style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }} />
                   )}
-                  <span style={{ fontWeight: 700 }}>Pledge: {val}</span>
+                  <span style={{ fontWeight: 700 }}>Pledge: {god?.name}</span>
                 </span>
               );
             }}
@@ -89,7 +93,7 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
             {gods
               .filter((god) => supportInfo?.subscribe_list.some((list) => Object.keys(list)?.[0]?.includes(god.name)))
               .map((god) => (
-                <MenuItem key={god.name} value={god.name} sx={{ display: "flex", alignItems: "center", gap: 1.5, py: 1 }}>
+                <MenuItem key={god.name} value={god.port} sx={{ display: "flex", alignItems: "center", gap: 1.5, py: 1 }}>
                   <img src={god.image} alt="" style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }} />
                   <span>{god.name}</span>
                 </MenuItem>
@@ -100,8 +104,8 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
         {/* Investor Account ID — selectable from subscribe_list for the chosen god */}
         <FormControl fullWidth size="small">
           <Select
-            value={pledgeData.investorId || supportInfo?.slave_port}
-            onChange={(e) => onPledgeChange("investorId", e.target.value.toString())}
+            value={pledgeData.investorId || supportInfo?.slave_port || ""}
+            onChange={(e) => onPledgeChange("investorId", Number(e.target.value))}
             displayEmpty
             disabled={isLoading || pledgeData.god.length === 0 || !!supportInfo?.main_port || !!supportInfo?.slave_port}
             sx={selectSx}
@@ -115,7 +119,11 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
             <MenuItem value="" disabled>
               Select Investor Account ID
             </MenuItem>
-            {(supportInfo?.subscribe_list.find((g) => pledgeData.god in g)?.[pledgeData.god] ?? []).map((id) => (
+            {(
+              supportInfo?.subscribe_list.find((g) => gods.find((f) => f.port === pledgeData.god)?.name in g)?.[
+                gods.find((f) => f.port === pledgeData.god)?.name
+              ] ?? []
+            ).map((id) => (
               <MenuItem key={id} value={id}>
                 {id}
               </MenuItem>

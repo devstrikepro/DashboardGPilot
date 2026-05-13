@@ -57,8 +57,8 @@ const STEPS = [
 
 export const HeroSectionV2 = () => (
   <div className="w-full">
-    <p className="text-center text-sm font-bold tracking-[6px] text-[#d4af37] uppercase py-3">HERO &amp; RULES</p>
-    <div className="relative w-full overflow-hidden">
+    <div className="text-center text-sm font-bold tracking-[6px] text-[#d4af37] uppercase py-3!">HERO &amp; RULES</div>
+    <div className="relative w-full overflow-hidden p-4! pb-8!">
       <img src="/ror/bg.png" alt="" className="absolute inset-0 w-full h-full object-cover object-top" />
       <div className="absolute inset-0 bg-linear-to-b from-black/30 via-black/50 to-black/80" />
       <div className="relative z-10 flex flex-col items-center justify-center px-8 py-8 gap-4 sm:px-12 sm:py-12 sm:gap-6">
