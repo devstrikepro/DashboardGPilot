@@ -143,6 +143,8 @@ export const useRagnarok = () => {
         slave_port: slavePort,
       });
 
+      console.log("res: ", res);
+
       if (res.success) {
         const msg = res.data?.message || "Your pledge has been accepted.";
         setPledgeMessage(msg);

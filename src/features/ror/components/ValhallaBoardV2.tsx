@@ -48,6 +48,8 @@ export const ValhallaBoardV2 = ({ rankingData, isLoading }: ValhallaBoardV2Props
       const now = new Date().getTime();
       const distance = lastUpdate - now;
 
+      console.log("now: ", now);
+
       if (distance < 0) {
         setTimeLeft("หมดเวลาแล้ว");
         clearInterval(intervalId);

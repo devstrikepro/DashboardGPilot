@@ -42,8 +42,6 @@ export interface TheAltarV2Props {
 }
 
 export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPledge, isLoading, message, onClearMessage }: TheAltarV2Props) => {
-  const isError = message?.includes("error") || message?.includes("fail") || message?.toLowerCase().includes("invalid");
-
   const [confirmOpen, setConfirmOpen] = useState(false);
   const canPledge = !isLoading && !!pledgeData.god && !!pledgeData.investorId;
 
@@ -138,15 +136,16 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
             paper: {
               sx: {
                 backgroundColor: "#0f172a",
-                border: `1px solid ${isError ? "rgba(239,68,68,0.4)" : "rgba(212,175,55,0.4)"}`,
+                border: `1px solid ${message?.includes("ไม่") ? "rgba(239,68,68,0.4)" : "rgba(212,175,55,0.4)"}`,
                 borderRadius: 2,
                 minWidth: 300,
               },
             },
           }}
         >
-          <DialogTitle sx={{ color: isError ? "#f87171" : "#d4af37", fontWeight: 800, fontSize: "0.9rem", letterSpacing: "0.05em", pb: 1 }}>
-            {isError ? "บูชาไม่สำเร็จ" : "บูชาสำเร็จ"}
+          <DialogTitle sx={{ color: message?.includes("ไม่") ? "#f87171" : "#d4af37", fontWeight: 800, fontSize: "0.9rem", letterSpacing: "0.05em", pb: 1 }}>
+            {/* {message ? "บูชาไม่สำเร็จ" : "บูชาสำเร็จ"} */}
+            {message}
           </DialogTitle>
           <DialogActions sx={{ px: 2, pb: 2 }}>
             <Button onClick={onClearMessage} variant="contained" size="small" sx={pledgeBtnSx}>
@@ -182,7 +181,7 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
           <DialogTitle sx={{ color: "#d4af37", fontWeight: 800, fontSize: "0.9rem", letterSpacing: "0.05em", pb: 1 }}>ยืนยันการบูชา?</DialogTitle>
           <DialogContent sx={{ color: "#cbd5e1", fontSize: "0.8rem", display: "flex", flexDirection: "column", gap: 1 }}>
             <span>
-              คุณกำลังจะบูชา <strong style={{ color: "#d4af37" }}>{pledgeData.god}</strong> ด้วยบัญชี{" "}
+              คุณกำลังจะบูชา <strong style={{ color: "#d4af37" }}>{gods.find((f) => f.port === pledgeData.god)?.name}</strong> ด้วยบัญชี{" "}
               <strong style={{ color: "#d4af37" }}>{pledgeData.investorId}</strong>
             </span>
             <span style={{ color: "rgba(255,100,100,0.9)" }}>⚠ เมื่อยืนยันแล้ว จะไม่สามารถเปลี่ยนแปลงหรือแก้ไขการเลือกได้อีก</span>
