@@ -132,13 +132,10 @@ export const useRagnarok = () => {
         throw new Error("Invalid account information.");
       }
 
-      console.log("main: ", mainPort);
-      console.log("slave: ", slavePort);
-
-      // const res = await RorService.addSupport({
-      //   main_port: mainPort,
-      //   slave_port: slavePort,
-      // });
+      const res = await RorService.addSupport({
+        main_port: mainPort,
+        slave_port: slavePort,
+      });
 
       if (res.success) {
         const msg = res.data?.message || "Your pledge has been accepted.";
