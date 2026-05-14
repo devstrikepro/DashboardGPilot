@@ -50,7 +50,7 @@ export const ValhallaBoardV2 = ({ rankingData, isLoading }: ValhallaBoardV2Props
       const remaining = targetTime - now;
 
       if (remaining <= 0) {
-        setTimeLeft("Refresh เพื่อดูข้อมูลล่าสุด");
+        setTimeLeft("กดรีเฟรชเพื่อดูข้อมูลล่าสุด");
         clearInterval(intervalId);
         return;
       }
