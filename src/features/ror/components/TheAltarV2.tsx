@@ -39,9 +39,10 @@ export interface TheAltarV2Props {
   isLoading: boolean;
   message: string | null;
   onClearMessage: () => void;
+  infoLoading: boolean;
 }
 
-export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPledge, isLoading, message, onClearMessage }: TheAltarV2Props) => {
+export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPledge, isLoading, message, onClearMessage, infoLoading }: TheAltarV2Props) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const canPledge = !isLoading && !!pledgeData.god && !!pledgeData.investorId;
 
@@ -69,10 +70,10 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
             onChange={(e) => onPledgeChange("god", Number(e.target.value))}
             displayEmpty
             sx={selectSx}
-            disabled={!supportInfo || Date.now() >= new Date("2026-05-25T00:00:00+07:00").getTime() || !!supportInfo?.main_port || !!supportInfo?.slave_port}
-            IconComponent={!supportInfo ? () => <CircularProgress size={14} sx={{ color: "rgba(255,255,255,0.4)", mr: 1 }} /> : undefined}
+            disabled={infoLoading || Date.now() >= new Date("2026-05-25T00:00:00+07:00").getTime() || !!supportInfo?.main_port || !!supportInfo?.slave_port}
+            IconComponent={infoLoading ? () => <CircularProgress size={14} sx={{ color: "rgba(255,255,255,0.4)", mr: 1 }} /> : undefined}
             renderValue={(val) => {
-              if (!supportInfo) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Loading...</span>;
+              if (infoLoading) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Loading...</span>;
               if (!val) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Select God</span>;
               const god = gods.find((g) => g.port === val);
               return (
@@ -105,11 +106,11 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
             value={pledgeData.investorId || supportInfo?.slave_port || ""}
             onChange={(e) => onPledgeChange("investorId", Number(e.target.value))}
             displayEmpty
-            disabled={isLoading || pledgeData.god.length === 0 || !!supportInfo?.main_port || !!supportInfo?.slave_port}
+            disabled={infoLoading || pledgeData.god.length === 0 || !!supportInfo?.main_port || !!supportInfo?.slave_port}
             sx={selectSx}
-            IconComponent={isLoading ? () => <CircularProgress size={14} sx={{ color: "rgba(255,255,255,0.4)", mr: 1 }} /> : undefined}
+            IconComponent={infoLoading ? () => <CircularProgress size={14} sx={{ color: "rgba(255,255,255,0.4)", mr: 1 }} /> : undefined}
             renderValue={(val) => {
-              if (isLoading) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Loading...</span>;
+              if (infoLoading) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Loading...</span>;
               if (!val) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Select Investor Account ID (e.g., MT5 ID)</span>;
               return <span style={{ fontWeight: 700 }}>{val}</span>;
             }}

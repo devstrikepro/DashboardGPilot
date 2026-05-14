@@ -32,6 +32,7 @@ export const RecordOfRagnarok: React.FC = () => {
     pledgeLoading,
     pledgeMessage,
     setPledgeMessage,
+    infoLoading,
   } = useRagnarok();
 
   return (
@@ -53,6 +54,7 @@ export const RecordOfRagnarok: React.FC = () => {
                 isLoading={pledgeLoading}
                 message={pledgeMessage}
                 onClearMessage={() => setPledgeMessage(null)}
+                infoLoading={infoLoading}
               />
             ) : (
               <LoginSectionV2

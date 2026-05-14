@@ -90,7 +90,7 @@ export const ROR_ENDPOINTS = {
   /** Step 2: เข้าสู่ระบบด้วย email + password + deviceFingerprint */
   AUTH_LOGIN: `/api/v2/my/signin`,
   /** Refresh Access Token ด้วย refreshToken + deviceFingerprint */
-  AUTH_REFRESH: `/api/v2/my/auth/refresh`,
+  AUTH_REFRESH: `/api/v2/my/my/refresh`,
   /** ยืนยันรหัส 2FA Google Authenticator */
   AUTH_2FA_GOOGLE: `/api/v2/my/2fa/google`,
   /** ยืนยันรหัส 2FA SMS */

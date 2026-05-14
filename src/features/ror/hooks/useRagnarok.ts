@@ -15,6 +15,7 @@ export const useRagnarok = () => {
   const [godsLoading, setGodsLoading] = useState(true);
   const [pledgeMessage, setPledgeMessage] = useState<string | null>(null);
   const [pledgeSuccess, setPledgeSuccess] = useState(false);
+  const [infoLoading, setInfoLoading] = useState(false);
 
   const [pledgeData, setPledgeData] = useState({
     investorId: "",
@@ -81,6 +82,7 @@ export const useRagnarok = () => {
   }, [accounts]);
 
   const fetchAccounts = useCallback(async () => {
+    setInfoLoading(true);
     const res = await RorService.getAccounts();
     if (res.success && res.data) {
       const fetchedAccounts = res.data.data;
@@ -100,10 +102,15 @@ export const useRagnarok = () => {
           const infoRes = await RorService.getSupportInfo({ ports });
 
           if (infoRes.success && infoRes.data) {
+            setInfoLoading(false);
             setSupportInfo(infoRes.data);
+          } else {
+            setInfoLoading(false);
           }
         }
       }
+    } else {
+      setInfoLoading(false);
     }
   }, []);
 
@@ -435,5 +442,6 @@ export const useRagnarok = () => {
     godsLoading,
     pledgeMessage,
     setPledgeMessage,
+    infoLoading,
   };
 };

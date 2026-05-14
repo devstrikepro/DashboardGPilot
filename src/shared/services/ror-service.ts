@@ -65,6 +65,7 @@ const withRorAuth = async <T>(fn: (token: string) => Promise<T>): Promise<T> => 
   } catch (error) {
     if (error instanceof ApiError && error.statusCode === 401) {
       const refreshToken = typeof window !== "undefined" ? localStorage.getItem("ror_refresh_token") : null;
+      const token = typeof window !== "undefined" ? localStorage.getItem("ror_auth_token") : null;
       if (!refreshToken) throw error;
 
       const stored = typeof window !== "undefined" ? localStorage.getItem("ror_device_fingerprint") : null;
@@ -79,7 +80,7 @@ const withRorAuth = async <T>(fn: (token: string) => Promise<T>): Promise<T> => 
           ROR_ENDPOINTS.AUTH_REFRESH,
           {
             method: "POST",
-            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            headers: { "Content-Type": "application/json", Accept: "application/json", Authorization: `Bearer ${token}` },
             body: JSON.stringify({ refreshToken, deviceFingerprint }),
           },
           undefined,

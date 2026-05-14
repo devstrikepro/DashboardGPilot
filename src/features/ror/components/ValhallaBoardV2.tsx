@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRagnarok } from "../hooks/useRagnarok";
 
 type RankingRow = ReturnType<typeof useRagnarok>["rankingData"][number];
@@ -35,7 +35,7 @@ export const ValhallaBoardV2 = ({ rankingData, isLoading }: ValhallaBoardV2Props
       return;
     }
 
-    const lastUpdate = new Date(rankingData?.[0]?.last_update).getTime();
+    const lastUpdate = rankingData?.[0]?.last_update ? new Date(rankingData[0].last_update).getTime() + 7 * 60 * 60 * 1000 : NaN;
 
     if (isNaN(lastUpdate)) {
       setTimeLeft("รูปแบบเวลาไม่ถูกต้อง");
@@ -46,24 +46,20 @@ export const ValhallaBoardV2 = ({ rankingData, isLoading }: ValhallaBoardV2Props
 
     const updateCountdown = () => {
       const now = new Date().getTime();
-      const distance = lastUpdate - now;
+      const targetTime = lastUpdate + 16 * 60 * 1000;
+      const remaining = targetTime - now;
 
-      console.log("now: ", now);
-
-      if (distance < 0) {
-        setTimeLeft("หมดเวลาแล้ว");
+      if (remaining <= 0) {
+        setTimeLeft("ข้อมูลอัพเดทแล้ว กด Refresh เพื่อดูข้อมูลล่าสุด");
         clearInterval(intervalId);
         return;
       }
 
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      const minutes = Math.floor(remaining / (1000 * 60));
+      const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
 
       const pad = (num: number) => String(num).padStart(2, "0");
-
-      setTimeLeft(`${days} วัน ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`);
+      setTimeLeft(`${pad(minutes)}:${pad(seconds)} นาที`);
     };
 
     // รันครั้งแรกทันทีเพื่อให้หน้าจอไม่ว่างเปล่า
