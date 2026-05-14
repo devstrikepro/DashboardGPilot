@@ -46,10 +46,6 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
   const [confirmOpen, setConfirmOpen] = useState(false);
   const canPledge = !isLoading && !!pledgeData.god && !!pledgeData.investorId;
 
-  console.log(
-    supportInfo?.subscribe_list.find((g) => gods.find((f) => f.port === pledgeData.god)?.name in g)?.[gods.find((f) => f.port === pledgeData.god)?.name] ?? []
-  );
-
   return (
     <div className="flex flex-col gap-3">
       <div className="text-center">

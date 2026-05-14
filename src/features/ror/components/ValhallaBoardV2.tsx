@@ -50,7 +50,7 @@ export const ValhallaBoardV2 = ({ rankingData, isLoading }: ValhallaBoardV2Props
       const remaining = targetTime - now;
 
       if (remaining <= 0) {
-        setTimeLeft("ข้อมูลอัพเดทแล้ว กด Refresh เพื่อดูข้อมูลล่าสุด");
+        setTimeLeft("Refresh เพื่อดูข้อมูลล่าสุด");
         clearInterval(intervalId);
         return;
       }
@@ -79,11 +79,11 @@ export const ValhallaBoardV2 = ({ rankingData, isLoading }: ValhallaBoardV2Props
         <p className="text-slate-400 text-xs">(LEADERBOARD)</p>
       </div>
 
-      <div className="relative rounded-xl border border-white/10 bg-black/60 p-6! backdrop-blur-sm space-y-2!">
+      <div className="rounded-xl border border-white/10 bg-black/60 p-6! backdrop-blur-sm space-y-2!">
         <div className="py-3 text-center">
           <h3 className="text-white font-black text-base tracking-widest">LIVE RANKING</h3>
         </div>
-        <div className="absolute top-7 right-6">{timeLeft}</div>
+        <div className="text-end">{timeLeft}</div>
 
         <div className="overflow-x-auto">
           <div className="min-w-100">
