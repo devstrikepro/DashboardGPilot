@@ -1,8 +1,9 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { apiServer } from "@/shared/api/api-server";
+import { apiServer, isRedirectError } from "@/shared/api/api-server";
 import { SUB_ENDPOINTS, API_GATEWAY_SUB } from "@/shared/api/endpoint";
+import { ApiError } from "@/shared/api/api-error";
 import type { LoginRequest, LoginResponse } from "@/shared/types/auth";
 import type { ServiceResponse } from "@/shared/types/api";
 
@@ -49,6 +50,35 @@ export async function loginAction(data: LoginRequest): Promise<ServiceResponse<L
 
     return response;
   } catch (error) {
+    // ถ้าเป็น Redirect Error จาก Next.js ให้ปล่อยไปเพื่อให้ Framework จัดการ
+    if (isRedirectError(error)) {
+      throw error;
+    }
+
+    // จัดการ ApiError เพื่อดึงข้อมูล Error ที่ถูกต้อง
+    if (error instanceof ApiError) {
+      // กรณี 401 คือกรอกรหัสผ่านผิด
+      if (error.statusCode === 401) {
+        return {
+          success: false,
+          data: null,
+          error: {
+            code: "AUTH_001",
+            message: "Incorrect email or password",
+          },
+        };
+      }
+
+      return {
+        success: false,
+        data: null,
+        error: {
+          code: (error.details?.error?.code || error.details?.code || "LOGIN_ERROR") as string,
+          message: error.message,
+        },
+      };
+    }
+
     return {
       success: false,
       data: null,
