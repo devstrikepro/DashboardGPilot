@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useRagnarok } from "../hooks/useRagnarok";
+import { GOD_STYLES } from "./GodsPantheonV2";
 
 type RankingRow = ReturnType<typeof useRagnarok>["rankingData"][number];
 
@@ -75,13 +76,13 @@ export const ValhallaBoardV2 = ({ rankingData, isLoading }: ValhallaBoardV2Props
   return (
     <div className="flex flex-col gap-3">
       <div className="text-center">
-        <h2 className="text-[#d4af37] font-bold text-lg">VALHALLA BOARD</h2>
-        <p className="text-slate-400 text-xs">(LEADERBOARD)</p>
+        <h2 className="text-[#d4af37] font-bold text-lg">กระดานวัลฮัลลา</h2>
+        <p className="text-slate-400 text-xs">(ตารางอันดับ)</p>
       </div>
 
       <div className="rounded-xl border border-white/10 bg-black/60 p-6! backdrop-blur-sm space-y-2!">
         <div className="py-3 text-center">
-          <h3 className="text-white font-black text-base tracking-widest">LIVE RANKING</h3>
+          <h3 className="text-white font-black text-base tracking-widest">อันดับแบบเรียลไทม์</h3>
         </div>
         <div className="text-end">{timeLeft}</div>
 
@@ -89,7 +90,7 @@ export const ValhallaBoardV2 = ({ rankingData, isLoading }: ValhallaBoardV2Props
           <div className="min-w-100">
             {/* Header */}
             <div className="grid grid-cols-5 px-4! py-2! bg-white/5 rounded-lg">
-              {(["Rank", "God", "ROI %", "Win Rate %", "Followers"] as const).map((h, i) => (
+              {(["อันดับ", "เทพเจ้า", "ROI %", "อัตราชนะ %", "ผู้ติดตาม"] as const).map((h, i) => (
                 <span key={h} className={`text-slate-400 text-xs font-semibold ${i >= 2 ? "text-right" : ""}`}>
                   {h}
                 </span>
@@ -111,32 +112,36 @@ export const ValhallaBoardV2 = ({ rankingData, isLoading }: ValhallaBoardV2Props
                       <div className="h-4 bg-white/10 rounded w-10 ml-auto" />
                     </div>
                   ))
-                : rankingData.map((row) => (
-                    <div
-                      key={row.rank}
-                      className={`grid grid-cols-5 items-center px-3! py-2.5! rounded-lg transition-colors ${
-                        row.rank === 1 ? "border border-[#d4af37] bg-[#d4af37]/5" : "border border-transparent hover:bg-white/5"
-                      }`}
-                    >
-                      <span className={`font-black text-sm ${rankColor(row.rank)}`}>#{row.rank}</span>
-                      <div className="flex items-center gap-2">
-                        <img
-                          src={row.avatar}
-                          alt={row.god}
-                          className="w-8 h-8 rounded-full object-cover shrink-0"
-                          style={{ border: `2px solid ${row.color}` }}
-                        />
-                        <span className="text-white font-semibold text-sm">{row.god}</span>
+                : rankingData.map((row) => {
+                    const s = GOD_STYLES[row.god] ?? GOD_STYLES.ODIN;
+
+                    return (
+                      <div
+                        key={row.rank}
+                        className={`grid grid-cols-5 items-center px-3! py-2.5! rounded-lg transition-colors ${
+                          row.rank === 1 ? "border border-[#d4af37] bg-[#d4af37]/5" : "border border-transparent hover:bg-white/5"
+                        }`}
+                      >
+                        <span className={`font-black text-sm ${rankColor(row.rank)}`}>#{row.rank}</span>
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={row.avatar}
+                            alt={row.god}
+                            className="w-8 h-8 rounded-full object-cover shrink-0"
+                            style={{ border: `2px solid ${row.color}` }}
+                          />
+                          <span className="text-white font-semibold text-sm whitespace-nowrap">{s.nameTH}</span>
+                        </div>
+                        <span className={`text-right font-black text-sm ${roiColor(row.rank)}`}>
+                          {typeof row.roi === "number" ? Math.round(row.roi) : row.roi}
+                        </span>
+                        <span className={`text-right text-sm font-semibold ${winRateColor(row.winRate, row.rank)}`}>
+                          {typeof row.winRate === "number" ? Math.round(row.winRate) : row.winRate}%
+                        </span>
+                        <span className={`text-right text-sm font-semibold ${followersColor(row.rank)}`}>{row.followers}</span>
                       </div>
-                      <span className={`text-right font-black text-sm ${roiColor(row.rank)}`}>
-                        {typeof row.roi === "number" ? Math.round(row.roi) : row.roi}
-                      </span>
-                      <span className={`text-right text-sm font-semibold ${winRateColor(row.winRate, row.rank)}`}>
-                        {typeof row.winRate === "number" ? Math.round(row.winRate) : row.winRate}%
-                      </span>
-                      <span className={`text-right text-sm font-semibold ${followersColor(row.rank)}`}>{row.followers}</span>
-                    </div>
-                  ))}
+                    );
+                  })}
             </div>
           </div>
         </div>

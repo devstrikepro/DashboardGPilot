@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Select, MenuItem, FormControl, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
-import { God } from "./GodsPantheonV2";
+import { God, GOD_STYLES } from "./GodsPantheonV2";
 import { SupportInfoResponse } from "@/shared/services/ror-service";
 
 const selectSx = {
@@ -23,13 +23,6 @@ const pledgeBtnSx = {
   "&.Mui-disabled": { backgroundColor: "rgba(212,175,55,0.2)", color: "rgba(255,255,255,0.3)" },
 } as const;
 
-// subscribe_list keys are lowercase ("thor"), pledgeData.god is uppercase ("THOR")
-const getSubscribedPort = (subscribeList: SupportInfoResponse["subscribe_list"] | undefined, godName: string): string => {
-  if (!subscribeList || !godName) return "";
-  const godKey = godName;
-  return subscribeList.find((g) => godKey in g)?.[godKey]?.[0] ?? "";
-};
-
 export interface TheAltarV2Props {
   gods: God[];
   supportInfo: SupportInfoResponse | null;
@@ -49,15 +42,11 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
   return (
     <div className="flex flex-col gap-3">
       <div className="text-center">
-        <h2 className="text-[#d4af37] font-bold text-lg">THE ALTAR</h2>
-        <p className="text-slate-400 text-xs">(PLEDGE)</p>
+        <h2 className="text-[#d4af37] font-bold text-lg">แท่นบูชา</h2>
+        <p className="text-slate-400 text-xs">(ให้คำมั่นสัญญา)</p>
       </div>
       <div className="rounded-xl border border-white/10 bg-black/50 backdrop-blur-sm p-6! flex flex-col gap-4">
-        <h3 className="text-white font-black text-xl text-center">
-          PLEDGE YOUR
-          <br />
-          LOYALTY
-        </h3>
+        <h3 className="text-white font-black text-xl text-center">ให้คำมั่นสัญญาของคุณ</h3>
 
         {/* God Select — uses gods prop directly so dropdown is always available */}
         <FormControl fullWidth size="small">
@@ -70,20 +59,21 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
             IconComponent={infoLoading ? () => <CircularProgress size={14} sx={{ color: "rgba(255,255,255,0.4)", mr: 1 }} /> : undefined}
             renderValue={(val) => {
               if (infoLoading) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Loading...</span>;
-              if (!val) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Select God</span>;
+              if (!val) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>เลือกเหล่าเทพ</span>;
               const god = gods.find((g) => g.port === val);
+              const s = GOD_STYLES[god?.name] ?? GOD_STYLES.ODIN;
               return (
                 <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   {god && (
                     <img src={god.image} alt="" style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }} />
                   )}
-                  <span style={{ fontWeight: 700 }}>Pledge: {god?.name}</span>
+                  <span style={{ fontWeight: 700 }}>คำมั่นสัญญา: {s.nameTH || god?.name}</span>
                 </span>
               );
             }}
           >
             <MenuItem value="" disabled>
-              Select God
+              เลือกเหล่าเทพ
             </MenuItem>
             {gods
               .filter((god) => supportInfo?.subscribe_list.some((list) => Object.keys(list)?.[0]?.includes(god.name)))
@@ -158,7 +148,13 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
           onClick={() => setConfirmOpen(true)}
           sx={pledgeBtnSx}
         >
-          {isLoading ? <CircularProgress size={20} sx={{ color: "#000" }} /> : "PLEDGE NOW (LOCK CHOICE)"}
+          {isLoading ? (
+            <CircularProgress size={20} sx={{ color: "#000" }} />
+          ) : !supportInfo?.main_port || !supportInfo?.slave_port ? (
+            "ร่วมให้คำมั่นสัญญาตอนนี้ (ล็อกตัวเลือก)"
+          ) : (
+            "ท่านได้ให้คำมั่นสัญญาแล้ว"
+          )}
         </Button>
 
         <Dialog
@@ -212,7 +208,6 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
           ) : (
             <p className="text-center">ข้อมูล port จะอัปเดตทุก 1 นาที กดรีเฟรชเพื่อดูข้อมูลล่าสุด</p>
           )}
-          <p className="text-slate-500 text-[10px] text-center">Validation elements of our validation</p>
         </div>
       </div>
     </div>

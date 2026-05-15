@@ -2,13 +2,19 @@ import { useRagnarok } from "../hooks/useRagnarok";
 
 export type God = ReturnType<typeof useRagnarok>["gods"][number];
 
-const GOD_STYLES: Record<string, { border: string; glow: string; textColor: string; btnBorder: string; btnHover: string }> = {
+export const GOD_STYLES: Record<
+  string,
+  { border: string; glow: string; textColor: string; btnBorder: string; btnHover: string; nameTH: string; typeTH: string; signatureTH: string }
+> = {
   THOR: {
     border: "border-red-500",
     glow: "shadow-[0_0_20px_rgba(239,68,68,0.4)]",
     textColor: "text-red-400",
     btnBorder: "border-red-500",
     btnHover: "hover:bg-red-500/20",
+    nameTH: "ธอร์กะดอก",
+    typeTH: "ดุดัน",
+    signatureTH: "สายฟ้า",
   },
   LOKI: {
     border: "border-green-500",
@@ -16,6 +22,9 @@ const GOD_STYLES: Record<string, { border: string; glow: string; textColor: stri
     textColor: "text-green-400",
     btnBorder: "border-green-500",
     btnHover: "hover:bg-green-500/20",
+    nameTH: "โลกี",
+    typeTH: "ยุทธวิธี",
+    signatureTH: "ควัน",
   },
   HEIMDALL: {
     border: "border-sky-400",
@@ -23,6 +32,9 @@ const GOD_STYLES: Record<string, { border: string; glow: string; textColor: stri
     textColor: "text-sky-300",
     btnBorder: "border-sky-400",
     btnHover: "hover:bg-sky-400/20",
+    nameTH: "ฮัมดำ",
+    typeTH: "สมดุล",
+    signatureTH: "บิฟรอสต์ ไลท์",
   },
   ODIN: {
     border: "border-purple-500",
@@ -30,25 +42,30 @@ const GOD_STYLES: Record<string, { border: string; glow: string; textColor: stri
     textColor: "text-purple-400",
     btnBorder: "border-purple-500",
     btnHover: "hover:bg-purple-500/20",
+    nameTH: "โอดวย",
+    typeTH: "เชิงกลยุทธ์",
+    signatureTH: "รูนิก",
   },
 };
 
 const GodCard = ({ god }: { god: God }) => {
   const s = GOD_STYLES[god.name] ?? GOD_STYLES.ODIN;
   return (
-    <div className={`rounded-xl border ${s.border} ${s.glow} bg-black/60 overflow-hidden flex flex-col transition-all duration-300 hover:scale-[1.03] hover:brightness-110 cursor-pointer`}>
+    <div
+      className={`rounded-xl border ${s.border} ${s.glow} bg-black/60 overflow-hidden flex flex-col transition-all duration-300 hover:scale-[1.03] hover:brightness-110 cursor-pointer`}
+    >
       <img src={god.image} alt={god.name} className="w-full aspect-3/4 object-cover object-center" />
       <div className="p-3 text-center flex flex-col gap-1.5">
-        <h3 className={`font-black text-lg ${s.textColor}`}>{god.name}</h3>
+        <h3 className={`font-black text-lg ${s.textColor}`}>{s.nameTH || god.name}</h3>
         <p className="text-[10px] text-slate-400">
           {god.type}&nbsp;|&nbsp;
           <span className="text-white font-bold">ROI: {god.roi}</span>
-          &nbsp;|&nbsp;WIN RATE: {god.winRate}
+          &nbsp;|&nbsp; อัตราชนะ: {god.winRate}
         </p>
         <p className={`text-sm italic ${s.textColor}`} style={{ fontFamily: "cursive" }}>
           Signature/{god.signature}
         </p>
-        <p className="text-[10px] text-slate-500 pb-2!">Followers: {god.followers}</p>
+        <p className="text-[10px] text-slate-500 pb-2!">ผู้ติดตาม: {god.followers}</p>
       </div>
     </div>
   );
@@ -62,8 +79,8 @@ interface GodsPantheonV2Props {
 export const GodsPantheonV2 = ({ gods, isLoading }: GodsPantheonV2Props) => (
   <div className="w-full">
     <div className="text-center my-4!">
-      <h2 className="text-[#d4af37] font-bold text-xl">THE GODS</h2>
-      <p className="text-[#d4af37] text-xs">(THE PANTHEON)</p>
+      <h2 className="text-[#d4af37] font-bold text-xl">เหล่าเทพเจ้า</h2>
+      <p className="text-[#d4af37] text-xs">(วิหารแห่งเทพ)</p>
     </div>
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
       {isLoading

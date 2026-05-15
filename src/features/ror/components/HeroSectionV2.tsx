@@ -11,7 +11,7 @@ const STEPS = [
         <line x1="50" y1="40" x2="50" y2="75" />
       </svg>
     ),
-    label: "1. OPEN BROKER ACCOUNT",
+    label: "1. เปิดบัญชีโบรกเกอร์",
     sub: "(External)",
   },
   {
@@ -24,7 +24,7 @@ const STEPS = [
         <line x1="50" y1="55" x2="70" y2="55" />
       </svg>
     ),
-    label: "2. GET INVESTOR ID",
+    label: "2. รับรหัสนักลงทุน",
     sub: null,
   },
   {
@@ -38,7 +38,7 @@ const STEPS = [
         <line x1="50" y1="45" x2="50" y2="85" />
       </svg>
     ),
-    label: "3. PLEDGE LOYALTY",
+    label: "3. ปฏิญาณความจงรักภักดี",
     sub: "(Register Here)",
   },
   {
@@ -50,14 +50,14 @@ const STEPS = [
         <path d="M50 20 V30 M80 50 H70 M20 50 H30 M30 30 L38 38 M70 30 L62 38" />
       </svg>
     ),
-    label: "4. CLAIM REWARDS",
+    label: "4. รับรางวัลของคุณ",
     sub: null,
   },
 ];
 
 export const HeroSectionV2 = () => (
   <div className="w-full">
-    <div className="text-center text-sm font-bold tracking-[6px] text-[#d4af37] uppercase py-3!">HERO &amp; RULES</div>
+    <div className="text-center text-sm font-bold tracking-[6px] text-[#d4af37] uppercase py-3!">เหล่าเทพ &amp; กฎกติกา</div>
     <div className="relative w-full overflow-hidden p-4! pb-8!">
       <img src="/ror/bg.png" alt="" className="absolute inset-0 w-full h-full object-cover object-top" />
       <div className="absolute inset-0 bg-linear-to-b from-black/30 via-black/50 to-black/80" />
@@ -83,11 +83,15 @@ export const HeroSectionV2 = () => (
           >
             Ragnarok
           </h1>
-          <p className="text-white/70 mt-1 tracking-widest text-xs sm:text-lg">Choose Your God. Witness the Battle. Claim the Glory.</p>
+          <div className="text-white/70 mt-1 tracking-widest text-xs sm:text-lg flex flex-wrap justify-center gap-2">
+            <span className="whitespace-nowrap">เลือกเทพของคุณ.</span>
+            <span className="whitespace-nowrap">เป็นสักขีพยานแห่งการต่อสู้.</span>
+            <span className="whitespace-nowrap">คว้าความรุ่งโรจน์มาครอง.</span>
+          </div>
         </div>
 
         <div className="w-full max-w-2xl">
-          <p className="text-center text-white font-bold text-sm sm:text-lg mb-2! sm:mb-3! tracking-wider">How to Play</p>
+          <p className="text-center text-white font-bold text-sm sm:text-lg mb-2! sm:mb-3! tracking-wider">วิธีการเล่น</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {STEPS.map((step, i) => (
               <div

@@ -68,21 +68,17 @@ export const LoginSectionV2 = ({
   return (
     <div className="flex flex-col gap-3">
       <div className="text-center">
-        <h2 className="text-[#d4af37] font-bold text-lg">{is2fa ? "SECURITY" : "LOGIN"}</h2>
-        <p className="text-slate-400 text-xs">{is2fa ? "(2FA VERIFICATION)" : "(AUTHENTICATE)"}</p>
+        <h2 className="text-[#d4af37] font-bold text-lg">{is2fa ? "SECURITY" : "เข้าสู่ระบบ"}</h2>
+        <p className="text-slate-400 text-xs">{is2fa ? "(2FA VERIFICATION)" : "(ยืนยันตัวตน)"}</p>
       </div>
       <div className="rounded-xl border border-white/10 bg-black/50 backdrop-blur-sm p-6! flex flex-col gap-4 min-h-90 justify-center">
         {!is2fa ? (
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
-            <h3 className="text-white font-black text-xl text-center">
-              ENTER THE
-              <br />
-              VALHALLA
-            </h3>
+            <h3 className="text-white font-black text-xl text-center">เข้าสู่วัลฮัลลา</h3>
             <TextField
               fullWidth
               size="small"
-              placeholder="Email Address"
+              placeholder="อีเมล Strike Pro"
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
@@ -103,7 +99,7 @@ export const LoginSectionV2 = ({
             <TextField
               fullWidth
               size="small"
-              placeholder="Password"
+              placeholder="รหัสผ่าน"
               type={showPass ? "text" : "password"}
               value={password}
               onChange={(e) => {
@@ -131,7 +127,7 @@ export const LoginSectionV2 = ({
             />
             {error && <p className="text-red-400 text-xs font-semibold">* {error}</p>}
             <Button fullWidth variant="contained" type="submit" disabled={isLoading || !email || !password} sx={btnSx}>
-              {isLoading ? <CircularProgress size={20} sx={{ color: "#000" }} /> : "SIGN IN TO PLEDGE"}
+              {isLoading ? <CircularProgress size={20} sx={{ color: "#000" }} /> : "ลงชื่อเข้าใช้เพื่อบูชา"}
             </Button>
           </form>
         ) : isMultiChoice ? (
@@ -187,7 +183,7 @@ export const LoginSectionV2 = ({
           </form>
         )}
         <p className="text-slate-500 text-[10px] text-center mt-auto">
-          {is2fa ? "Wait for the code to refresh if it fails" : "Unlock the altar by signing in"}
+          {is2fa ? "Wait for the code to refresh if it fails" : "ปลดล็อกแท่นบูชาด้วยการลงชื่อเข้าใช้"}
         </p>
       </div>
     </div>
