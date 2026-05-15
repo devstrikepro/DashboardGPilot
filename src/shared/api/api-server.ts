@@ -100,7 +100,9 @@ export async function apiServer<T>(
       const errorCode = errorData?.error?.code || errorData?.code;
 
       // Global Authentication Handling: ถ้า Token หมดอายุ หรือไม่ถูกต้อง ให้ Redirect ไปหน้า Login
-      if (response.status === 401 || errorCode === "SYS_001") {
+      // ยกเว้นกรณีที่เป็นการเรียก Login Endpoint เอง เพื่อให้ฝั่ง UI จัดการ Error ได้ (เช่น รหัสผ่านผิด)
+      const isLoginEndpoint = endpoint.includes("/auth/login") || endpoint.includes("/signin");
+      if ((response.status === 401 || errorCode === "SYS_001") && !isLoginEndpoint) {
         redirect("/login");
       }
 
