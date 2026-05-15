@@ -1,26 +1,26 @@
 "use client";
 
-import { 
-  Box, 
-  Card, 
-  CardContent, 
-  Typography, 
-  TextField, 
-  Button, 
-  Stack, 
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  Stack,
   Alert,
-  IconButton, 
+  IconButton,
   InputAdornment,
   Link,
   Checkbox,
-  FormControlLabel
+  FormControlLabel,
 } from "@mui/material";
-import { 
-  Email as EmailIcon, 
-  Lock as LockIcon, 
-  Visibility as VisibilityIcon, 
+import {
+  Email as EmailIcon,
+  Lock as LockIcon,
+  Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
-  Login as LoginIcon
+  Login as LoginIcon,
 } from "@mui/icons-material";
 import { loginAction } from "./auth-actions";
 import { useAuth } from "@/shared/providers/auth-provider";
@@ -46,34 +46,31 @@ export function LoginPage() {
       // เรียกใช้ Server Action
       const res = await loginAction({
         email: email,
-        password: password
+        password: password,
       });
 
       if (res.success && res.data) {
         // อัปเดต Client-side Storage เพื่อความต่อเนื่องของ UI
-        localStorage.setItem('auth_token', res.data.access_token);
+        localStorage.setItem("auth_token", res.data.access_token);
         if (res.data.refresh_token) {
-          localStorage.setItem('refresh_token', res.data.refresh_token);
+          localStorage.setItem("refresh_token", res.data.refresh_token);
         }
-        localStorage.setItem('user_info', JSON.stringify(res.data.user));
+        localStorage.setItem("user_info", JSON.stringify(res.data.user));
 
         // อัปเดตสถานะใน AuthProvider
         authLogin(res.data);
 
         // ตรวจสอบว่าต้องเปลี่ยนรหัสผ่านหรือไม่
-        const isPasswordChangeRequired = 
-          res.data.user.require_password_change || 
-          res.error?.code === "AUTH_PASSWORD_CHANGE_REQUIRED";
+        const isPasswordChangeRequired = res.data.user.require_password_change || res.error?.code === "AUTH_PASSWORD_CHANGE_REQUIRED";
 
         if (isPasswordChangeRequired) {
-            router.push("/change-password");
+          router.push("/change-password");
         } else {
-            router.push("/dashboard");
+          router.push("/dashboard");
         }
       } else {
         setError(res.error?.message || "เข้าสู่ระบบไม่สำเร็จ");
       }
-
     } catch (err) {
       setError("เกิดข้อผิดพลาดในการเชื่อมต่อ");
     } finally {
@@ -82,37 +79,38 @@ export function LoginPage() {
   };
 
   return (
-    <Box 
-      sx={{ 
-        minHeight: "100vh", 
-        display: "flex", 
-        alignItems: "center", 
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
         justifyContent: "center",
         bgcolor: "background.default",
         p: 2,
-        backgroundImage: "radial-gradient(circle at 98% 10%, rgba(34, 211, 238, 0.05) 0%, transparent 40%), radial-gradient(circle at 2% 90%, rgba(8, 145, 178, 0.05) 0%, transparent 40%)"
+        backgroundImage:
+          "radial-gradient(circle at 98% 10%, rgba(34, 211, 238, 0.05) 0%, transparent 40%), radial-gradient(circle at 2% 90%, rgba(8, 145, 178, 0.05) 0%, transparent 40%)",
       }}
     >
-      <Card sx={{ maxWidth: 400, width: "100%", borderRadius: 6, boxShadow: "0 20px 50px rgba(0,0,0,0.1)", overflow: 'visible' }}>
-        <Box sx={{ position: 'relative', height: 8, bgcolor: 'primary.main', borderTopLeftRadius: 24, borderTopRightRadius: 24 }} />
+      <Card sx={{ maxWidth: 400, width: "100%", borderRadius: 6, boxShadow: "0 20px 50px rgba(0,0,0,0.1)", overflow: "visible" }}>
+        <Box sx={{ position: "relative", height: 8, bgcolor: "primary.main", borderTopLeftRadius: 24, borderTopRightRadius: 24 }} />
         <CardContent sx={{ p: 4 }}>
           <Box sx={{ textAlign: "center", mb: 4 }}>
-            <Box 
-              sx={{ 
-                width: 60, 
-                height: 60, 
-                borderRadius: 3, 
-                bgcolor: "rgba(34, 211, 238, 0.1)", 
-                display: "flex", 
-                alignItems: "center", 
+            <Box
+              sx={{
+                width: 60,
+                height: 60,
+                borderRadius: 3,
+                bgcolor: "rgba(34, 211, 238, 0.1)",
+                display: "flex",
+                alignItems: "center",
                 justifyContent: "center",
                 mx: "auto",
-                mb: 2
+                mb: 2,
               }}
             >
               <LoginIcon sx={{ color: "primary.main", fontSize: 32 }} />
             </Box>
-            <Typography variant="h5" sx={{ fontWeight: 800, fontFamily: 'Manrope' }}>
+            <Typography variant="h5" sx={{ fontWeight: 800, fontFamily: "Manrope" }}>
               Welcome Back
             </Typography>
             <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
@@ -141,7 +139,7 @@ export function LoginPage() {
                       <EmailIcon sx={{ color: "text.secondary", fontSize: 20 }} />
                     </InputAdornment>
                   ),
-                  sx: { borderRadius: 3 }
+                  sx: { borderRadius: 3 },
                 }}
               />
               <TextField
@@ -166,16 +164,20 @@ export function LoginPage() {
                       </IconButton>
                     </InputAdornment>
                   ),
-                  sx: { borderRadius: 3 }
+                  sx: { borderRadius: 3 },
                 }}
               />
 
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <FormControlLabel
                   control={<Checkbox size="small" />}
-                  label={<Typography variant="body2" sx={{ color: 'text.secondary' }}>Remember me</Typography>}
+                  label={
+                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                      Remember me
+                    </Typography>
+                  }
                 />
-                <Link href="#" underline="hover" sx={{ fontSize: '0.875rem', fontWeight: 600, color: 'primary.main' }}>
+                <Link href="#" underline="hover" sx={{ fontSize: "0.875rem", fontWeight: 600, color: "primary.main" }}>
                   Forgot password?
                 </Link>
               </Box>
@@ -186,42 +188,19 @@ export function LoginPage() {
                 type="submit"
                 variant="contained"
                 disabled={isLoading}
-                sx={{ 
-                  borderRadius: 3, 
-                  py: 1.5, 
-                  fontWeight: 700, 
+                sx={{
+                  borderRadius: 3,
+                  py: 1.5,
+                  fontWeight: 700,
                   textTransform: "none",
                   boxShadow: "0 8px 20px rgba(34, 211, 238, 0.3)",
-                  mt: 1
+                  mt: 1,
                 }}
               >
                 {isLoading ? "Signing In..." : "Sign In"}
               </Button>
             </Stack>
           </form>
-          <Box sx={{ mt: 4, textAlign: "center" }}>
-            
-            <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
-              <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                หากยังไม่มีบัญชี StrikePro สมัครได้ที่นี่
-              </Typography>
-              <Button
-                component="a"
-                href="https://my.strikeprofx.com/register?referral=93"
-                target="_blank"
-                rel="noopener noreferrer"
-                startIcon={<AdsClickIcon />}
-                sx={{ 
-                  mt: 1,
-                  textTransform: 'none',
-                  fontWeight: 700,
-                  color: 'success.main'
-                }}
-              >
-                สมัคร StrikePro
-              </Button>
-            </Box>
-          </Box>
         </CardContent>
       </Card>
     </Box>
