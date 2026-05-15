@@ -206,8 +206,12 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
           </DialogActions>
         </Dialog>
 
-        <div className="space-y-1!">
-          <p className="text-center">ข้อมูลอัปเดตทุก 1 นาที กดรีเฟรชเพื่อดูข้อมูลล่าสุด</p>
+        <div className={supportInfo?.main_port || supportInfo?.slave_port ? "" : "space-y-1!"}>
+          {supportInfo?.main_port || supportInfo?.slave_port ? (
+            <></>
+          ) : (
+            <p className="text-center">ข้อมูล port จะอัปเดตทุก 1 นาที กดรีเฟรชเพื่อดูข้อมูลล่าสุด</p>
+          )}
           <p className="text-slate-500 text-[10px] text-center">Validation elements of our validation</p>
         </div>
       </div>
