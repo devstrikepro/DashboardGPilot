@@ -6,6 +6,7 @@ import type {
   AccountProfile, 
   AccountFinance,
   AccountInfo,
+  AccountInfoList,
   SyncResult
 } from '@/shared/types/api';
 
@@ -18,13 +19,13 @@ export const AccountService = {
   /**
    * ดึงข้อมูลสรุปรายพอร์ตทั้งหมดที่ผู้ใช้ถือครอง
    */
-  getProfile: async (mt5Id?: number): Promise<ServiceResponse<AccountProfile | AccountProfile[]>> => {
+  getProfile: async (mt5Id?: number, options?: RequestInit): Promise<ServiceResponse<AccountProfile | AccountProfile[]>> => {
     try {
       logger.info('Fetching account profile(s) from Backend-Sub', { mt5Id });
       
       const response = await apiClient<ServiceResponse<AccountProfile | AccountProfile[]>>(
         SUB_ENDPOINTS.ACCOUNT_PROFILE,
-        undefined,
+        options,
         mt5Id ? { mt5_id: mt5Id } : undefined,
         API_GATEWAY_SUB
       );
@@ -53,13 +54,13 @@ export const AccountService = {
   /**
    * ดึงข้อมูลการเงินและสถิติภาพรวม (Finance, Equity Curve)
    */
-  getFinance: async (mt5Id?: number): Promise<ServiceResponse<AccountFinance | AccountFinance[]>> => {
+  getFinance: async (mt5Id?: number, options?: RequestInit): Promise<ServiceResponse<AccountFinance | AccountFinance[]>> => {
     try {
       logger.info('Fetching account finance from Backend-Sub', { mt5Id });
       
       const response = await apiClient<ServiceResponse<AccountFinance | AccountFinance[]>>(
         SUB_ENDPOINTS.ACCOUNT_FINANCE,
-        undefined,
+        options,
         mt5Id ? { mt5_id: mt5Id } : undefined,
         API_GATEWAY_SUB
       );
@@ -87,14 +88,15 @@ export const AccountService = {
 
   /**
    * ดึงข้อมูลบัญชี MT5 เบื้องต้น (Listing page)
+   * Backend-Sub คืนแบบ wrapped: { list: AccountInfo[], last_update: string | null }
    */
-  getInfo: async (): Promise<ServiceResponse<AccountInfo[]>> => {
+  getInfo: async (options?: RequestInit): Promise<ServiceResponse<AccountInfoList>> => {
     try {
       logger.info('Fetching account info list from Backend-Sub');
       
-      const response = await apiClient<ServiceResponse<AccountInfo[]>>(
+      const response = await apiClient<ServiceResponse<AccountInfoList>>(
         SUB_ENDPOINTS.ACCOUNT_INFO,
-        undefined,
+        options,
         undefined,
         API_GATEWAY_SUB
       );

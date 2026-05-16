@@ -37,6 +37,7 @@ The backbone of the application.
 
 - **[client.ts](file:///d:/EAGold/Gpliot/GPilotFrontEnd/src/shared/api/client.ts)**: Central API gateway. Handles Auth headers, `X-Trace-ID`, and error mapping.
 - **[endpoint.ts](file:///d:/EAGold/Gpliot/GPilotFrontEnd/src/shared/api/endpoint.ts)**: Registry of all Backend API endpoints.
+- **[API_INTEGRATION.md](file:///d:/EAGold/Gpliot/GPilotFrontEnd/API_INTEGRATION.md)**: Documentation of how frontend services consume Backend-Sub APIs.
 
 ### ⚙️ Services (`shared/services/`)
 

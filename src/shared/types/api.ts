@@ -230,6 +230,15 @@ export interface AccountInfo {
   readonly support_group: string;
 }
 
+/**
+ * Wrapped response จาก Backend-Sub /account/info
+ * data จะเป็น object { list, last_update } ไม่ใช่ array โดยตรง
+ */
+export interface AccountInfoList {
+  readonly list: AccountInfo[];
+  readonly last_update: string | null;
+}
+
 // ---------------------------------------------
 // Grouped Deal (Round-Turn Position)
 // ---------------------------------------------

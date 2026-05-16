@@ -7,6 +7,7 @@ interface SectionHeaderProps {
     readonly title: string;
     readonly onRefresh?: () => void;
     readonly loading?: boolean;
+    readonly refreshDisabled?: boolean;
     readonly icon?: React.ReactNode;
     readonly actions?: React.ReactNode;
     readonly sx?: SxProps<Theme>;
@@ -16,6 +17,7 @@ export function SectionHeader({
     title,
     onRefresh,
     loading = false,
+    refreshDisabled = false,
     icon,
     actions,
     sx,
@@ -42,7 +44,7 @@ export function SectionHeader({
                 {onRefresh && (
                     <IconButton
                         onClick={onRefresh}
-                        disabled={loading}
+                        disabled={loading || refreshDisabled}
                         sx={{
                             bgcolor: "background.paper",
                             boxShadow: 1,

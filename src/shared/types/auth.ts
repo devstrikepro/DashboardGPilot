@@ -55,7 +55,7 @@ export interface UserSession {
   user: {
     id: string;
     email: string;
-    role: string;
+    role_id: string;
     require_password_change?: boolean;
     menu: {
       dashboard: string[];

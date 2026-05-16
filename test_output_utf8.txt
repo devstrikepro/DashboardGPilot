@@ -1,0 +1,364 @@
+﻿
+[1m[46m RUN [49m[22m [36mv4.1.2 [39m[90mD:/EAGold/Gpliot/GPilotFrontEnd[39m
+
+node.exe : [90mstderr[2m | src/features/product-detail/hooks/__tests__/use-product-detail-data.test.tsx[2m > 
+[22m[2museProductDetailData Hook (TanStack Query)[2m > 
+[22m[2museProductDetailData_SuccessfulFetch_ReturnsFormattedData
+At C:\Program Files\nodejs\npx.ps1:29 char:3
++   & $NODE_EXE $NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([90mstderr[2m...nsFormattedData:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[22m[39mTypeError: Cannot read properties of undefined (reading 'map')
+    at D:/EAGold/Gpliot/GPilotFrontEnd/src/features/product-detail/hooks/use-product-detail-data.ts:43:33
+    at updateMemo [90m(D:\EAGold\Gpliot\GPilotFrontEnd\[39mnode_modules\[4mreact-dom[24m\cjs\react-dom-client.devel
+opment.js:8795:19[90m)[39m
+    at Object.useMemo [90m(D:\EAGold\Gpliot\GPilotFrontEnd\[39mnode_modules\[4mreact-dom[24m\cjs\react-dom-client.d
+evelopment.js:26484:18[90m)[39m
+    at process.env.NODE_ENV.exports.useMemo 
+[90m(D:\EAGold\Gpliot\GPilotFrontEnd\[39mnode_modules\[4mreact[24m\cjs\react.development.js:1251:34[90m)[39m
+    at Module.useProductDetailData 
+(D:/EAGold/Gpliot/GPilotFrontEnd/src/features/product-detail/hooks/use-product-detail-data.ts:41:22)
+    at 
+D:/EAGold/Gpliot/GPilotFrontEnd/src/features/product-detail/hooks/__tests__/use-product-detail-data.test.tsx:57:41
+    at TestComponent 
+[90m(D:\EAGold\Gpliot\GPilotFrontEnd\[39mnode_modules\[4m@testing-library[24m\react\dist\pure.js:330:27[90m)[39m
+    at Object.react_stack_bottom_frame [90m(D:\EAGold\Gpliot\GPilotFrontEnd\[39mnode_modules\[4mreact-dom[24m\cjs\r
+eact-dom-client.development.js:25904:20[90m)[39m
+    at renderWithHooks [90m(D:\EAGold\Gpliot\GPilotFrontEnd\[39mnode_modules\[4mreact-dom[24m\cjs\react-dom-client.
+development.js:7662:22[90m)[39m
+    at updateFunctionComponent [90m(D:\EAGold\Gpliot\GPilotFrontEnd\[39mnode_modules\[4mreact-dom[24m\cjs\react-dom
+-client.development.js:10166:19[90m)[39m
+An error occurred in the <TestComponent> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+
+ [32mโ“[39m src/features/dashboard/hooks/__tests__/use-dashboard-data.test.tsx[2m > [22museDashboardData Hook (TanStack Query)[2m > [22museDashboardData_SuccessfulFetch_ReturnsSummary[32m 114[2mms[22m[39m
+ [32mโ“[39m src/features/dashboard/hooks/__tests__/use-dashboard-data.test.tsx[2m > [22museDashboardData Hook (TanStack Query)[2m > [22museDashboardData_HealthCheckFail_ReturnsError[32m 67[2mms[22m[39m
+ [31mร—[39m src/features/history/hooks/__tests__/use-history-data.test.tsx[2m > [22museHistoryData Hook (TanStack Query)[2m > [22museHistoryData_SuccessfulFetch_StoresDataInQuery[32m 124[2mms[22m[39m
+[31m   โ’ expected +0 to be 100 // Object.is equality[39m
+ [32mโ“[39m src/features/history/hooks/__tests__/use-history-data.test.tsx[2m > [22museHistoryData Hook (TanStack Query)[2m > [22museHistoryData_HandleSort_ResetsPageAndTriggersRefetch[32m 82[2mms[22m[39m
+ [32mโ“[39m src/features/history/hooks/__tests__/use-history-data.test.tsx[2m > [22museHistoryData Hook (TanStack Query)[2m > [22museHistoryData_PaginationChange_UpdatesState[32m 85[2mms[22m[39m
+ [31mร—[39m src/features/product-detail/hooks/__tests__/use-product-detail-data.test.tsx[2m > [22museProductDetailData Hook (TanStack Query)[2m > [22museProductDetailData_SuccessfulFetch_ReturnsFormattedData[33m 1052[2mms[22m[39m
+[31m   โ’ expected true to be false // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div />[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+ [32mโ“[39m src/features/product-detail/hooks/__tests__/use-product-detail-data.test.tsx[2m > [22museProductDetailData Hook (TanStack Query)[2m > [22museProductDetailData_ApiError_ReturnsErrorMessage[32m 94[2mms[22m[39m
+ [32mโ“[39m src/features/product-detail/components/__tests__/product-detail-header.test.tsx[2m > [22mProductDetailHeader[2m > [22mrenders the product name correctly[32m 51[2mms[22m[39m
+ [32mโ“[39m src/features/product-detail/components/__tests__/product-detail-header.test.tsx[2m > [22mProductDetailHeader[2m > [22mcalls onBack when back chip is clicked[32m 18[2mms[22m[39m
+ [32mโ“[39m src/features/product-detail/components/__tests__/product-detail-tabs.test.tsx[2m > [22mProductDetailTabs[2m > [22mrenders both tabs correctly[32m 93[2mms[22m[39m
+ [32mโ“[39m src/features/product-detail/components/__tests__/product-detail-tabs.test.tsx[2m > [22mProductDetailTabs[2m > [22mcalls onChange when a tab is clicked[32m 49[2mms[22m[39m
+ [31mร—[39m src/features/dashboard/components/__tests__/dashboard-card.test.tsx[2m > [22mDashboardCard[2m > [22mrenders correctly with data[32m 87[2mms[22m[39m
+[31m   โ’ Unable to find an element with the text: 10%. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"MuiGrid-root MuiGrid-direction-xs-row MuiGrid-grid-xs-12 MuiGrid-grid-md-6 css-204a8q-MuiGrid-root"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-1v5itm8-MuiPaper-root-MuiCard-root"[31m
+        [33mstyle[31m=[32m"--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"[31m
+      [36m>[31m
+        [36m<button[31m
+          [33mclass[31m=[32m"MuiButtonBase-root MuiCardActionArea-root css-29zpp2-MuiButtonBase-root-MuiCardActionArea-root"[31m
+          [33mtabindex[31m=[32m"0"[31m
+          [33mtype[31m=[32m"button"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"MuiBox-root css-19vjvj8"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"MuiBox-root css-41fhq1"[31m
+            [36m>[31m
+              [0mGP[0m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"MuiBox-root css-15ync0s"[31m
+            [36m>[31m
+              [36m<h6[31m
+                [33mclass[31m=[32m"MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-1k76q8e-MuiTypography-root"[31m
+              [36m>[31m
+                [0mGpilot[0m
+              [36m</h6>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"MuiBox-root css-172hjuw"[31m
+              [36m>[31m
+                [36m<span[31m
+                  [33mclass[31m=[32m"MuiTypography-root MuiTypography-caption css-1f3qpdn-MuiTypography-root"[31m
+                [36m>[31m
+                  [0mDD %[0m
+                [36m</span>[31m
+                [36m<p[31m
+                  [33mclass[31m=[32m"MuiTypography-root MuiTypography-body2 css-ppzd2s-MuiTypography-root"[31m
+                [36m>[31m
+                  [0m0.00[0m
+                  [0m%[0m
+                [36m</p>[31m
+              [36m</div>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"MuiBox-root css-1or3nvl"[31m
+            [36m>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"MuiTypography-root MuiTypography-caption css-1rebboe-MuiTypography-root"[31m
+              [36m>[31m
+                [0mAVG MONTH PROFIT[0m
+              [36m</span>[31m
+              [36m<h4[31m
+                [33mclass[31m=[32m"MuiTypography-root MuiTypography-h4 metric-value css-15on0t-MuiTypography-root"[31m
+              [36m>[31m
+                [0m0[0m
+                [0m%[0m
+              [36m</h4>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"MuiCardActionArea-focusHighlight css-1h5un5t-MuiCardActionArea-focusHighlight"[31m
+          [36m/>[31m
+        [36m</button>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+ [32mโ“[39m src/features/account/components/__tests__/referral-sync.test.tsx[2m > [22mReferralSyncCard[2m > [22mrenders loading state initially[32m 156[2mms[22m[39m
+ [32mโ“[39m src/features/dashboard/components/__tests__/dashboard-card.test.tsx[2m > [22mDashboardCard[2m > [22mdisplays warning alert when there is an error[32m 31[2mms[22m[39m
+ [32mโ“[39m src/features/dashboard/components/__tests__/dashboard-card.test.tsx[2m > [22mDashboardCard[2m > [22mcalls onCardClick when clicked[32m 62[2mms[22m[39m
+ [32mโ“[39m src/features/account/components/__tests__/referral-sync.test.tsx[2m > [22mReferralSyncCard[2m > [22mdisplays data correctly after loading[32m 97[2mms[22m[39m
+ [32mโ“[39m src/features/account/components/__tests__/referral-sync.test.tsx[2m > [22mReferralSyncCard[2m > [22mdisplays error message on fetch failure[32m 91[2mms[22m[39m
+ [32mโ“[39m src/shared/providers/__tests__/api-health-provider.test.tsx[2m > [22mApiHealthProvider[2m > [22mApiHealthProvider_SuccessfulCheck_SetsIsHealthyTrue[32m 28[2mms[22m[39m
+ [32mโ“[39m src/shared/providers/__tests__/api-health-provider.test.tsx[2m > [22mApiHealthProvider[2m > [22mApiHealthProvider_FailedCheck_SetsIsHealthyFalse[32m 5[2mms[22m[39m
+ [32mโ“[39m src/shared/providers/__tests__/api-health-provider.test.tsx[2m > [22mApiHealthProvider[2m > [22mApiHealthProvider_OnPathnameChange_TriggersHealthCheck[32m 4[2mms[22m[39m
+ [32mโ“[39m src/shared/ui/__tests__/toast.test.tsx[2m > [22mToast[2m > [22mToast_RendersTitleAndDescription_WhenOpen[32m 85[2mms[22m[39m
+ [32mโ“[39m src/shared/ui/__tests__/toast.test.tsx[2m > [22mToast[2m > [22mToast_DoesNotRender_WhenClosed[32m 3[2mms[22m[39m
+ [32mโ“[39m src/shared/ui/__tests__/toast.test.tsx[2m > [22mToast[2m > [22mToast_OnClose_TriggersCallback[32m 24[2mms[22m[39m
+ [32mโ“[39m src/app/change-password/__tests__/change-password.test.tsx[2m > [22mChangePasswordPage[2m > [22mChangePasswordPage_PasswordMismatch_ShowsError[33m 375[2mms[22m[39m
+ [32mโ“[39m src/app/change-password/__tests__/change-password.test.tsx[2m > [22mChangePasswordPage[2m > [22mChangePasswordPage_ShortPassword_ShowsError[32m 178[2mms[22m[39m
+ [32mโ“[39m src/shared/utils/__tests__/utils.test.ts[2m > [22mcn utility[2m > [22mshould merge classes correctly[32m 9[2mms[22m[39m
+ [32mโ“[39m src/shared/utils/__tests__/utils.test.ts[2m > [22mcn utility[2m > [22mshould handle conditional classes[32m 1[2mms[22m[39m
+ [32mโ“[39m src/shared/utils/__tests__/utils.test.ts[2m > [22mcn utility[2m > [22mshould resolve tailwind conflicts[32m 0[2mms[22m[39m
+ [32mโ“[39m src/shared/utils/__tests__/utils.test.ts[2m > [22mcn utility[2m > [22mshould handle undefined or null inputs[32m 0[2mms[22m[39m
+ [32mโ“[39m src/shared/ui/__tests__/data-table.test.tsx[2m > [22mDataTable[2m > [22mDataTable_RendersRows_MatchesMockData[33m 497[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/auth-service.test.ts[2m > [22mAuthService[2m > [22mregister[2m > [22mregister_WithValidData_EncryptsPasswordAndCallsApi[32m 6[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/auth-service.test.ts[2m > [22mAuthService[2m > [22mregister[2m > [22mregister_MissingKey_ReturnsConfigError[32m 1[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/auth-service.test.ts[2m > [22mAuthService[2m > [22mlogin[2m > [22mlogin_WithValidCredentials_ReturnsTokens[32m 2[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/auth-service.test.ts[2m > [22mAuthService[2m > [22mupdateMT5Password[2m > [22mupdateMT5Password_Successful_CallsApiWithEncryptedPassword[32m 1[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/auth-service.test.ts[2m > [22mAuthService[2m > [22mupdatePassword[2m > [22mupdatePassword_Successful_CallsApiWithEncryptedPassword[32m 1[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/auth-service.test.ts[2m > [22mAuthService[2m > [22mrefreshToken[2m > [22mrefreshToken_Successful_UpdatesLocalStorageAndCookies[32m 2[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/auth-service.test.ts[2m > [22mAuthService[2m > [22mrefreshToken[2m > [22mrefreshToken_Failed_ClearsTokensAndLogout[32m 1[2mms[22m[39m
+ [32mโ“[39m src/shared/utils/__tests__/crypto.test.ts[2m > [22mCryptoUtils[2m > [22mencrypt[2m > [22mshould encrypt plaintext into a valid base64 string[32m 5[2mms[22m[39m
+ [32mโ“[39m src/shared/utils/__tests__/crypto.test.ts[2m > [22mCryptoUtils[2m > [22mencrypt[2m > [22mshould produce different ciphertexts for the same plaintext due to random nonce[32m 2[2mms[22m[39m
+ [32mโ“[39m src/shared/utils/__tests__/crypto.test.ts[2m > [22mCryptoUtils[2m > [22mencrypt[2m > [22mshould throw error if key is invalid[32m 1[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/account-service.test.ts[2m > [22mAccountService[2m > [22mgetProfile[2m > [22mgetProfile_Successful_CallsApiClientWithCorrectEndpoint[32m 4[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/account-service.test.ts[2m > [22mAccountService[2m > [22mgetFinance[2m > [22mgetFinance_Successful_CallsApiClientWithCorrectEndpoint[32m 1[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/account-service.test.ts[2m > [22mAccountService[2m > [22msyncAccount[2m > [22msyncAccount_Successful_CallsApiClientWithPost[32m 2[2mms[22m[39m
+ [32mโ“[39m src/shared/utils/__tests__/date-utils.test.ts[2m > [22mdate-utils[2m > [22mgetMostRecentMonday[2m > [22mshould return the same day if it is Monday[32m 3[2mms[22m[39m
+ [32mโ“[39m src/shared/utils/__tests__/date-utils.test.ts[2m > [22mdate-utils[2m > [22mgetMostRecentMonday[2m > [22mshould return the previous Monday if it is Sunday[32m 0[2mms[22m[39m
+ [32mโ“[39m src/shared/utils/__tests__/date-utils.test.ts[2m > [22mdate-utils[2m > [22mgetMostRecentMonday[2m > [22mshould return the previous Monday if it is Wednesday[32m 0[2mms[22m[39m
+ [32mโ“[39m src/shared/utils/__tests__/date-utils.test.ts[2m > [22mdate-utils[2m > [22mtoISODateString[2m > [22mshould format date correctly as YYYY-MM-DD[32m 0[2mms[22m[39m
+ [32mโ“[39m src/shared/utils/__tests__/date-utils.test.ts[2m > [22mdate-utils[2m > [22mtoFullISOString[2m > [22mshould return full ISO string[32m 0[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/analytics-service.test.ts[2m > [22mAnalyticsService[2m > [22mgetGroupedTrades[2m > [22mgetGroupedTrades_Successful_ReturnsData[32m 5[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/analytics-service.test.ts[2m > [22mAnalyticsService[2m > [22mgetGroupedTrades[2m > [22mgetGroupedTrades_WithServiceBase_PassesBaseToClient[32m 1[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/analytics-service.test.ts[2m > [22mAnalyticsService[2m > [22mgetProductDetail[2m > [22mgetProductDetail_WithGpilot_CallsApiClient[32m 1[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/analytics-service.test.ts[2m > [22mAnalyticsService[2m > [22mgetProductDetail[2m > [22mgetProductDetail_WithOtherService_CallsApiClientWithBase[32m 0[2mms[22m[39m
+ [32mโ“[39m src/shared/ui/__tests__/data-table.test.tsx[2m > [22mDataTable[2m > [22mDataTable_OnSymbolFilterChange_TriggersCallback[32m 284[2mms[22m[39m
+ [32mโ“[39m src/shared/ui/__tests__/data-table.test.tsx[2m > [22mDataTable[2m > [22mDataTable_LoadingState_ShowsCircularProgress[32m 294[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/trade-history-service.test.ts[2m > [22mTradeHistoryService[2m > [22mMy History[2m > [22mgetMySyncedHistory_CallsApiClientWithCorrectEndpoint[32m 4[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/trade-history-service.test.ts[2m > [22mTradeHistoryService[2m > [22mReferral History[2m > [22mgetReferralHistory_CallsApiClientWithSubGateway[32m 1[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/trade-history-service.test.ts[2m > [22mTradeHistoryService[2m > [22mSync Operations[2m > [22msyncMyTrades_CallsApiClientWithPost[32m 2[2mms[22m[39m
+ [32mโ“[39m src/shared/services/__tests__/trade-history-service.test.ts[2m > [22mTradeHistoryService[2m > [22mSync Operations[2m > [22msyncReferralTrades_CallsApiClientWithPost[32m 0[2mms[22m[39m
+ [32mโ“[39m src/shared/ui/__tests__/metric-card.test.tsx[2m > [22mMetricCard Component[2m > [22mrenders title and value correctly[32m 37[2mms[22m[39m
+ [32mโ“[39m src/shared/ui/__tests__/metric-card.test.tsx[2m > [22mMetricCard Component[2m > [22mrenders change text when provided[32m 7[2mms[22m[39m
+ [32mโ“[39m src/shared/ui/__tests__/metric-card.test.tsx[2m > [22mMetricCard Component[2m > [22mapplies correct color for positive change[32m 6[2mms[22m[39m
+ [32mโ“[39m src/app/change-password/__tests__/change-password.test.tsx[2m > [22mChangePasswordPage[2m > [22mChangePasswordPage_SuccessfulSubmission_RedirectsToDashboard[33m 1748[2mms[22m[39m
+ [32mโ“[39m src/app/change-password/__tests__/change-password.test.tsx[2m > [22mChangePasswordPage[2m > [22mChangePasswordPage_ApiError_ShowsErrorMessage[32m 108[2mms[22m[39m
+
+[31mโฏโฏโฏโฏโฏโฏ[39m[1m[41m Failed Suites 1 [49m[22m[31mโฏโฏโฏโฏโฏโฏโฏ[39m
+
+[41m[1m FAIL [22m[49m src/features/account/components/__tests__/account-header.test.tsx[2m [ 
+src/features/account/components/__tests__/account-header.test.tsx ][22m
+[31m[1mError[22m: EMFILE: too many open files, open 
+'D:\EAGold\Gpliot\GPilotFrontEnd\node_modules\@mui\icons-material\esm\SettingsInputComponentTwoTone.js'[39m
+[31m[2mโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏ[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ errno: -4066, code: 'EMFILE', syscall: 'open', path: 
+'D:\EAGold\Gpliot\GPilotFrontEnd\node_modules\@mui\icons-material\esm\SettingsInputComponentTwoTone.js' }[39m
+[31m[2mโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏ[1/4]โฏ[22m[39m
+
+
+[31mโฏโฏโฏโฏโฏโฏโฏ[39m[1m[41m Failed Tests 3 [49m[22m[31mโฏโฏโฏโฏโฏโฏโฏ[39m
+
+[41m[1m FAIL [22m[49m src/features/dashboard/components/__tests__/dashboard-card.test.tsx[2m > 
+[22mDashboardCard[2m > [22mrenders correctly with data
+[31m[1mTestingLibraryElementError[22m: Unable to find an element with the text: 10%. This could be because the text 
+is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher 
+more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"MuiGrid-root MuiGrid-direction-xs-row MuiGrid-grid-xs-12 MuiGrid-grid-md-6 
+css-204a8q-MuiGrid-root"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root 
+css-1v5itm8-MuiPaper-root-MuiCard-root"[31m
+        [33mstyle[31m=[32m"--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 
+1px 3px 0px rgba(0,0,0,0.12);"[31m
+      [36m>[31m
+        [36m<button[31m
+          [33mclass[31m=[32m"MuiButtonBase-root MuiCardActionArea-root 
+css-29zpp2-MuiButtonBase-root-MuiCardActionArea-root"[31m
+          [33mtabindex[31m=[32m"0"[31m
+          [33mtype[31m=[32m"button"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"MuiBox-root css-19vjvj8"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"MuiBox-root css-41fhq1"[31m
+            [36m>[31m
+              [0mGP[0m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"MuiBox-root css-15ync0s"[31m
+            [36m>[31m
+              [36m<h6[31m
+                [33mclass[31m=[32m"MuiTypography-root MuiTypography-h6 MuiTypography-noWrap 
+css-1k76q8e-MuiTypography-root"[31m
+              [36m>[31m
+                [0mGpilot[0m
+              [36m</h6>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"MuiBox-root css-172hjuw"[31m
+              [36m>[31m
+                [36m<span[31m
+                  [33mclass[31m=[32m"MuiTypography-root MuiTypography-caption css-1f3qpdn-MuiTypography-root"[31m
+                [36m>[31m
+                  [0mDD %[0m
+                [36m</span>[31m
+                [36m<p[31m
+                  [33mclass[31m=[32m"MuiTypography-root MuiTypography-body2 css-ppzd2s-MuiTypography-root"[31m
+                [36m>[31m
+                  [0m0.00[0m
+                  [0m%[0m
+                [36m</p>[31m
+              [36m</div>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"MuiBox-root css-1or3nvl"[31m
+            [36m>[31m
+              [36m<span[31m
+                [33mclass[31m=[32m"MuiTypography-root MuiTypography-caption css-1rebboe-MuiTypography-root"[31m
+              [36m>[31m
+                [0mAVG MONTH PROFIT[0m
+              [36m</span>[31m
+              [36m<h4[31m
+                [33mclass[31m=[32m"MuiTypography-root MuiTypography-h4 metric-value 
+css-15on0t-MuiTypography-root"[31m
+              [36m>[31m
+                [0m0[0m
+                [0m%[0m
+              [36m</h4>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"MuiCardActionArea-focusHighlight css-1h5un5t-MuiCardActionArea-focusHighlight"[31m
+          [36m/>[31m
+        [36m</button>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+[90m [2mโฏ[22m Object.getElementError node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2mโฏ[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m76:38[22m[39m
+[90m [2mโฏ[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m52:17[22m[39m
+[90m [2mโฏ[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2mโฏ[22m src/features/dashboard/components/__tests__/dashboard-card.test.tsx:[2m26:23[22m[39m
+    [90m 24|[39m         render(<DashboardCard product={mockProduct} onCardClick={mockOโ€ฆ
+    [90m 25|[39m         
+[34mexpect[39m(screen[33m.[39m[34mgetByText[39m([32m'Gpilot'[39m))[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m 26|[39m         
+[34mexpect[39m(screen[33m.[39m[34mgetByText[39m([32m'10%'[39m))[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m   |[39m                       [31m^[39m
+    [90m 27|[39m         
+[34mexpect[39m(screen[33m.[39m[34mgetByText[39m([32m'5.00%'[39m))[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m 28|[39m     })[33m;[39m
+
+[31m[2mโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏ[2/4]โฏ[22m[39m
+
+[41m[1m FAIL [22m[49m src/features/history/hooks/__tests__/use-history-data.test.tsx[2m > [22museHistoryData 
+Hook (TanStack Query)[2m > [22museHistoryData_SuccessfulFetch_StoresDataInQuery
+[31m[1mAssertionError[22m: expected +0 to be 100 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 100[39m
+[31m+ 0[39m
+
+[36m [2mโฏ[22m src/features/history/hooks/__tests__/use-history-data.test.tsx:[2m66:41[22m[39m
+    [90m 64|[39m     
+[34mexpect[39m(result[33m.[39mcurrent[33m.[39mdeals)[33m.[39m[34mtoHaveLength[39m([34m1[39m)[33m;[39m
+    [90m 65|[39m     [34mexpect[39m(result[33m.[39mcurrent[33m.[39mdeals[[34m0[39m][33m.[39msymbol)[33m.[
+39m[34mtoBe[39m([32m"EURUSD"[39m)[33m;[39m
+    [90m 66|[39m     [34mexpect[39m(result[33m.[39mcurrent[33m.[39mtotals[33m.[39mnetPL)[33m.[39m[34mtoBe
+[39m([34m100[39m)[33m;[39m
+    [90m   |[39m                                         [31m^[39m
+    [90m 67|[39m     
+[34mexpect[39m(result[33m.[39mcurrent[33m.[39mtotalCount)[33m.[39m[34mtoBe[39m([34m1[39m)[33m;[39m
+    [90m 68|[39m   })[33m;[39m
+
+[31m[2mโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏ[3/4]โฏ[22m[39m
+
+[41m[1m FAIL [22m[49m src/features/product-detail/hooks/__tests__/use-product-detail-data.test.tsx[2m > 
+[22museProductDetailData Hook (TanStack Query)[2m > [22museProductDetailData_SuccessfulFetch_ReturnsFormattedData
+[31m[1mAssertionError[22m: expected true to be false // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div />[31m
+  [36m</body>[31m
+[36m</html>[31m[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- false[39m
+[31m+ true[39m
+
+[36m [2mโฏ[22m src/features/product-detail/hooks/__tests__/use-product-detail-data.test.tsx:[2m61:56[22m[39m
+    [90m 59|[39m     })[33m;[39m
+    [90m 60|[39m
+    [90m 61|[39m     [35mawait[39m [34mwaitFor[39m(() [33m=>[39m 
+[34mexpect[39m(result[33m.[39mcurrent[33m.[39mloading)[33m.[39m[34mtoBe[39m([35mfalse[39m))[33m;[39m
+    [90m   |[39m                                                        [31m^[39m
+    [90m 62|[39m
+    [90m 63|[39m     [34mexpect[39m(result[33m.[39mcurrent[33m.[39maccount[33m.[39mbalance)[33m.[39m[34mto
+Be[39m([34m5000[39m)[33m;[39m
+[90m [2mโฏ[22m runWithExpensiveErrorDiagnosticsDisabled 
+node_modules/@testing-library/dom/dist/config.js:[2m47:12[22m[39m
+[90m [2mโฏ[22m checkCallback node_modules/@testing-library/dom/dist/wait-for.js:[2m124:77[22m[39m
+[90m [2mโฏ[22m Timeout.checkRealTimersCallback 
+node_modules/@testing-library/dom/dist/wait-for.js:[2m118:16[22m[39m
+
+[31m[2mโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏโฏ[4/4]โฏ[22m[39m
+
+
+[2m Test Files [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m16 passed[39m[22m[90m (20)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m60 passed[39m[22m[90m (63)[39m
+[2m   Start at [22m 15:40:10
+[2m   Duration [22m 7.55s[2m (transform 1.69s, setup 3.15s, import 17.49s, tests 6.15s, environment 15.84s)[22m
+

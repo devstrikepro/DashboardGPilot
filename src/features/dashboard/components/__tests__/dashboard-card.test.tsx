@@ -15,7 +15,7 @@ describe('DashboardCard', () => {
         (useDashboardData as any).mockReturnValue({
             loading: false,
             error: null,
-            summary: { avgProfitMonth: 10, DD: 5 },
+            summary: { avg_profit_month: 10, drawdown: 5 },
             formatCurrency: (val: number) => `$${val}`,
         });
     });

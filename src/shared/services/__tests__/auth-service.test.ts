@@ -39,7 +39,7 @@ describe('AuthService', () => {
 
       const data = {
         email: 'test@example.com',
-        mt5Id: 12345,
+        mt5_id: 12345,
         mt5_password_plain: 'mt5-pass-123',
       };
 
@@ -53,7 +53,8 @@ describe('AuthService', () => {
           body: expect.stringContaining('test@example.com')
         }),
         undefined,
-        API_GATEWAY_SUB
+        API_GATEWAY_SUB,
+        true
       );
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockResult.data);
@@ -63,7 +64,7 @@ describe('AuthService', () => {
       delete process.env.NEXT_PUBLIC_MT5_ENCRYPTION_KEY;
       const data = {
         email: 'test@example.com',
-        mt5Id: 12345,
+        mt5_id: 12345,
         mt5_password_plain: 'mt5-pass-123',
       };
 
@@ -79,9 +80,9 @@ describe('AuthService', () => {
       const mockLoginResponse = { 
         success: true, 
         data: { 
-          accessToken: 'abc', 
-          tokenType: 'bearer', 
-          user: { id: '1', email: 'test@example.com', role: 'admin' } 
+          access_token: 'abc', 
+          token_type: 'bearer', 
+          user: { id: '1', email: 'test@example.com', role_id: 'L3' } 
         }, 
         error: null 
       };
@@ -96,7 +97,8 @@ describe('AuthService', () => {
           body: JSON.stringify({ email: 'test@example.com', password: MOCK_ENCRYPTED_PASS })
         }),
         undefined,
-        API_GATEWAY_SUB
+        API_GATEWAY_SUB,
+        true
       );
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockLoginResponse.data);
@@ -114,7 +116,7 @@ describe('AuthService', () => {
         SUB_ENDPOINTS.AUTH_UPDATE_MT5_PASSWORD,
         expect.objectContaining({
           method: 'PATCH',
-          body: JSON.stringify({ mt5Id: 12345, encryptedPassword: MOCK_ENCRYPTED_PASS })
+          body: JSON.stringify({ mt5_id: 12345, encrypted_password: MOCK_ENCRYPTED_PASS })
         }),
         undefined,
         API_GATEWAY_SUB
@@ -165,7 +167,7 @@ describe('AuthService', () => {
       mockLocalStorage.setItem('refresh_token', 'old-refresh');
       const mockRefreshResponse = {
         success: true,
-        data: { accessToken: 'new-access', refreshToken: 'new-refresh', tokenType: 'bearer' },
+        data: { access_token: 'new-access', refresh_token: 'new-refresh', token_type: 'bearer' },
         error: null
       };
       vi.mocked(apiClient).mockResolvedValue(mockRefreshResponse);
@@ -176,10 +178,11 @@ describe('AuthService', () => {
         SUB_ENDPOINTS.AUTH_REFRESH,
         expect.objectContaining({
           method: 'POST',
-          body: JSON.stringify({ refreshToken: 'old-refresh' })
+          body: JSON.stringify({ refresh_token: 'old-refresh' })
         }),
         undefined,
-        API_GATEWAY_SUB
+        API_GATEWAY_SUB,
+        true
       );
       expect(result.success).toBe(true);
       expect(mockLocalStorage.getItem('auth_token')).toBe('new-access');

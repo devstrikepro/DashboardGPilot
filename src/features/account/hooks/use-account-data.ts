@@ -34,18 +34,21 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
   const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lastUpdate, setLastUpdate] = useState<string | null>(initialData?.lastUpdate || null);
 
   // If initialData is provided, mark as fetched
   const isInitialFetched = useRef(!!initialData && Object.keys(initialData).length > 0);
 
   // 1. Fetch Account Info List (Listing Page)
-  const fetchAccountInfoList = useCallback(async () => {
+  const fetchAccountInfoList = useCallback(async (options?: RequestInit) => {
     if (!isHealthy) return;
     setLoading(true);
     try {
-      const res = await AccountService.getInfo();
+      const res = await AccountService.getInfo(options);
       if (res.success && res.data) {
-        setAccountInfoList(res.data);
+        // Backend-Sub คืนแบบ wrapped: { list: AccountInfo[], last_update: string | null }
+        setAccountInfoList(res.data.list);
+        setLastUpdate(res.data.last_update);
       } else if (!res.success) {
         setError(res.message || "Failed to fetch account list");
       }
@@ -58,14 +61,14 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
   }, [isHealthy]);
 
   // 2. Fetch Detail Data (Detail Page)
-  const fetchDetailInfo = useCallback(async (targetMt5Id: number) => {
+  const fetchDetailInfo = useCallback(async (targetMt5Id: number, options?: RequestInit) => {
     if (!isHealthy) return;
     
     setLoading(true);
     try {
       const [profileRes, financeRes] = await Promise.all([
-        AccountService.getProfile(targetMt5Id),
-        AccountService.getFinance(targetMt5Id),
+        AccountService.getProfile(targetMt5Id, options),
+        AccountService.getFinance(targetMt5Id, options),
       ]);
 
       if (profileRes.success && profileRes.data) {
@@ -89,7 +92,7 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
   }, [isHealthy]);
 
   // 3. Fetch Trades (Independent)
-  const fetchTrades = useCallback(async (targetMt5Id?: number) => {
+  const fetchTrades = useCallback(async (targetMt5Id?: number, options?: RequestInit) => {
     if (!isHealthy) return;
 
     setTableLoading(true);
@@ -101,7 +104,7 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
         type: tableParams?.type || null,
         date_from: tableParams?.date_from || null,
         end_date: tableParams?.end_date || null,
-      }, API_GATEWAY_SUB);
+      }, API_GATEWAY_SUB, options);
 
       if (tradesRes.success && tradesRes.data) {
         // Sub-API returns List of objects, each for one port
@@ -205,17 +208,40 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
     netProfit: finance?.net_profit ?? 0,
     equityCurve: finance?.equity_curve || [],
     formatCurrency,
+    lastUpdate,
+    canRefresh: useMemo(() => {
+      if (!lastUpdate) return true;
+      const lastUpdateTime = new Date(lastUpdate).getTime();
+      const now = new Date().getTime();
+      return now - lastUpdateTime > 15 * 60 * 1000;
+    }, [lastUpdate]),
     refreshData: async () => {
+      // 1. ตรวจสอบว่าสามารถรีเฟรชได้หรือไม่ (Cooldown 15 นาที)
+      if (!lastUpdate) {
+        // ถ้าไม่มี lastUpdate เลยให้ข้ามไปทำต่อได้ (เช่น โหลดครั้งแรก)
+      } else {
+        const lastUpdateTime = new Date(lastUpdate).getTime();
+        const now = new Date().getTime();
+        if (now - lastUpdateTime <= 15 * 60 * 1000) {
+          console.warn("Refresh blocked: Cooldown active");
+          return;
+        }
+      }
+
       setLoading(true);
       try {
-        // 1. First trigger manual sync
+        // 2. Trigger manual sync (เส้นนี้หนักที่สุด)
         await AccountService.syncAccount();
         
-        // 2. Then fetch updated data based on view
+        // 3. Then fetch updated data based on view (Force no-cache)
+        const fetchOptions: RequestInit = { cache: 'no-store' };
         if (mt5Id) {
-          await Promise.all([fetchDetailInfo(mt5Id), fetchTrades(mt5Id)]);
+          await Promise.all([
+            fetchDetailInfo(mt5Id, fetchOptions), 
+            fetchTrades(mt5Id, fetchOptions)
+          ]);
         } else {
-          await fetchAccountInfoList();
+          await fetchAccountInfoList(fetchOptions);
         }
       } catch (err) {
         setError("Failed to sync and refresh data.");

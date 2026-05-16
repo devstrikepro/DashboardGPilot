@@ -23,7 +23,7 @@ export default async function Page() {
 
     if (response.success && response.data && response.data.length > 0) {
       initialData = {
-        profitSharingBalance: response.data[0].totalProfitSharing || 0
+        profitSharingBalance: response.data[0].total_profit_sharing || 0
       };
     }
   } catch (error) {

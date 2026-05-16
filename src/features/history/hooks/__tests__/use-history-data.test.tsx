@@ -31,15 +31,15 @@ describe("useHistoryData Hook (TanStack Query)", () => {
 
   const mockHistoryResponse = [{
     paginated: {
-      list: [{ ticket: 1, symbol: "EURUSD", netProfit: 100 }],
+      list: [{ ticket: 1, symbol: "EURUSD", net_profit: 100 }],
       total: 1,
     },
-    totalVolume: 1,
-    grossProfit: 100,
-    grossLoss: 0,
-    netProfit: 100,
+    total_volume: 1,
+    gross_profit: 100,
+    gross_loss: 0,
+    net_profit: 100,
     fee: 0,
-    totalTrades: 1,
+    total_trades: 1,
   }] as any;
 
   it("useHistoryData_SuccessfulFetch_StoresDataInQuery", async () => {

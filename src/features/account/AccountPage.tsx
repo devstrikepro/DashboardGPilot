@@ -10,6 +10,7 @@ import type { AccountProfile, AccountFinance, GroupedTradesResponse, AccountInfo
 
 export interface AccountInitialData {
     info?: AccountInfo[] | null;
+    lastUpdate?: string | null;
     profile?: AccountProfile | AccountProfile[] | null;
     finance?: AccountFinance | AccountFinance[] | null;
     tradesData?: GroupedTradesResponse | GroupedTradesResponse[] | null;
@@ -56,6 +57,8 @@ export function AccountPage({ initialData, mt5Id }: AccountPageProps) {
         setStartDate,
         endDate,
         setEndDate,
+        lastUpdate,
+        canRefresh,
     } = useAccountViewModel(initialData, mt5Id);
 
     const handleSelectPort = (index: number) => {
@@ -75,6 +78,8 @@ export function AccountPage({ initialData, mt5Id }: AccountPageProps) {
                 onRefresh={refreshData} 
                 loading={loading} 
                 onBack={isDetailView ? handleBack : undefined}
+                lastUpdate={lastUpdate}
+                canRefresh={canRefresh}
             />
 
             {!isDetailView ? (

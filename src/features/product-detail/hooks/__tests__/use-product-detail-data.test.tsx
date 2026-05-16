@@ -31,15 +31,15 @@ describe("useProductDetailData Hook (TanStack Query)", () => {
 
   const mockProductDetail = {
     balance: 5000,
-    equityCurve: [{ time: "2024-03-25T10:00:00Z", equity: 5000 }],
-    symbolStats: { list: [], totaltrades: 5 },
-    winrate: 65,
-    recoveryFactor: 1.5,
-    maxdd: 10,
-    profitFactor: 2.1,
-    profitToday: 100,
-    avgProfitWeek: 500,
-    avgProfitMonth: 2000,
+    equity_curve: [{ time: "2024-03-25T10:00:00Z", equity: 5000 }],
+    symbol_statistics: { list: [], total_trades: 5 },
+    win_rate: 65,
+    recovery_factor: 1.5,
+    max_drawdown: 10,
+    profit_factor: 2.1,
+    profit_today: 100,
+    avg_profit_week: 500,
+    avg_profit_month: 2000,
   } as any;
 
   it("useProductDetailData_SuccessfulFetch_ReturnsFormattedData", async () => {
