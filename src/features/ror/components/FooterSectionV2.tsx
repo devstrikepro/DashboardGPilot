@@ -14,9 +14,9 @@ export const FooterSectionV2 = ({ onLogout, isLoggedIn }: FooterSectionV2Props) 
     <>
       <div className="mt-auto py-4! px-10! border-t border-white/5 flex justify-end gap-6 text-slate-500 text-xs bg-[#0F172A]">
         <div className="flex items-center gap-6">
-          <span>Terms &amp; Conditions</span>
-          <span>Broker Website</span>
-          <span>Contact Info</span>
+          <span>ข้อกำหนดและเงื่อนไข</span>
+          <span>เว็บไซต์โบรกเกอร์</span>
+          <span>ข้อมูลติดต่อ</span>
         </div>
 
         {isLoggedIn && (
