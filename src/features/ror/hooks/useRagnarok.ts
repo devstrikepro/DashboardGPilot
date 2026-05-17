@@ -302,7 +302,7 @@ export const useRagnarok = () => {
             throw new Error("Invalid response from server");
           }
         } else {
-          setError(result.error?.code || "Invalid 2FA code");
+          setError("Invalid code");
           toast({
             title: "Verification Failed",
             description: result.error?.code || "Invalid 2FA code",
@@ -310,7 +310,7 @@ export const useRagnarok = () => {
           });
         }
       } catch (error) {
-        setError(error instanceof Error ? error.message : "Failed to verify 2FA.");
+        setError("Failed to verify 2FA.");
         toast({
           title: "Error",
           description: error instanceof Error ? error.message : "Failed to verify 2FA.",
@@ -356,10 +356,10 @@ export const useRagnarok = () => {
             throw new Error("Invalid response from server");
           }
         } else {
-          setError(result.error?.code || "Invalid 2FA code");
+          setError("Invalid code");
           toast({
             title: "Verification Failed",
-            description: result.error?.message || "Invalid 2FA code",
+            description: "Invalid code",
             variant: "destructive",
           });
         }
