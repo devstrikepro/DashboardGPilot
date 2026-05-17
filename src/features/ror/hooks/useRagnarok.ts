@@ -409,7 +409,6 @@ export const useRagnarok = () => {
     emailRef.current = "";
     setIsLoggedIn(false);
     setAccounts([]);
-    setPortGods(null);
     setSupportInfo(null);
     setUuid(null);
     setWorkflow(null);
