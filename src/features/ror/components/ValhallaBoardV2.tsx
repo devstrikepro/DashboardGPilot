@@ -127,7 +127,7 @@ export const ValhallaBoardV2 = ({ rankingData, isLoading }: ValhallaBoardV2Props
                           <img
                             src={row.avatar}
                             alt={row.god}
-                            className="w-8 h-8 rounded-full object-cover shrink-0"
+                            className="w-8 h-8 rounded-full object-cover object-top shrink-0"
                             style={{ border: `2px solid ${row.color}` }}
                           />
                           <span className="text-white font-semibold text-sm whitespace-nowrap">{s.nameTH}</span>

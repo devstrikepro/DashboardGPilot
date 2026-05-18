@@ -54,7 +54,7 @@ const GodCard = ({ god }: { god: God }) => {
     <div
       className={`rounded-xl border ${s.border} ${s.glow} bg-black/60 overflow-hidden flex flex-col transition-all duration-300 hover:scale-[1.03] hover:brightness-110 cursor-pointer`}
     >
-      <img src={god.image} alt={god.name} className="w-full aspect-3/4 object-cover object-center" />
+      <img src={god.image} alt={god.name} className="w-full object-cover object-center" />
       <div className="p-3 text-center flex flex-col gap-1.5">
         <h3 className={`font-black text-lg ${s.textColor}`}>{s.nameTH || god.name}</h3>
         <p className="text-[10px] text-slate-400">

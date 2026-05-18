@@ -12,7 +12,7 @@ const STEPS = [
       </svg>
     ),
     label: "เปิดบัญชีกับ Strike Pro",
-    sub: "(External)",
+    sub: null,
   },
   {
     icon: (
@@ -39,7 +39,7 @@ const STEPS = [
       </svg>
     ),
     label: "เลือกบูชาเทพ",
-    sub: "(Register Here)",
+    sub: null,
   },
   {
     icon: (

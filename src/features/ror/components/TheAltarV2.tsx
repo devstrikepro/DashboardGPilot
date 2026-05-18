@@ -78,7 +78,12 @@ export const TheAltarV2 = ({
               return (
                 <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   {god && (
-                    <img src={god.image} alt="" style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }} />
+                    <img
+                      src={god.image}
+                      alt=""
+                      className="object-top"
+                      style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }}
+                    />
                   )}
                   <span style={{ fontWeight: 700 }}>เลือกบูชาเทพ: {s.nameTH || god?.name}</span>
                 </span>
@@ -95,7 +100,12 @@ export const TheAltarV2 = ({
 
                 return (
                   <MenuItem key={god.name} value={god.port} sx={{ display: "flex", alignItems: "center", gap: 1.5, py: 1 }}>
-                    <img src={god.image} alt="" style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }} />
+                    <img
+                      src={god.image}
+                      alt=""
+                      className="object-top"
+                      style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }}
+                    />
                     <span>{s.nameTH || god?.name}</span>
                   </MenuItem>
                 );
