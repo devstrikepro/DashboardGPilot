@@ -1,11 +1,23 @@
 "use client";
 
+import { Button } from "@mui/material";
 import { useState } from "react";
 
 interface FooterSectionV2Props {
   onLogout: () => void;
   isLoggedIn: boolean;
 }
+
+const pledgeBtnSx = {
+  backgroundColor: "#d4af37",
+  color: "#000",
+  fontWeight: 800,
+  fontSize: "0.75rem",
+  letterSpacing: "0.1em",
+  py: 1.25,
+  "&:hover": { backgroundColor: "#b8960f" },
+  "&.Mui-disabled": { backgroundColor: "rgba(212,175,55,0.2)", color: "rgba(255,255,255,0.3)" },
+} as const;
 
 export const FooterSectionV2 = ({ onLogout, isLoggedIn }: FooterSectionV2Props) => {
   const [showConfirm, setShowConfirm] = useState(false);
@@ -41,22 +53,26 @@ export const FooterSectionV2 = ({ onLogout, isLoggedIn }: FooterSectionV2Props) 
               ใช่หรือไม่?
             </p>
 
-            <div className="flex gap-3 w-full">
-              <button
+            <div className="flex justify-center gap-3 w-full">
+              <Button
                 onClick={() => setShowConfirm(false)}
-                className="flex-1 py-2 rounded-lg border border-white/10 text-slate-400 text-xs font-medium hover:bg-white/5 transition-colors cursor-pointer"
+                variant="outlined"
+                size="small"
+                sx={{ py: 1.25, color: "#fff", borderColor: "rgba(255,255,255,0.2)", "&:hover": { borderColor: "#fff" } }}
               >
-                ยกเลิก
-              </button>
-              <button
+                CANCEL
+              </Button>
+              <Button
                 onClick={() => {
                   setShowConfirm(false);
                   onLogout();
                 }}
-                className="flex-1 py-2 rounded-lg bg-linear-to-b from-[#2a2a2a] via-[#1a1a1a] to-[#1a1a1a] border border-[#8b6d3f] text-white text-xs font-bold shadow-[0_0_12px_rgba(139,109,63,0.3)] hover:shadow-[0_0_20px_rgba(139,109,63,0.5)] transition-all cursor-pointer"
+                variant="contained"
+                size="small"
+                sx={{ ...pledgeBtnSx }}
               >
-                ยืนยัน
-              </button>
+                CONFIRM
+              </Button>
             </div>
           </div>
         </div>

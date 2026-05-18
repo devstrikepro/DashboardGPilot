@@ -90,12 +90,16 @@ export const TheAltarV2 = ({
             </MenuItem>
             {gods
               .filter((god) => supportInfo?.subscribe_list.some((list) => Object.keys(list)?.[0]?.includes(god.name)))
-              .map((god) => (
-                <MenuItem key={god.name} value={god.port} sx={{ display: "flex", alignItems: "center", gap: 1.5, py: 1 }}>
-                  <img src={god.image} alt="" style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }} />
-                  <span>{god.name}</span>
-                </MenuItem>
-              ))}
+              .map((god) => {
+                const s = GOD_STYLES[god?.name] ?? GOD_STYLES.ODIN;
+
+                return (
+                  <MenuItem key={god.name} value={god.port} sx={{ display: "flex", alignItems: "center", gap: 1.5, py: 1 }}>
+                    <img src={god.image} alt="" style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }} />
+                    <span>{s.nameTH || god?.name}</span>
+                  </MenuItem>
+                );
+              })}
           </Select>
         </FormControl>
 
@@ -111,7 +115,11 @@ export const TheAltarV2 = ({
             renderValue={(val) => {
               if (infoLoading) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Loading...</span>;
               if (!val) return <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.8rem" }}>Select Investor Account ID (e.g., MT5 ID)</span>;
-              return <span style={{ fontWeight: 700 }}>{val}</span>;
+              return (
+                <span style={{ fontWeight: 700 }}>
+                  {val} (${Number(accounts?.find((a) => a.accountNumber === String(val))?.statement.availableBalance)?.toFixed(0)})
+                </span>
+              );
             }}
           >
             <MenuItem value="" disabled>
@@ -187,8 +195,17 @@ export const TheAltarV2 = ({
           <DialogTitle sx={{ color: "#d4af37", fontWeight: 800, fontSize: "0.9rem", letterSpacing: "0.05em", pb: 1 }}>ยืนยันการบูชา?</DialogTitle>
           <DialogContent sx={{ color: "#cbd5e1", fontSize: "0.8rem", display: "flex", flexDirection: "column", gap: 1 }}>
             <span>
-              คุณกำลังจะบูชา <strong style={{ color: "#d4af37" }}>{gods.find((f) => f.port === pledgeData.god)?.name}</strong> ด้วยบัญชี{" "}
-              <strong style={{ color: "#d4af37" }}>{pledgeData.investorId}</strong>
+              คุณกำลังจะบูชา{" "}
+              <strong style={{ color: "#d4af37" }}>
+                {gods.find((f) => f.port === pledgeData.god)?.name
+                  ? GOD_STYLES[gods.find((f) => f.port === pledgeData.god)?.name].nameTH
+                  : gods.find((f) => f.port === pledgeData.god)?.name}
+              </strong>{" "}
+              ด้วยบัญชี{" "}
+              <strong style={{ color: "#d4af37" }}>
+                {pledgeData.investorId} ($
+                {Number(accounts?.find((a) => a.accountNumber.toString() === pledgeData.investorId.toString())?.statement.availableBalance)?.toFixed(0)})
+              </strong>
             </span>
             <span style={{ color: "rgba(255,100,100,0.9)" }}>⚠ เมื่อยืนยันแล้ว จะไม่สามารถเปลี่ยนแปลงหรือแก้ไขการเลือกได้อีก</span>
           </DialogContent>
