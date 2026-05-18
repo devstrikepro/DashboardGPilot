@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Select, MenuItem, FormControl, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { God, GOD_STYLES } from "./GodsPantheonV2";
 import { SupportInfoResponse } from "@/shared/services/ror-service";
+import { Account } from "../types";
 
 const selectSx = {
   color: "#fff",
@@ -26,6 +27,7 @@ const pledgeBtnSx = {
 export interface TheAltarV2Props {
   gods: God[];
   supportInfo: SupportInfoResponse | null;
+  accounts: Account[] | null;
   pledgeData: { investorId: string; god: string };
   onPledgeChange: (field: string, value: number) => void;
   onPledge: () => void;
@@ -35,7 +37,18 @@ export interface TheAltarV2Props {
   infoLoading: boolean;
 }
 
-export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPledge, isLoading, message, onClearMessage, infoLoading }: TheAltarV2Props) => {
+export const TheAltarV2 = ({
+  accounts,
+  gods,
+  supportInfo,
+  pledgeData,
+  onPledgeChange,
+  onPledge,
+  isLoading,
+  message,
+  onClearMessage,
+  infoLoading,
+}: TheAltarV2Props) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const canPledge = !isLoading && !!pledgeData.god && !!pledgeData.investorId;
 
@@ -110,7 +123,7 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
               ] ?? []
             ).map((id) => (
               <MenuItem key={id} value={id}>
-                {id}
+                {id} (${Number(accounts?.find((a) => a.accountNumber === id)?.statement.availableBalance)?.toFixed(0)})
               </MenuItem>
             ))}
           </Select>

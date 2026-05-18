@@ -2,13 +2,14 @@ import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { RorService, SupportInfoResponse } from "@/shared/services/ror-service";
 import { useToast } from "@/shared/hooks/use-toast";
 import { FingerprintUtils } from "@/shared/utils/fingerprint";
+import type { Account } from "../types";
 
 export const useRagnarok = () => {
   const { toast } = useToast();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
   const [uuid, setUuid] = useState<string | null>(null);
-  const [accounts, setAccounts] = useState<any[]>([]);
+  const [accounts, setAccounts] = useState<Account[] | null>(null);
   const [portGods, setPortGods] = useState<any>(null);
   const [supportInfo, setSupportInfo] = useState<SupportInfoResponse | null>(null);
   const [pledgeLoading, setPledgeLoading] = useState(false);
@@ -75,7 +76,7 @@ export const useRagnarok = () => {
 
     return accounts.filter((acc) => {
       const isPammInvestor = acc.group?.type === "mamInvestor";
-      const hasEnoughBalance = parseFloat(acc.statement?.currentBalance || "0") >= 100;
+      const hasEnoughBalance = parseFloat(acc.statement?.availableBalance || "0") >= 100;
 
       return isPammInvestor && hasEnoughBalance;
     });
@@ -86,11 +87,11 @@ export const useRagnarok = () => {
     const res = await RorService.getAccounts();
     if (res.success && res.data) {
       const fetchedAccounts = res.data.data;
-      setAccounts(fetchedAccounts);
+      setAccounts(fetchedAccounts as Account[]);
 
       const qualified = fetchedAccounts.filter((acc: any) => {
         const isPammInvestor = acc.group?.type === "mamInvestor";
-        const hasEnoughBalance = parseFloat(acc.statement?.currentBalance || "0") >= 100;
+        const hasEnoughBalance = parseFloat(acc.statement?.availableBalance || "0") >= 100;
         return isPammInvestor && hasEnoughBalance;
       });
 

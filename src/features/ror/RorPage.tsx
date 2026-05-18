@@ -22,6 +22,7 @@ export const RecordOfRagnarok: React.FC = () => {
     godsLoading,
     isLoggedIn,
     authLoading,
+    accounts,
     error,
     setError,
     logout,
@@ -61,6 +62,7 @@ export const RecordOfRagnarok: React.FC = () => {
                 message={pledgeMessage}
                 onClearMessage={() => setPledgeMessage(null)}
                 infoLoading={infoLoading}
+                accounts={accounts}
               />
             ) : (
               <LoginSectionV2
