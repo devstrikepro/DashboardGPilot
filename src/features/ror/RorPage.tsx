@@ -8,6 +8,12 @@ import { TheAltarV2 } from "./components/TheAltarV2";
 import { LoginSectionV2 } from "./components/LoginSectionV2";
 import { ValhallaBoardV2 } from "./components/ValhallaBoardV2";
 import { FooterSectionV2 } from "./components/FooterSectionV2";
+import { Noto_Sans_Thai } from "next/font/google";
+
+const notoSansThai = Noto_Sans_Thai({
+  subsets: ["thai"],
+  weight: ["400", "500", "700"],
+});
 
 export const RecordOfRagnarok: React.FC = () => {
   const {
@@ -36,7 +42,7 @@ export const RecordOfRagnarok: React.FC = () => {
   } = useRagnarok();
 
   return (
-    <div className="min-h-screen flex flex-col text-white">
+    <div className={`${notoSansThai.className} min-h-screen flex flex-col text-white`}>
       <HeroSectionV2 />
 
       <div className="flex-1 flex flex-col w-full mx-auto px-4! sm:px-8! lg:px-20! gap-10 pb-8! bg-[#0F172A]">
