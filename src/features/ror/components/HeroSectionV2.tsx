@@ -11,7 +11,7 @@ const STEPS = [
         <line x1="50" y1="40" x2="50" y2="75" />
       </svg>
     ),
-    label: "1. เปิดบัญชีโบรกเกอร์",
+    label: "เปิดบัญชีกับ Strike Pro",
     sub: "(External)",
   },
   {
@@ -24,7 +24,7 @@ const STEPS = [
         <line x1="50" y1="55" x2="70" y2="55" />
       </svg>
     ),
-    label: "2. รับรหัสนักลงทุน",
+    label: "ติดตามพอร์ตเทพ",
     sub: null,
   },
   {
@@ -38,7 +38,7 @@ const STEPS = [
         <line x1="50" y1="45" x2="50" y2="85" />
       </svg>
     ),
-    label: "3. ปฏิญาณความจงรักภักดี",
+    label: "เลือกบูชาเทพ",
     sub: "(Register Here)",
   },
   {
@@ -50,7 +50,7 @@ const STEPS = [
         <path d="M50 20 V30 M80 50 H70 M20 50 H30 M30 30 L38 38 M70 30 L62 38" />
       </svg>
     ),
-    label: "4. รับรางวัลของคุณ",
+    label: "รับรางวัลแห่งชัยชนะ",
     sub: null,
   },
 ];

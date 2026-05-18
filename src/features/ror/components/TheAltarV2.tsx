@@ -43,10 +43,10 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
     <div className="flex flex-col gap-3">
       <div className="text-center">
         <h2 className="text-[#d4af37] font-bold text-lg">แท่นบูชา</h2>
-        <p className="text-slate-400 text-xs">(ให้คำมั่นสัญญา)</p>
+        <p className="text-slate-400 text-xs">(เลือกบูชาเทพ)</p>
       </div>
       <div className="rounded-xl border border-white/10 bg-black/50 backdrop-blur-sm p-6! flex flex-col gap-4">
-        <h3 className="text-white font-black text-xl text-center">ให้คำมั่นสัญญาของคุณ</h3>
+        <h3 className="text-white font-black text-xl text-center">เลือกบูชาเทพของท่าน</h3>
 
         {/* God Select — uses gods prop directly so dropdown is always available */}
         <FormControl fullWidth size="small">
@@ -67,13 +67,13 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
                   {god && (
                     <img src={god.image} alt="" style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", border: `1px solid ${god.color}` }} />
                   )}
-                  <span style={{ fontWeight: 700 }}>คำมั่นสัญญา: {s.nameTH || god?.name}</span>
+                  <span style={{ fontWeight: 700 }}>เลือกบูชาเทพ: {s.nameTH || god?.name}</span>
                 </span>
               );
             }}
           >
             <MenuItem value="" disabled>
-              เลือกเหล่าเทพ
+              เลือกบูชาเทพ
             </MenuItem>
             {gods
               .filter((god) => supportInfo?.subscribe_list.some((list) => Object.keys(list)?.[0]?.includes(god.name)))
@@ -151,9 +151,9 @@ export const TheAltarV2 = ({ gods, supportInfo, pledgeData, onPledgeChange, onPl
           {isLoading ? (
             <CircularProgress size={20} sx={{ color: "#000" }} />
           ) : !supportInfo?.main_port || !supportInfo?.slave_port ? (
-            "ร่วมให้คำมั่นสัญญาตอนนี้ (ล็อกตัวเลือก)"
+            "ร่วมบูชาตอนนี้ (ล็อกตัวเลือก)"
           ) : (
-            "ท่านได้ให้คำมั่นสัญญาแล้ว"
+            "ท่านได้เลือกบูชาเทพแล้ว"
           )}
         </Button>
 
