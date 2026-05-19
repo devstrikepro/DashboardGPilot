@@ -143,7 +143,7 @@ export function PasswordManagementCard() {
                 type="text"
                 placeholder="ระบุ MT5 ID"
                 value={mt5Id}
-                onChange={(e) => setMt5Id(e.target.value)}
+                onChange={(e) => setMt5Id(e.target.value.replace(/\D/g, ""))}
                 autoComplete="off"
                 sx={{ flex: 1 }}
               />

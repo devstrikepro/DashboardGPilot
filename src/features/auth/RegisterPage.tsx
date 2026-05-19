@@ -136,7 +136,7 @@ function RegisterContent() {
                 label="MT5 ID"
                 placeholder="e.g. 12345678"
                 value={mt5Id}
-                onChange={(e) => setMt5Id(e.target.value)}
+                onChange={(e) => setMt5Id(e.target.value.replace(/\D/g, ""))}
                 required
                 slotProps={{
                   input: {
