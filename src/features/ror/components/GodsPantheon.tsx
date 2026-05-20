@@ -67,7 +67,7 @@ export const GodsPantheon: React.FC<GodsPantheonProps> = ({ gods, onSelectGod })
                       fontSize: "0.85rem",
                     }}
                   >
-                    Signature/{god.signature}
+                    Skill:{god.signature}
                   </Typography>
                   <Box
                     onClick={() => onSelectGod?.(god.name)}
