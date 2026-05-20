@@ -63,7 +63,7 @@ const GodCard = ({ god }: { god: God }) => {
           &nbsp;|&nbsp; อัตราชนะ: {god.winRate}
         </p>
         <p className={`text-sm italic ${s.textColor}`} style={{ fontFamily: "cursive" }}>
-          Signature/{god.signature}
+          Skill : {god.signature}
         </p>
         <p className="text-[10px] text-slate-500 pb-2!">ผู้ติดตาม: {god.followers}</p>
       </div>
