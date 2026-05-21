@@ -14,6 +14,7 @@ export interface RegistrationResponse {
   id: string;
   email: string;
   defaultPassword?: string;
+  default_password?: string;
 }
 
 /**

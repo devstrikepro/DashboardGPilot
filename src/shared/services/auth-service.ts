@@ -60,26 +60,73 @@ export const AuthService = {
       
       // จัดการกับ ServiceResponse (ห่อตามมาตรฐาน)
       if (!response.success || !response.data) {
+        const errorCode = response.error?.code || response.error_code || 'REGISTRATION_ERROR';
+        let errorMessage = response.error?.message || response.message || 'เกิดข้อผิดพลาดในการลงทะเบียน';
+        
+        if (errorCode === 'AUTH_001') {
+          errorMessage = 'เลขพอร์ต MT5 หรือ Investor Password ไม่ถูกต้อง (การยืนยันตัวตนกับ MT5 Terminal ล้มเหลว)';
+        } else if (errorCode === 'AUTH_002') {
+          errorMessage = 'อีเมลนี้ถูกใช้งานในระบบแล้ว';
+        } else if (errorCode === 'AUTH_003') {
+          errorMessage = 'สายงาน (Profit Sharing ID) ไม่ถูกต้อง หรือการเชื่อมต่อกับ MT5 Terminal ล้มเหลว/หมดเวลา';
+        }
+
         return {
           success: false,
           data: null,
-          error_code: response.error_code || 'REGISTRATION_ERROR',
-          message: response.message || 'เกิดข้อผิดพลาดในการลงทะเบียน'
+          error: {
+            code: errorCode as string,
+            message: errorMessage
+          }
         };
       }
 
+      // แปลงข้อมูลจากงู (snake_case) เป็น camelCase เพื่อให้ตรงกับอินเทอร์เฟซ RegistrationResponse ของ Frontend
+      const rawData = response.data as any;
+      const mappedData: RegistrationResponse = {
+        id: rawData.id || rawData.user_id,
+        email: rawData.email,
+        defaultPassword: rawData.default_password || rawData.defaultPassword
+      };
+
       logger.info('User registered successfully', { email: data.email });
-      return response;
+      return {
+        success: true,
+        data: mappedData,
+        message: response.message
+      };
 
     } catch (error) {
-      const errorMsg = error instanceof ApiError ? error.message : 'เกิดข้อผิดพลาดในการลงทะเบียน';
       logger.error('Registration failed', error instanceof Error ? error : String(error));
       
+      let errorCode = 'REGISTRATION_ERROR';
+      let errorMessage = 'เกิดข้อผิดพลาดในการลงทะเบียน';
+
+      if (error instanceof ApiError) {
+        const detailsError = error.details?.error;
+        errorCode = detailsError?.code || error.details?.code || 'REGISTRATION_ERROR';
+        
+        // แผนที่โค้ดข้อผิดพลาดเป็นข้อความภาษาไทยที่เข้าใจง่าย
+        if (errorCode === 'AUTH_001') {
+          errorMessage = 'เลขพอร์ต MT5 หรือ Investor Password ไม่ถูกต้อง (การยืนยันตัวตนกับ MT5 Terminal ล้มเหลว)';
+        } else if (errorCode === 'AUTH_002') {
+          errorMessage = 'อีเมลนี้ถูกใช้งานในระบบแล้ว';
+        } else if (errorCode === 'AUTH_003') {
+          errorMessage = 'สายงาน (Profit Sharing ID) ไม่ถูกต้อง หรือการเชื่อมต่อกับ MT5 Terminal ล้มเหลว/หมดเวลา';
+        } else {
+          errorMessage = detailsError?.message || error.message || 'เกิดข้อผิดพลาดในการลงทะเบียน';
+        }
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
       return {
         success: false,
         data: null,
-        error_code: 'REGISTRATION_ERROR',
-        message: errorMsg
+        error: {
+          code: errorCode,
+          message: errorMessage
+        }
       };
     }
   },

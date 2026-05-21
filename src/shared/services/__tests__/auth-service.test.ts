@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AuthService } from '../auth-service';
 import { apiClient } from '@/shared/api/client';
-import { CryptoUtils } from '@/shared/utils/crypto';
 import { SUB_ENDPOINTS, API_GATEWAY_SUB } from '@/shared/api/endpoint';
+import { ApiError } from '@/shared/api/api-error';
+import { CryptoUtils } from '@/shared/utils/crypto';
 
 // Mock values
 const MOCK_ENCRYPTION_KEY = '00'.repeat(32);
@@ -34,7 +35,15 @@ describe('AuthService', () => {
 
   describe('register', () => {
     it('register_WithValidData_EncryptsPasswordAndCallsApi', async () => {
-      const mockResult = { success: true, data: { user_id: 123 }, error: null };
+      const mockResult = { 
+        success: true, 
+        data: { 
+          id: 'GP-A2B2C2', 
+          email: 'test@example.com', 
+          default_password: 'P@ssw0rd-1' 
+        }, 
+        error: null 
+      };
       vi.mocked(apiClient).mockResolvedValue(mockResult);
 
       const data = {
@@ -57,7 +66,11 @@ describe('AuthService', () => {
         true
       );
       expect(result.success).toBe(true);
-      expect(result.data).toEqual(mockResult.data);
+      expect(result.data).toEqual({
+        id: 'GP-A2B2C2',
+        email: 'test@example.com',
+        defaultPassword: 'P@ssw0rd-1'
+      });
     });
 
     it('register_MissingKey_ReturnsConfigError', async () => {
@@ -72,6 +85,30 @@ describe('AuthService', () => {
 
       expect(result.success).toBe(false);
       expect(result.error?.code).toBe('CONFIG_ERROR');
+    });
+
+    it('register_ApiFailsWithAuth001_ReturnsMappedThaiErrorMessage', async () => {
+      const apiError = new ApiError('MT5 Port number or password incorrect', 400, {
+        success: false,
+        data: null,
+        error: {
+          code: 'AUTH_001',
+          message: 'MT5 Port number or password incorrect'
+        }
+      });
+      vi.mocked(apiClient).mockRejectedValue(apiError);
+
+      const data = {
+        email: 'test@example.com',
+        mt5_id: 12345,
+        mt5_password_plain: 'wrong-pass',
+      };
+
+      const result = await AuthService.register(data);
+
+      expect(result.success).toBe(false);
+      expect(result.error?.code).toBe('AUTH_001');
+      expect(result.error?.message).toContain('เลขพอร์ต MT5 หรือ Investor Password ไม่ถูกต้อง');
     });
   });
 
