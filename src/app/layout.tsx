@@ -19,7 +19,6 @@ const manrope = Manrope({
   display: "swap",
 });
 
-
 export const metadata: Metadata = {
   title: {
     template: "%s | GPilot",
@@ -46,14 +45,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${manrope.variable} antialiased`}>
+      <body className={`${inter.variable} ${manrope.variable} antialiased`} suppressHydrationWarning>
         <AppRouterCacheProvider>
           <ThemeProvider>
             <AuthProvider>
               <QueryProvider>
-                <ApiHealthProvider>
-                  {children}
-                </ApiHealthProvider>
+                <ApiHealthProvider>{children}</ApiHealthProvider>
               </QueryProvider>
             </AuthProvider>
           </ThemeProvider>

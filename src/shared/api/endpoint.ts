@@ -73,6 +73,14 @@ export const SUB_ENDPOINTS = {
   /** สั่ง Sync ข้อมูลการเทรด Referral (Manual) */
   REFERRAL_SYNC: `/referral/sync`,
 
+  // Profit Sharing Endpoints
+  /** ดึงรายการ Products Profit Sharing */
+  PROFIT_SHARING_PRODUCTS: `/profit-sharing/products`,
+  /** ถอนเงิน Profit Sharing */
+  PROFIT_SHARING_WITHDRAWAL: `/profit-sharing/withdrawal`,
+  /** ดึงประวัติธุรกรรม Profit Sharing */
+  PROFIT_SHARING_TRANSACTION_HISTORY: `/profit-sharing/transaction-history`,
+
   // --- Legacy Mappings (For backward compatibility) ---
   TRADES: `/account/trades`,
   TRADES_REFERRALS: `/referral/trades`,

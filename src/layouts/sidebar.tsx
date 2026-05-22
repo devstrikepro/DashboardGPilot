@@ -9,25 +9,16 @@ import { useThemeMode } from "@/shared/ui";
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: Dashboard },
   { label: "My Portfolio", href: "/account", icon: Person },
-  // { label: "Wallet", href: "/wallet", icon: Wallet },
+  { label: "Wallet", href: "/wallet", icon: Wallet },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
   const { mode } = useThemeMode();
-  const backgroundColor = mode === "dark"
-    ? "rgba(34, 211, 238, 0.15)"
-    : "rgba(8, 145, 178, 0.1)";
-  const borderColor = mode === "dark"
-    ? "1px solid rgba(34, 211, 238, 0.2)"
-    : "1px solid rgba(8, 145, 178, 0.2)";
-  const hoverActiveBgcolor = mode === "dark"
-    ? "rgba(34, 211, 238, 0.2)"
-    : "rgba(8, 145, 178, 0.15)";
-  const hoverNotActiveBgcolor = mode === "dark"
-    ? "rgba(148, 163, 184, 0.08)"
-    : "rgba(15, 23, 42, 0.05)";
-
+  const backgroundColor = mode === "dark" ? "rgba(34, 211, 238, 0.15)" : "rgba(8, 145, 178, 0.1)";
+  const borderColor = mode === "dark" ? "1px solid rgba(34, 211, 238, 0.2)" : "1px solid rgba(8, 145, 178, 0.2)";
+  const hoverActiveBgcolor = mode === "dark" ? "rgba(34, 211, 238, 0.2)" : "rgba(8, 145, 178, 0.15)";
+  const hoverNotActiveBgcolor = mode === "dark" ? "rgba(148, 163, 184, 0.08)" : "rgba(15, 23, 42, 0.05)";
 
   return (
     <Box
@@ -74,10 +65,7 @@ export function Sidebar() {
               >
                 GPilot Product
               </Typography>
-              <Typography
-                variant="caption"
-                sx={{ color: "text.secondary", fontSize: "0.7rem" }}
-              >
+              <Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.7rem" }}>
                 Trading Terminal
               </Typography>
             </Box>
@@ -97,16 +85,10 @@ export function Sidebar() {
                 sx={{
                   borderRadius: 2,
                   py: 1.5,
-                  bgcolor: isActive
-                    ? backgroundColor
-                    : "transparent",
-                  border: isActive
-                    ? borderColor
-                    : "1px solid transparent",
+                  bgcolor: isActive ? backgroundColor : "transparent",
+                  border: isActive ? borderColor : "1px solid transparent",
                   "&:hover": {
-                    bgcolor: isActive
-                      ? hoverActiveBgcolor
-                      : hoverNotActiveBgcolor
+                    bgcolor: isActive ? hoverActiveBgcolor : hoverNotActiveBgcolor,
                   },
                 }}
               >
@@ -125,7 +107,7 @@ export function Sidebar() {
                       fontSize: "0.875rem",
                       fontWeight: isActive ? 500 : 400,
                       color: isActive ? "text.primary" : "text.secondary",
-                    }
+                    },
                   }}
                 />
               </ListItemButton>
@@ -133,7 +115,6 @@ export function Sidebar() {
           );
         })}
       </List>
-
     </Box>
   );
 }

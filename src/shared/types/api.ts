@@ -320,6 +320,35 @@ export interface SyncResult {
 }
 
 // ---------------------------------------------
+// Profit Sharing Types
+// ---------------------------------------------
+
+export interface ProfitSharingProduct {
+  readonly product_name: string;
+  readonly product_port: number;
+  readonly total_earned: number;
+  readonly total_withdrawn: number;
+  readonly available: number;
+}
+
+export interface ProfitSharingWithdrawalRequest {
+  product_name: string;
+  product_port: number;
+  amount: number;
+}
+
+export interface ProfitSharingTransaction {
+  readonly id: string;
+  readonly type: string;
+  readonly amount: number;
+  readonly date: string;
+  readonly status?: string | null;
+  readonly description?: string | null;
+  readonly product_name?: string | null;
+  readonly product_port?: number | null;
+}
+
+// ---------------------------------------------
 // Re-export Domain Models
 // ---------------------------------------------
 export * from './domain';

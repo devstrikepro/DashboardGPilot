@@ -13,7 +13,7 @@ import { useThemeMode } from "@/shared/ui/theme-provider";
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: <DashboardIcon /> },
   { label: "Account", href: "/account", icon: <PersonIcon /> },
-  // { label: "Wallet", href: "/wallet", icon: <WalletIcon /> },
+  { label: "Wallet", href: "/wallet", icon: <WalletIcon /> },
 ];
 
 export function BottomNav() {
@@ -61,13 +61,7 @@ export function BottomNav() {
         }}
       >
         {navItems.map((item) => (
-          <BottomNavigationAction
-            key={item.href}
-            component={Link}
-            href={item.href}
-            label={item.label}
-            icon={item.icon}
-          />
+          <BottomNavigationAction key={item.href} component={Link} href={item.href} label={item.label} icon={item.icon} />
         ))}
       </BottomNavigation>
     </Paper>
