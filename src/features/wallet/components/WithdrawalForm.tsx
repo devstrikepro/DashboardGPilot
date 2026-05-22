@@ -106,8 +106,16 @@ export function WithdrawalForm({ activeProduct }: WithdrawalFormProps) {
               </Box>
             )}
 
-            {error && <Alert severity="error" sx={{ borderRadius: 2 }}>{error}</Alert>}
-            {success && <Alert severity="success" sx={{ borderRadius: 2 }}>Withdrawal submitted successfully</Alert>}
+            {error && (
+              <Alert severity="error" sx={{ borderRadius: 2 }}>
+                {error}
+              </Alert>
+            )}
+            {success && (
+              <Alert severity="success" sx={{ borderRadius: 2 }}>
+                Withdrawal submitted successfully
+              </Alert>
+            )}
 
             <Button
               fullWidth

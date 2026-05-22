@@ -25,8 +25,6 @@ export function TransactionHistory({ transactions = TRANSACTIONS }: TransactionH
   useEffect(() => {
     ProfitSharingService.getTransactionHistory().then((res) => {
       if (res.success && res.data) {
-        console.log("res: ", res);
-        console.log("res.data: ", res.data);
         setTransactionHistory(res.data);
       }
     });
