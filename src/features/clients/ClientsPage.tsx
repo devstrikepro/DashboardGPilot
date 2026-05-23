@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  Box, Typography, Grid, Card, CardContent, Button,
-  TextField, InputAdornment, Avatar, Chip, Stack, IconButton,
-} from "@mui/material";
+import { Box, Typography, Grid, Card, CardContent, Button, TextField, InputAdornment, Avatar, Chip, Stack, IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
@@ -11,6 +8,7 @@ import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 const MOCK_CLIENTS = [
@@ -76,8 +74,7 @@ const MOCK_CLIENTS = [
   },
 ];
 
-const fmt = (val: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(val);
+const fmt = (val: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(val);
 
 // ─── Sparkline SVG ────────────────────────────────────────────────────────────
 function Sparkline({ data, positive }: { data: number[]; positive: boolean }) {
@@ -86,20 +83,11 @@ function Sparkline({ data, positive }: { data: number[]; positive: boolean }) {
   const min = Math.min(...data);
   const max = Math.max(...data);
   const range = max - min || 1;
-  const pts = data
-    .map((v, i) => `${(i / (data.length - 1)) * W},${H - ((v - min) / range) * H}`)
-    .join(" ");
+  const pts = data.map((v, i) => `${(i / (data.length - 1)) * W},${H - ((v - min) / range) * H}`).join(" ");
   const color = positive ? "#10B981" : "#EF4444";
   return (
     <svg width={W} height={H} style={{ overflow: "visible" }}>
-      <polyline
-        fill="none"
-        stroke={color}
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        points={pts}
-      />
+      <polyline fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" points={pts} />
     </svg>
   );
 }
@@ -110,19 +98,14 @@ function ClientCard({ client }: { client: (typeof MOCK_CLIENTS)[0] }) {
   return (
     <Card
       sx={{
-        bgcolor: (t) =>
-          t.palette.mode === "dark" ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.8)",
+        bgcolor: (t) => (t.palette.mode === "dark" ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.8)"),
         backdropFilter: "blur(12px)",
-        border: (t) =>
-          `1px solid ${t.palette.mode === "dark" ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)"}`,
+        border: (t) => `1px solid ${t.palette.mode === "dark" ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)"}`,
         borderRadius: 3,
         transition: "transform 0.2s, box-shadow 0.2s",
         "&:hover": {
           transform: "translateY(-3px)",
-          boxShadow: (t) =>
-            t.palette.mode === "dark"
-              ? "0 8px 25px -5px rgba(34,211,238,0.15)"
-              : "0 8px 25px -5px rgba(8,145,178,0.15)",
+          boxShadow: (t) => (t.palette.mode === "dark" ? "0 8px 25px -5px rgba(34,211,238,0.15)" : "0 8px 25px -5px rgba(8,145,178,0.15)"),
         },
       }}
     >
@@ -165,7 +148,9 @@ function ClientCard({ client }: { client: (typeof MOCK_CLIENTS)[0] }) {
         {/* Portfolio + Sparkline */}
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", mb: 1.5 }}>
           <Box>
-            <Typography variant="caption" sx={{ color: "text.secondary" }}>Total Portfolio</Typography>
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
+              Total Portfolio
+            </Typography>
             <Typography
               variant="h6"
               sx={{
@@ -179,16 +164,10 @@ function ClientCard({ client }: { client: (typeof MOCK_CLIENTS)[0] }) {
               {fmt(client.portfolio)}
             </Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.4, mt: 0.3 }}>
-              {isPositive ? (
-                <TrendingUpIcon sx={{ fontSize: 14, color: "success.main" }} />
-              ) : (
-                <TrendingDownIcon sx={{ fontSize: 14, color: "error.main" }} />
-              )}
-              <Typography
-                variant="caption"
-                sx={{ fontWeight: 700, color: isPositive ? "success.main" : "error.main" }}
-              >
-                {isPositive ? "+" : ""}{client.performance}%
+              {isPositive ? <TrendingUpIcon sx={{ fontSize: 14, color: "success.main" }} /> : <TrendingDownIcon sx={{ fontSize: 14, color: "error.main" }} />}
+              <Typography variant="caption" sx={{ fontWeight: 700, color: isPositive ? "success.main" : "error.main" }}>
+                {isPositive ? "+" : ""}
+                {client.performance}%
               </Typography>
             </Box>
           </Box>
@@ -219,22 +198,21 @@ function ClientCard({ client }: { client: (typeof MOCK_CLIENTS)[0] }) {
 }
 
 export interface ClientsInitialData {
-    clients?: typeof MOCK_CLIENTS;
+  clients?: typeof MOCK_CLIENTS;
 }
 
 interface ClientsPageProps {
-    initialData?: ClientsInitialData;
+  initialData?: ClientsInitialData;
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export function ClientsPage({ initialData }: ClientsPageProps) {
+  const router = useRouter();
   const [search, setSearch] = useState("");
 
   const clients = initialData?.clients ?? MOCK_CLIENTS;
 
-  const filtered = clients.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = clients.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()));
 
   const activeCount = clients.filter((c) => c.status === "Active").length;
   const totalPortfolio = clients.reduce((s, c) => s + c.portfolio, 0);
@@ -258,6 +236,7 @@ export function ClientsPage({ initialData }: ClientsPageProps) {
           variant="contained"
           startIcon={<PersonAddIcon />}
           sx={{ borderRadius: 2.5, fontWeight: 700, textTransform: "none", px: 3 }}
+          onClick={() => router.push("/add-port")}
         >
           Add Client
         </Button>
