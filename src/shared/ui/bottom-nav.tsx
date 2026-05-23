@@ -12,8 +12,8 @@ import { useThemeMode } from "@/shared/ui/theme-provider";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: <DashboardIcon /> },
-  { label: "Account", href: "/account", icon: <PersonIcon /> },
   { label: "Wallet", href: "/wallet", icon: <WalletIcon /> },
+  { label: "Account", href: "/account", icon: <PersonIcon /> },
 ];
 
 export function BottomNav() {
