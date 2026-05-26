@@ -52,9 +52,9 @@ export const GodsPantheon: React.FC<GodsPantheonProps> = ({ gods, onSelectGod })
                   >
                     {god.type}&nbsp;|&nbsp;
                     <Box component="span" sx={{ color: "#fff", fontWeight: 700 }}>
-                      ROI: {god.roi}
+                      ROI: {god.roi}%
                     </Box>
-                    &nbsp;|&nbsp;WIN RATE: {god.winRate}
+                    &nbsp;|&nbsp;WIN RATE: {god.winRate}%
                   </Typography>
                   <Typography
                     variant="caption"

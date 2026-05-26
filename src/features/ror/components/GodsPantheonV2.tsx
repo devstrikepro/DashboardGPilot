@@ -59,8 +59,8 @@ const GodCard = ({ god }: { god: God }) => {
         <h3 className={`font-black text-lg ${s.textColor}`}>{s.nameTH || god.name}</h3>
         <p className="text-[10px] text-slate-400">
           {god.type}&nbsp;|&nbsp;
-          <span className="text-white font-bold">ROI: {god.roi}</span>
-          &nbsp;|&nbsp; อัตราชนะ: {god.winRate}
+          <span className="text-white font-bold">ROI: {god.name === "THOR" ? god.roi * 1.25 : god.roi}%</span>
+          &nbsp;|&nbsp; อัตราชนะ: {god.winRate}%
         </p>
         <p className={`text-sm italic ${s.textColor}`} style={{ fontFamily: "cursive" }}>
           Skill : {god.signature}

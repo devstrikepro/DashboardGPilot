@@ -132,12 +132,8 @@ export const ValhallaBoardV2 = ({ rankingData, isLoading }: ValhallaBoardV2Props
                           />
                           <span className="text-white font-semibold text-sm whitespace-nowrap">{s.nameTH}</span>
                         </div>
-                        <span className={`text-right font-black text-sm ${roiColor(row.rank)}`}>
-                          {typeof row.roi === "number" ? Math.round(row.roi) : row.roi}
-                        </span>
-                        <span className={`text-right text-sm font-semibold ${winRateColor(row.winRate, row.rank)}`}>
-                          {typeof row.winRate === "number" ? Math.round(row.winRate) : row.winRate}%
-                        </span>
+                        <span className={`text-right font-black text-sm ${roiColor(row.rank)}`}>{row.god === "THOR" ? row.roi * 1.25 : row.roi}</span>
+                        <span className={`text-right text-sm font-semibold ${winRateColor(row.winRate, row.rank)}`}>{row.winRate}%</span>
                         <span className={`text-right text-sm font-semibold ${followersColor(row.rank)}`}>{row.followers}</span>
                       </div>
                     );
