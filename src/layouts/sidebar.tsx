@@ -3,13 +3,16 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
-import { Dashboard, Description, Analytics, Person, Wallet } from "@mui/icons-material";
+import { Dashboard, Description, Person, Wallet } from "@mui/icons-material";
 import { useThemeMode } from "@/shared/ui";
+import { useAuth } from "@/shared/providers/auth-provider";
+import ScheduleIcon from "@mui/icons-material/Schedule";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: Dashboard },
   { label: "Wallet", href: "/wallet", icon: Wallet },
   { label: "My Portfolio", href: "/account", icon: Person },
+  { label: "Transactions", href: "/transactions", icon: ScheduleIcon },
 ];
 
 export function Sidebar() {
@@ -19,6 +22,10 @@ export function Sidebar() {
   const borderColor = mode === "dark" ? "1px solid rgba(34, 211, 238, 0.2)" : "1px solid rgba(8, 145, 178, 0.2)";
   const hoverActiveBgcolor = mode === "dark" ? "rgba(34, 211, 238, 0.2)" : "rgba(8, 145, 178, 0.15)";
   const hoverNotActiveBgcolor = mode === "dark" ? "rgba(148, 163, 184, 0.08)" : "rgba(15, 23, 42, 0.05)";
+
+  const { user } = useAuth();
+
+  const navPermissions = ["L1", "L2"].includes(user?.role_id || "") ? navItems : navItems.filter((item) => item.label !== "Transactions");
 
   return (
     <Box
@@ -74,7 +81,7 @@ export function Sidebar() {
       </Box>
 
       <List sx={{ flex: 1, px: 2, py: 2 }}>
-        {navItems.map((item) => {
+        {navPermissions.map((item) => {
           const isActive = pathname === item.href;
           return (
             <ListItem key={item.href} disablePadding sx={{ mb: 0.5 }}>

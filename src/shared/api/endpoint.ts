@@ -80,6 +80,14 @@ export const SUB_ENDPOINTS = {
   PROFIT_SHARING_WITHDRAWAL: `/profit-sharing/withdrawal`,
   /** ดึงประวัติธุรกรรม Profit Sharing */
   PROFIT_SHARING_TRANSACTION_HISTORY: `/profit-sharing/transaction-history`,
+  /** ดึงรายชื่อ Clients ของ Profit Sharing แบ่งตาม product_port */
+  PROFIT_SHARING_MY_CLIENT: `/profit-sharing/my-client`,
+  /** ดึงข้อมูล Port Detail ตาม mt5_id */
+  PROFIT_SHARING_PORT_DETAIL: `/profit-sharing/port`,
+
+  // Admin Endpoints
+  /** ดึงรายการ Withdrawals ทั้งหมด (Admin) */
+  ADMIN_WITHDRAWALS: `/admin/withdrawals`,
 
   // --- Legacy Mappings (For backward compatibility) ---
   TRADES: `/account/trades`,

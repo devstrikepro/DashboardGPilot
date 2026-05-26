@@ -1,102 +1,175 @@
 "use client";
 
-import { Box, Typography, Grid, Card, CardContent, SxProps, Theme } from "@mui/material";
-import { AccountBalanceWallet as AccountBalanceWalletIcon } from "@mui/icons-material";
-import { StatBox, InfoGrid } from "@/shared/ui";
+import { Box, Typography, Card, CardContent, Avatar, Skeleton, SxProps, Theme } from "@mui/material";
+import { Work as WorkIcon } from "@mui/icons-material";
 
 interface FinancialSummaryProps {
-    readonly loading: boolean;
-    readonly realBalance: number;
-    readonly grossTradeProfit: number;
-    readonly totalDeposits: number;
-    readonly totalWithdrawals: number;
-    readonly totalProfitSharing: number;
-    readonly netProfit: number;
-    readonly formatCurrency: (value: number) => string;
-    readonly sx?: SxProps<Theme>;
+  readonly loading: boolean;
+  readonly login: number;
+  readonly supportGroup?: string;
+  readonly realBalance: number;
+  readonly totalDeposits: number;
+  readonly totalWithdrawals: number;
+  readonly netProfit: number;
+  readonly growthPercent: number;
+  readonly formatCurrency: (value: number) => string;
+  readonly sx?: SxProps<Theme>;
 }
 
 export function FinancialSummary({
-    loading,
-    realBalance,
-    grossTradeProfit,
-    totalDeposits,
-    totalWithdrawals,
-    totalProfitSharing,
-    netProfit,
-    formatCurrency,
-    sx,
+  loading,
+  login,
+  supportGroup,
+  realBalance,
+  totalDeposits,
+  totalWithdrawals,
+  netProfit,
+  growthPercent,
+  formatCurrency,
+  sx,
 }: Readonly<FinancialSummaryProps>) {
-    return (
-        <Card sx={{ borderRadius: 4, ...sx }}>
-            <CardContent sx={{ p: 3 }}>
-                <Typography
-                    variant="subtitle1"
-                    sx={{ fontWeight: 700, mb: 2, display: "flex", alignItems: "center", gap: 1 }}
-                >
-                    <AccountBalanceWalletIcon sx={{ color: "primary.main", fontSize: 20 }} />
-                    Financial Summary
+  return (
+    <Card sx={{ borderRadius: 4, ...sx }}>
+      <CardContent sx={{ p: 3 }}>
+        {/* Header */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
+          <Avatar sx={{ width: 52, height: 52, bgcolor: "primary.main" }}>
+            <WorkIcon sx={{ fontSize: 28, color: "background.paper" }} />
+          </Avatar>
+          <Box>
+            {loading ? (
+              <>
+                <Skeleton width={120} height={28} />
+                <Skeleton width={60} height={20} />
+              </>
+            ) : (
+              <>
+                <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
+                  {login || "-"}
                 </Typography>
-
-                <StatBox
-                    label="REAL BALANCE (Deposits - Withdrawals - PF + Trade Profit)"
-                    value={formatCurrency(realBalance)}
-                    loading={loading}
-                    color="primary.main"
-                    bgcolor="rgba(34, 211, 238, 0.05)"
-                    sx={{ mb: 2 }}
-                />
-
-                <Grid container spacing={2}>
-                    <Grid size={{ xs: 12, sm: 8 }}>
-                        <InfoGrid
-                            loading={loading}
-                            columns={{ xs: 6 }}
-                            items={[
-                                { label: "Total Deposits", value: formatCurrency(totalDeposits) },
-                                { label: "Total Withdrawals", value: formatCurrency(totalWithdrawals) },
-                                {
-                                    label: "Gross Trade Profit",
-                                    value: (
-                                        <Typography
-                                            variant="body2"
-                                            sx={{
-                                                fontWeight: 700,
-                                                color: grossTradeProfit >= 0 ? "success.main" : "error.main",
-                                            }}
-                                        >
-                                            {formatCurrency(grossTradeProfit)}
-                                        </Typography>
-                                    ),
-                                },
-                                {
-                                    label: "Profit Sharing",
-                                    value: (
-                                        <Typography variant="body2" sx={{ fontWeight: 700, color: "error.main" }}>
-                                            {formatCurrency(totalProfitSharing)}
-                                        </Typography>
-                                    ),
-                                },
-                            ]}
-                        />
-                    </Grid>
-
-                    <Grid size={{ xs: 12, sm: 4 }}>
-                        <StatBox
-                            label="Net Profit Gain"
-                            value={formatCurrency(netProfit)}
-                            loading={loading}
-                            color={netProfit >= 0 ? "success.main" : "error.main"}
-                            bgcolor="rgba(16, 185, 129, 0.08)"
-                            sx={{ border: "1px solid", borderColor: "success.main" }}
-                        />
-                    </Grid>
-                </Grid>
-
-                <Typography variant="caption" sx={{ color: "text.secondary", mt: 2, display: "block" }}>
-                    *This counts actual equity currently available in your account.
+                <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
+                  {supportGroup || "-"}
                 </Typography>
-            </CardContent>
-        </Card>
-    );
+              </>
+            )}
+          </Box>
+        </Box>
+
+        {/* Balance */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            bgcolor: "rgb(34, 50, 67)",
+            borderRadius: 1,
+            px: 2,
+            py: 1.5,
+            mb: 2,
+          }}
+        >
+          <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 500 }}>
+            Balance
+          </Typography>
+          {loading ? (
+            <Skeleton width={120} height={36} />
+          ) : (
+            <Typography variant="h5" sx={{ fontWeight: 700, color: "primary.main" }}>
+              {formatCurrency(realBalance)}
+            </Typography>
+          )}
+        </Box>
+
+        {/* Deposit / Withdraw */}
+        <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, mb: 2 }}>
+          <Box
+            sx={{
+              border: "1px solid",
+              borderColor: "rgb(34, 50, 67)",
+              borderRadius: 1,
+              px: 2,
+              py: 1.5,
+            }}
+          >
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
+              Deposit
+            </Typography>
+            {loading ? (
+              <Skeleton width={90} height={28} />
+            ) : (
+              <Typography variant="body1" sx={{ fontWeight: 700, color: "primary.main" }} className="text-end">
+                {formatCurrency(totalDeposits)}
+              </Typography>
+            )}
+          </Box>
+          <Box
+            sx={{
+              border: "1px solid",
+              borderColor: "rgb(34, 50, 67)",
+              borderRadius: 1,
+              px: 2,
+              py: 1.5,
+            }}
+          >
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
+              Withdraw
+            </Typography>
+            {loading ? (
+              <Skeleton width={90} height={28} />
+            ) : (
+              <Typography variant="body1" sx={{ fontWeight: 700, color: "error.main" }} className="text-end">
+                {formatCurrency(totalWithdrawals)}
+              </Typography>
+            )}
+          </Box>
+        </Box>
+
+        {/* Net Profit / Net Profit % */}
+        <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
+          <Box
+            sx={{
+              bgcolor: "rgba(16, 185, 129, 0.08)",
+              border: "1px solid",
+              borderColor: "success.main",
+              borderRadius: 1,
+              px: 2,
+              py: 1.5,
+            }}
+          >
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
+              Net Profit
+            </Typography>
+            {loading ? (
+              <Skeleton width={90} height={28} />
+            ) : (
+              <Typography variant="body1" sx={{ fontWeight: 700, color: "success.main" }} className="text-end">
+                {formatCurrency(netProfit)}
+              </Typography>
+            )}
+          </Box>
+          <Box
+            sx={{
+              bgcolor: "rgba(16, 185, 129, 0.08)",
+              border: "1px solid",
+              borderColor: "success.main",
+              borderRadius: 1,
+              px: 2,
+              py: 1.5,
+            }}
+          >
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
+              Net Profit %
+            </Typography>
+            {loading ? (
+              <Skeleton width={60} height={28} />
+            ) : (
+              <Typography variant="body1" sx={{ fontWeight: 700, color: "success.main" }} className="text-end">
+                {growthPercent.toFixed(2)} %
+              </Typography>
+            )}
+          </Box>
+        </Box>
+      </CardContent>
+    </Card>
+  );
 }

@@ -4,32 +4,27 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { CARD_SX, fmt, TRANSACTIONS, TX_META } from "../constants";
 import { SectionIconBox } from "./SectionIconBox";
-import { ProfitSharingService } from "@/shared/services/profit-sharing-service";
 import type { ProfitSharingTransaction } from "@/shared/types/api";
 
 const TX_ICON: Record<string, React.ReactNode> = {
   credit: <EmojiEventsIcon sx={{ fontSize: 18 }} />,
   deposit: <ArrowDownwardIcon sx={{ fontSize: 18 }} />,
   withdraw: <ArrowUpwardIcon sx={{ fontSize: 18 }} />,
+  rejected: <HighlightOffIcon sx={{ fontSize: 18 }} />,
+  pending: <HourglassEmptyIcon sx={{ fontSize: 18 }} />,
+  approved: <CheckCircleOutlineIcon sx={{ fontSize: 18 }} />,
 };
 
 interface TransactionHistoryProps {
-  transactions?: typeof TRANSACTIONS;
+  transactions?: ProfitSharingTransaction[];
 }
 
-export function TransactionHistory({ transactions = TRANSACTIONS }: TransactionHistoryProps) {
-  const [transactionHistory, setTransactionHistory] = useState<ProfitSharingTransaction[]>([]);
-
-  useEffect(() => {
-    ProfitSharingService.getTransactionHistory().then((res) => {
-      if (res.success && res.data) {
-        setTransactionHistory(res.data);
-      }
-    });
-  }, []);
-
+export function TransactionHistory({ transactions }: TransactionHistoryProps) {
   return (
     <Card sx={CARD_SX}>
       <CardContent sx={{ p: { xs: 2.5, lg: 3 }, "&:last-child": { pb: { xs: 2.5, lg: 3 } } }}>
@@ -43,8 +38,9 @@ export function TransactionHistory({ transactions = TRANSACTIONS }: TransactionH
         </Box>
 
         <Stack spacing={1}>
-          {transactions.map((tx) => {
-            const meta = TX_META[tx.type];
+          {transactions?.map((tx) => {
+            const meta = TX_META[tx.status || ""] ?? { bg: "rgba(148,163,184,0.15)", color: "#94A3B8", label: tx.status };
+            console.log(tx);
             return (
               <Box
                 key={tx.id}
@@ -74,7 +70,7 @@ export function TransactionHistory({ transactions = TRANSACTIONS }: TransactionH
                     flexShrink: 0,
                   }}
                 >
-                  {TX_ICON[tx.type]}
+                  {TX_ICON[tx.status || ""]}
                 </Box>
 
                 <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -82,16 +78,23 @@ export function TransactionHistory({ transactions = TRANSACTIONS }: TransactionH
                     variant="body2"
                     sx={{ fontWeight: 600, color: "text.primary", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
                   >
-                    {tx.label}
+                    {tx.note}
                   </Typography>
                   <Typography variant="caption" sx={{ color: "text.disabled" }}>
-                    {tx.date}
+                    {new Date(tx.requested_at).toLocaleDateString("en-EN", { dateStyle: "medium" })}
                   </Typography>
                 </Box>
 
                 <Box sx={{ textAlign: "right", flexShrink: 0 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 800, fontFamily: '"Inter", monospace', color: tx.amount > 0 ? "success.main" : "error.main" }}>
-                    {tx.amount > 0 ? "+" : "-"}
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontWeight: 800,
+                      fontFamily: '"Inter", monospace',
+                      color: tx.status === "rejected" ? "error.main" : tx.amount > 0 ? "success.main" : "error.main",
+                    }}
+                  >
+                    {/* {tx.amount > 0 ? "+" : "-"} */}
                     {fmt(tx.amount)}
                   </Typography>
                   <Chip

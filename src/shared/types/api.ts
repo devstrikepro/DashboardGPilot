@@ -39,16 +39,15 @@ export interface StandardResponse<T> {
   readonly error_code?: string | null;
 }
 
-
 /**
  * Interface สำหรับการ Check Health ของ API
  */
 export interface HealthResponse {
   readonly success: boolean;
   readonly data: {
-    readonly status?: string;    // สำหรับ Main Backend
-    readonly api?: string;       // สำหรับ Backend-Sub
-    readonly database?: string;  // สำหรับ Backend-Sub
+    readonly status?: string; // สำหรับ Main Backend
+    readonly api?: string; // สำหรับ Backend-Sub
+    readonly database?: string; // สำหรับ Backend-Sub
   };
   readonly error: ErrorDetail | string | null;
 }
@@ -58,21 +57,21 @@ export interface HealthResponse {
  * รองรับทั้ง Backend-Main (Standard & Grouped)
  */
 export interface TradeRequest {
-  from_date?: string | null;  // สำหรับ API ทั่วไป
-  to_date?: string | null;    // สำหรับ API ทั่วไป
-  date_from?: string | null;  // สำหรับ /trades/grouped (Backend Alias)
-  end_date?: string | null;   // สำหรับ /trades/grouped (Backend Alias)
+  from_date?: string | null; // สำหรับ API ทั่วไป
+  to_date?: string | null; // สำหรับ API ทั่วไป
+  date_from?: string | null; // สำหรับ /trades/grouped (Backend Alias)
+  end_date?: string | null; // สำหรับ /trades/grouped (Backend Alias)
   symbol?: string | null;
   type?: string | null;
   entry?: string | null;
   comment?: string | null;
   pageNumber?: number;
   pageSize?: number;
-  page?: number;     // Pagination Alias
-  limit?: number;    // Pagination Alias
-  order_by?: string | null;   // Sorting
-  order_dir?: 'ASC' | 'DESC'; // Sorting
-  mt5_id?: number;             // สำหรับระบุพอร์ต
+  page?: number; // Pagination Alias
+  limit?: number; // Pagination Alias
+  order_by?: string | null; // Sorting
+  order_dir?: "ASC" | "DESC"; // Sorting
+  mt5_id?: number; // สำหรับระบุพอร์ต
 }
 
 // ---------------------------------------------
@@ -80,7 +79,7 @@ export interface TradeRequest {
 // ---------------------------------------------
 
 export interface EquityPoint {
-  readonly time: string;    // ISO 8601
+  readonly time: string; // ISO 8601
   readonly equity: number;
   readonly ticket: number;
 }
@@ -146,7 +145,6 @@ export interface ProductDetail {
   };
 }
 
-
 // ---------------------------------------------
 // Cashflow Types
 // ---------------------------------------------
@@ -182,7 +180,7 @@ export interface AccountSummary {
   readonly server: string;
   readonly leverage: number;
   readonly currency: string;
-  
+
   readonly gross_trade_profit: number;
   readonly total_deposits: number;
   readonly total_withdrawals: number;
@@ -337,19 +335,51 @@ export interface ProfitSharingWithdrawalRequest {
   amount: number;
 }
 
+export interface MyClient {
+  readonly name: string;
+  readonly mt5_id: number;
+  readonly total_pf: number;
+  readonly balance: number;
+}
+
+export interface MyClientProduct {
+  readonly product_name: string;
+  readonly product_port: number;
+  readonly percent: number;
+  readonly balance: number;
+  readonly user: MyClient[];
+}
+
+export interface PortDetailItem {
+  readonly profit: number;
+  readonly date: string;
+  readonly dividend: number;
+}
+
+export interface PortDetail {
+  readonly name: string;
+  readonly mt5_id: number;
+  readonly percent: number;
+  readonly product_name: string;
+  readonly product_port: number;
+  readonly status: string;
+  readonly list: PortDetailItem[];
+}
+
 export interface ProfitSharingTransaction {
   readonly id: string;
-  readonly type: string;
-  readonly amount: number;
-  readonly date: string;
-  readonly status?: string | null;
-  readonly description?: string | null;
+  readonly user_id: string;
   readonly product_name?: string | null;
   readonly product_port?: number | null;
+  readonly amount: number;
+  readonly status?: string | null;
+  readonly note?: string | null;
+  readonly requested_at: string;
+  readonly reviewed_at?: string | null;
+  readonly reviewed_by?: string | null;
 }
 
 // ---------------------------------------------
 // Re-export Domain Models
 // ---------------------------------------------
-export * from './domain';
-
+export * from "./domain";

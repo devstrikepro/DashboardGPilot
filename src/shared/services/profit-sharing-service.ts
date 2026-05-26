@@ -2,7 +2,14 @@ import { apiClient } from "@/shared/api/client";
 import { ApiError } from "@/shared/api/api-error";
 import { SUB_ENDPOINTS, API_GATEWAY_SUB } from "@/shared/api/endpoint";
 import { createLogger } from "@/shared/utils/logger";
-import type { ServiceResponse, ProfitSharingProduct, ProfitSharingWithdrawalRequest, ProfitSharingTransaction } from "@/shared/types/api";
+import type {
+  ServiceResponse,
+  ProfitSharingProduct,
+  ProfitSharingWithdrawalRequest,
+  ProfitSharingTransaction,
+  MyClientProduct,
+  PortDetail,
+} from "@/shared/types/api";
 
 const logger = createLogger("ProfitSharingService");
 
@@ -33,10 +40,10 @@ export const ProfitSharingService = {
     }
   },
 
-  getTransactionHistory: async (): Promise<ServiceResponse<ProfitSharingTransaction[]>> => {
+  getTransactionHistory: async (port: number): Promise<ServiceResponse<ProfitSharingTransaction[]>> => {
     try {
       const response = await apiClient<ServiceResponse<ProfitSharingTransaction[]>>(
-        SUB_ENDPOINTS.PROFIT_SHARING_TRANSACTION_HISTORY,
+        SUB_ENDPOINTS.PROFIT_SHARING_TRANSACTION_HISTORY + "/" + port,
         undefined,
         undefined,
         API_GATEWAY_SUB
@@ -55,6 +62,68 @@ export const ProfitSharingService = {
     } catch (e) {
       const errorMsg = e instanceof ApiError ? e.message : "ไม่สามารถดึงข้อมูล Transaction History ได้";
       logger.error("Failed to fetch transaction history", e instanceof Error ? e : String(e));
+      return {
+        success: false,
+        data: null,
+        error_code: "FETCH_ERROR",
+        message: errorMsg,
+      };
+    }
+  },
+
+  getMyClients: async (productPort: number): Promise<ServiceResponse<MyClientProduct>> => {
+    try {
+      const response = await apiClient<ServiceResponse<MyClientProduct>>(
+        SUB_ENDPOINTS.PROFIT_SHARING_MY_CLIENT,
+        undefined,
+        { product_port: productPort },
+        API_GATEWAY_SUB
+      );
+
+      if (!response.success) {
+        return {
+          success: false,
+          data: null,
+          error_code: response.error_code || "FETCH_ERROR",
+          message: response.message || "ไม่สามารถดึงข้อมูล My Clients ได้",
+        };
+      }
+
+      return response;
+    } catch (e) {
+      const errorMsg = e instanceof ApiError ? e.message : "ไม่สามารถดึงข้อมูล My Clients ได้";
+      logger.error("Failed to fetch my clients", e instanceof Error ? e : String(e));
+      return {
+        success: false,
+        data: null,
+        error_code: "FETCH_ERROR",
+        message: errorMsg,
+      };
+    }
+  },
+
+  getPortDetail: async (mt5Id: number): Promise<ServiceResponse<PortDetail>> => {
+    try {
+      const response = await apiClient<ServiceResponse<PortDetail>>(
+        `${SUB_ENDPOINTS.PROFIT_SHARING_PORT_DETAIL}/${mt5Id}`,
+        undefined,
+        undefined,
+        API_GATEWAY_SUB
+      );
+
+      if (!response.success) {
+        return {
+          success: false,
+          data: null,
+          error_code: response.error_code || "FETCH_ERROR",
+          message: response.message || "ไม่สามารถดึงข้อมูล Port Detail ได้",
+        };
+      }
+
+      return response;
+    } catch (e) {
+      const errorMsg = e instanceof ApiError ? e.message : "ไม่สามารถดึงข้อมูล Port Detail ได้";
+      logger.error("Failed to fetch port detail", e instanceof Error ? e : String(e));
       return {
         success: false,
         data: null,

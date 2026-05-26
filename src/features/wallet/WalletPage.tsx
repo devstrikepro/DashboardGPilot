@@ -3,8 +3,8 @@
 import { Box, Grid, Tab, Tabs, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { ProfitSharingService } from "@/shared/services/profit-sharing-service";
-import type { ProfitSharingProduct } from "@/shared/types/api";
-import { TRANSACTIONS } from "./constants";
+import type { ProfitSharingProduct, ProfitSharingTransaction } from "@/shared/types/api";
+import { TRANSACTIONS, MOCK_PROFIT_SHARING_TRANSACTIONS } from "./constants";
 import { ProfitSharingHero } from "./components/ProfitSharingHero";
 import { WithdrawalForm } from "./components/WithdrawalForm";
 import { TransactionHistory } from "./components/TransactionHistory";
@@ -29,6 +29,7 @@ export function WalletPage({ initialData }: WalletPageProps) {
   const [tabs, setTabs] = useState<WalletTab[] | null>(null);
   const [activeTab, setActiveTab] = useState<number | null>(null);
   const [products, setProducts] = useState<ProfitSharingProduct[]>([]);
+  const [transactionHistory, setTransactionHistory] = useState<ProfitSharingTransaction[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
   const [productsError, setProductsError] = useState<string | null>(null);
 
@@ -46,6 +47,15 @@ export function WalletPage({ initialData }: WalletPageProps) {
       })
       .finally(() => setProductsLoading(false));
   }, []);
+
+  useEffect(() => {
+    ProfitSharingService.getTransactionHistory(activeTab || 0).then((res) => {
+      if (res.success && res.data) {
+        setTransactionHistory(res.data);
+        // setTransactionHistory(MOCK_PROFIT_SHARING_TRANSACTIONS);
+      }
+    });
+  }, [activeTab]);
 
   const activeBalance = products.find((p) => p.product_port === activeTab)?.available ?? initialData?.profitSharingBalance ?? 0;
   const transactions = initialData?.transactions ?? TRANSACTIONS;
@@ -75,7 +85,7 @@ export function WalletPage({ initialData }: WalletPageProps) {
           }}
         >
           {tabs?.map((tab) => (
-            <Tab key={tab.key} value={tab.key} id={tab.key.toString()} aria-controls={"tabpanel-" + tab.key} iconPosition="start" label={tab.label} />
+            <Tab key={tab.key} value={tab.key} id={`${tab.key}`} aria-controls={"tabpanel-" + tab.key} iconPosition="start" label={tab.label} />
           ))}
         </Tabs>
       </Box>
@@ -89,7 +99,7 @@ export function WalletPage({ initialData }: WalletPageProps) {
           <WithdrawalForm activeProduct={products.find((p) => p.product_port === activeTab) ?? null} />
         </Grid>
         <Grid size={{ xs: 12, md: 7, lg: 8 }}>
-          <TransactionHistory transactions={transactions} />
+          <TransactionHistory transactions={transactionHistory} />
         </Grid>
       </Grid>
     </Box>

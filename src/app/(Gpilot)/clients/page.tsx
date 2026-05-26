@@ -7,10 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  let initialData: ClientsInitialData = {};
-
-  // NOTE: ปัจจุบันใช้ Mock Data ฝั่ง Client แต่โครงสร้างนี้เตรียมไว้สำหรับการดึงข้อมูลจริงจาก Server ในอนาคต
-  // ตัวอย่าง: const response = await apiServer(...)
-
-  return <ClientsPage initialData={initialData} />;
+  return <ClientsPage />;
 }

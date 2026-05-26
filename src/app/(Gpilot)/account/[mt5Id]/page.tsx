@@ -2,7 +2,7 @@ import { AccountPage, type AccountInitialData } from "@/features/account";
 import type { Metadata } from "next";
 import { apiServer, isRedirectError } from "@/shared/api/api-server";
 import { SUB_ENDPOINTS, API_GATEWAY_SUB } from "@/shared/api/endpoint";
-import type { ServiceResponse, AccountProfile, AccountFinance, GroupedTradesResponse } from "@/shared/types/api";
+import type { ServiceResponse, AccountProfile, AccountFinance, GroupedTradesResponse, AccountInfoList } from "@/shared/types/api";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
@@ -29,7 +29,7 @@ export default async function Page({ params }: DetailPageProps) {
     try {
         // ดึงข้อมูลเจาะจงรายพอร์ตตั้งแต่บน Server
         // ใช้ mt5_id (snake_case) เพื่อความแน่นอนตามมาตรฐาน Backend-Sub
-        const [profileRes, financeRes, tradesRes] = await Promise.all([
+        const [profileRes, financeRes, tradesRes, infoRes] = await Promise.all([
             apiServer<ServiceResponse<AccountProfile>>(
                 SUB_ENDPOINTS.ACCOUNT_PROFILE,
                 { cache: "no-store" },
@@ -48,12 +48,19 @@ export default async function Page({ params }: DetailPageProps) {
                 { mt5_id: mt5IdNum, page: 1, limit: 10 },
                 API_GATEWAY_SUB
             ),
+            apiServer<ServiceResponse<AccountInfoList>>(
+                SUB_ENDPOINTS.ACCOUNT_INFO,
+                { cache: "no-store" },
+                undefined,
+                API_GATEWAY_SUB
+            ),
         ]);
 
         initialData = {
             profile: profileRes.success ? profileRes.data : null,
             finance: financeRes.success ? financeRes.data : null,
             tradesData: tradesRes.success ? tradesRes.data : null,
+            info: infoRes.success ? infoRes.data?.list : null,
         };
     } catch (error) {
         if (isRedirectError(error)) throw error;

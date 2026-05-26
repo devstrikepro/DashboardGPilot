@@ -10,6 +10,7 @@ import { CARD_SX, FEE_RATE, fmt } from "../constants";
 import { SectionIconBox } from "./SectionIconBox";
 import { ProfitSharingService } from "@/shared/services/profit-sharing-service";
 import type { ProfitSharingProduct } from "@/shared/types/api";
+import crypto from "crypto";
 
 interface WithdrawalFormProps {
   activeProduct: ProfitSharingProduct | null;
@@ -46,6 +47,23 @@ export function WithdrawalForm({ activeProduct }: WithdrawalFormProps) {
       setError(res.message || "ไม่สามารถทำรายการถอนได้");
     }
   };
+
+  function encrypt(port?: number) {
+    if (port == null) return "";
+    const keySource = process.env.NEXT_PUBLIC_ENCRYPT_KEY ?? "gpilot-secret-key";
+    const key = Buffer.alloc(32);
+    Buffer.from(keySource, "utf8").copy(key);
+
+    const iv = crypto.randomBytes(12);
+    const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
+
+    let encrypted = cipher.update(port.toString(), "utf8", "hex");
+    encrypted += cipher.final("hex");
+
+    const authTag = cipher.getAuthTag().toString("hex");
+
+    return `${iv.toString("hex")}:${encrypted}:${authTag}`;
+  }
 
   return (
     <>
@@ -135,7 +153,7 @@ export function WithdrawalForm({ activeProduct }: WithdrawalFormProps) {
       <Button
         fullWidth
         variant="outlined"
-        onClick={() => router.push("/clients")}
+        onClick={() => router.push("/clients?p=" + encrypt(activeProduct?.product_port))}
         startIcon={<PeopleAltIcon />}
         sx={{
           mt: 2,

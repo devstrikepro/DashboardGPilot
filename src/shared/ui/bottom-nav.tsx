@@ -4,22 +4,27 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Paper, BottomNavigation, BottomNavigationAction } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import DescriptionIcon from "@mui/icons-material/Description";
-import AnalyticsIcon from "@mui/icons-material/Analytics";
 import WalletIcon from "@mui/icons-material/Wallet";
 import PersonIcon from "@mui/icons-material/Person";
 import { useThemeMode } from "@/shared/ui/theme-provider";
+import { useAuth } from "../providers/auth-provider";
+import ScheduleIcon from "@mui/icons-material/Schedule";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: <DashboardIcon /> },
   { label: "Wallet", href: "/wallet", icon: <WalletIcon /> },
   { label: "Account", href: "/account", icon: <PersonIcon /> },
+  { label: "Transactions", href: "/transactions", icon: <ScheduleIcon /> },
 ];
 
 export function BottomNav() {
   const pathname = usePathname();
   const { mode } = useThemeMode();
   const currentIndex = navItems.findIndex((item) => item.href === pathname);
+
+  const { user } = useAuth();
+
+  const navPermissions = ["L1", "L2"].includes(user?.role_id || "") ? navItems : navItems.filter((item) => item.label !== "Transactions");
 
   return (
     <Paper
@@ -60,7 +65,7 @@ export function BottomNav() {
           },
         }}
       >
-        {navItems.map((item) => (
+        {navPermissions.map((item) => (
           <BottomNavigationAction key={item.href} component={Link} href={item.href} label={item.label} icon={item.icon} />
         ))}
       </BottomNavigation>
