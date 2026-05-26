@@ -41,6 +41,7 @@ export const useRagnarok = () => {
       followers: live.god_support as number,
       port: live.god_port,
       last_update: live.last_update,
+      score: live.score as number,
     }));
   }, [portGods]);
 
@@ -57,6 +58,7 @@ export const useRagnarok = () => {
         winRate: live.winrate as number,
         followers: live.god_support as number,
         last_update: live.last_update,
+        score: live.score as number,
       }));
   }, [portGods]);
 

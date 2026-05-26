@@ -90,7 +90,7 @@ export const ValhallaBoardV2 = ({ rankingData, isLoading }: ValhallaBoardV2Props
           <div className="min-w-100">
             {/* Header */}
             <div className="grid grid-cols-5 px-4! py-2! bg-white/5 rounded-lg">
-              {(["อันดับ", "เทพเจ้า", "ROI %", "อัตราชนะ %", "ผู้ติดตาม"] as const).map((h, i) => (
+              {(["อันดับ", "เทพเจ้า", "ROI %", "คะแนน", "ผู้ติดตาม"] as const).map((h, i) => (
                 <span key={h} className={`text-slate-400 text-xs font-semibold ${i >= 2 ? "text-right" : ""}`}>
                   {h}
                 </span>
@@ -132,8 +132,8 @@ export const ValhallaBoardV2 = ({ rankingData, isLoading }: ValhallaBoardV2Props
                           />
                           <span className="text-white font-semibold text-sm whitespace-nowrap">{s.nameTH}</span>
                         </div>
-                        <span className={`text-right font-black text-sm ${roiColor(row.rank)}`}>{row.god === "THOR" ? row.roi * 1.25 : row.roi}</span>
-                        <span className={`text-right text-sm font-semibold ${winRateColor(row.winRate, row.rank)}`}>{row.winRate}%</span>
+                        <span className={`text-right font-black text-sm ${roiColor(row.rank)}`}>{row.roi}</span>
+                        <span className={`text-right text-sm font-semibold ${winRateColor(row.score, row.rank)}`}>{row.score}</span>
                         <span className={`text-right text-sm font-semibold ${followersColor(row.rank)}`}>{row.followers}</span>
                       </div>
                     );
