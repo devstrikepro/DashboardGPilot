@@ -27,7 +27,7 @@ export const AdminService = {
       const response = await apiClient<ServiceResponse<null>>(
         `/admin/withdrawals/${id}/approve`,
         { method: "PATCH" },
-        undefined,
+        { id },
         API_GATEWAY_SUB
       );
       if (!response.success) {
@@ -46,7 +46,7 @@ export const AdminService = {
       const response = await apiClient<ServiceResponse<null>>(
         `/admin/withdrawals/${id}/reject`,
         { method: "PATCH" },
-        undefined,
+        { id },
         API_GATEWAY_SUB
       );
       if (!response.success) {
