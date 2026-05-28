@@ -165,17 +165,19 @@ export function TransactionsPage() {
                           variant="body2"
                           sx={{ fontWeight: 600, color: "text.primary", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
                         >
-                          {tx.user_email}
+                          {tx.name}
                         </Typography>
-                        <Tooltip title="Copy email" placement="top">
-                          <IconButton
-                            size="small"
-                            onClick={() => navigator.clipboard.writeText(tx.user_email)}
-                            sx={{ p: 0.25, color: "text.disabled", "&:hover": { color: "text.secondary" } }}
-                          >
-                            <ContentCopyIcon sx={{ fontSize: 13 }} />
-                          </IconButton>
-                        </Tooltip>
+                        {status === "pending" && (
+                          <Tooltip title="Copy email" placement="top">
+                            <IconButton
+                              size="small"
+                              onClick={() => navigator.clipboard.writeText(tx.user_email)}
+                              sx={{ p: 0.25, color: "text.disabled", "&:hover": { color: "text.secondary" } }}
+                            >
+                              <ContentCopyIcon sx={{ fontSize: 13 }} />
+                            </IconButton>
+                          </Tooltip>
+                        )}
                       </Box>
                       <Typography variant="caption" sx={{ color: "text.disabled" }}>
                         {date}
@@ -187,15 +189,17 @@ export function TransactionsPage() {
                         <Typography variant="body2" sx={{ fontWeight: 700, fontFamily: '"Inter", monospace', color: "text.primary" }}>
                           {fmt(tx.amount)}
                         </Typography>
-                        <Tooltip title="Copy amount" placement="top">
-                          <IconButton
-                            size="small"
-                            onClick={() => navigator.clipboard.writeText(String(tx.amount))}
-                            sx={{ p: 0.25, color: "text.disabled", "&:hover": { color: "text.secondary" } }}
-                          >
-                            <ContentCopyIcon sx={{ fontSize: 13 }} />
-                          </IconButton>
-                        </Tooltip>
+                        {status === "pending" && (
+                          <Tooltip title="Copy amount" placement="top">
+                            <IconButton
+                              size="small"
+                              onClick={() => navigator.clipboard.writeText(String(tx.amount))}
+                              sx={{ p: 0.25, color: "text.disabled", "&:hover": { color: "text.secondary" } }}
+                            >
+                              <ContentCopyIcon sx={{ fontSize: 13 }} />
+                            </IconButton>
+                          </Tooltip>
+                        )}
                       </Box>
 
                       {status === "pending" && (

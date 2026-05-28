@@ -11,6 +11,7 @@ export interface AdminWithdrawal {
   user_id: string;
   user_port: number;
   user_email: string;
+  name: string;
   product_name: string;
   product_port: number;
   amount: number;
