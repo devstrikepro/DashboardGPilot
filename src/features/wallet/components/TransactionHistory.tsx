@@ -12,12 +12,14 @@ import { SectionIconBox } from "./SectionIconBox";
 import type { ProfitSharingTransaction } from "@/shared/types/api";
 
 const TX_ICON: Record<string, React.ReactNode> = {
-  credit: <EmojiEventsIcon sx={{ fontSize: 18 }} />,
+  rewards: <EmojiEventsIcon sx={{ fontSize: 18 }} />,
   deposit: <ArrowDownwardIcon sx={{ fontSize: 18 }} />,
-  withdraw: <ArrowUpwardIcon sx={{ fontSize: 18 }} />,
+  withdrawal: <ArrowUpwardIcon sx={{ fontSize: 18 }} />,
   rejected: <HighlightOffIcon sx={{ fontSize: 18 }} />,
+  reject: <HighlightOffIcon sx={{ fontSize: 18 }} />,
   pending: <HourglassEmptyIcon sx={{ fontSize: 18 }} />,
   approved: <CheckCircleOutlineIcon sx={{ fontSize: 18 }} />,
+  success: <CheckCircleOutlineIcon sx={{ fontSize: 18 }} />,
 };
 
 interface TransactionHistoryProps {
@@ -39,8 +41,8 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
 
         <Stack spacing={1}>
           {transactions?.map((tx) => {
-            const meta = TX_META[tx.status || ""] ?? { bg: "rgba(148,163,184,0.15)", color: "#94A3B8", label: tx.status };
-            console.log(tx);
+            const meta = TX_META[tx.status.toLowerCase() || ""] ?? { bg: "rgba(148,163,184,0.15)", color: "#94A3B8", label: tx.status };
+
             return (
               <Box
                 key={tx.id}
@@ -70,7 +72,7 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
                     flexShrink: 0,
                   }}
                 >
-                  {TX_ICON[tx.status || ""]}
+                  {TX_ICON[tx.status.toLowerCase() || ""]}
                 </Box>
 
                 <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -78,10 +80,10 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
                     variant="body2"
                     sx={{ fontWeight: 600, color: "text.primary", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
                   >
-                    {tx.note}
+                    {tx.description}
                   </Typography>
                   <Typography variant="caption" sx={{ color: "text.disabled" }}>
-                    {new Date(tx.requested_at).toLocaleDateString("en-EN", { dateStyle: "medium" })}
+                    {new Date(tx.created_at).toLocaleDateString("en-EN", { dateStyle: "medium" })}
                   </Typography>
                 </Box>
 
@@ -91,7 +93,7 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
                     sx={{
                       fontWeight: 800,
                       fontFamily: '"Inter", monospace',
-                      color: tx.status === "rejected" ? "error.main" : tx.amount > 0 ? "success.main" : "error.main",
+                      color: tx.status === "Reject" ? "error.main" : tx.amount > 0 ? "success.main" : "error.main",
                     }}
                   >
                     {/* {tx.amount > 0 ? "+" : "-"} */}

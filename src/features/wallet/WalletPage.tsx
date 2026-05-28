@@ -4,7 +4,7 @@ import { Box, Grid, Tab, Tabs, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { ProfitSharingService } from "@/shared/services/profit-sharing-service";
 import type { ProfitSharingProduct, ProfitSharingTransaction } from "@/shared/types/api";
-import { TRANSACTIONS, MOCK_PROFIT_SHARING_TRANSACTIONS } from "./constants";
+import { TRANSACTIONS } from "./constants";
 import { ProfitSharingHero } from "./components/ProfitSharingHero";
 import { WithdrawalForm } from "./components/WithdrawalForm";
 import { TransactionHistory } from "./components/TransactionHistory";
@@ -49,7 +49,8 @@ export function WalletPage({ initialData }: WalletPageProps) {
   }, []);
 
   useEffect(() => {
-    ProfitSharingService.getTransactionHistory(activeTab || 0).then((res) => {
+    const wallet = products.find((p) => p.product_port === activeTab)?.wallet_code;
+    ProfitSharingService.getTransactionHistory(wallet || "").then((res) => {
       if (res.success && res.data) {
         setTransactionHistory(res.data);
         // setTransactionHistory(MOCK_PROFIT_SHARING_TRANSACTIONS);
@@ -58,7 +59,6 @@ export function WalletPage({ initialData }: WalletPageProps) {
   }, [activeTab]);
 
   const activeBalance = products.find((p) => p.product_port === activeTab)?.available ?? initialData?.profitSharingBalance ?? 0;
-  const transactions = initialData?.transactions ?? TRANSACTIONS;
 
   return (
     <Box sx={{ p: { xs: 2, lg: 3 }, flex: 1 }}>

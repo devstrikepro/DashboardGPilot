@@ -79,7 +79,7 @@ export const SUB_ENDPOINTS = {
   /** ถอนเงิน Profit Sharing */
   PROFIT_SHARING_WITHDRAWAL: `/profit-sharing/withdrawal`,
   /** ดึงประวัติธุรกรรม Profit Sharing */
-  PROFIT_SHARING_TRANSACTION_HISTORY: `/profit-sharing/transaction-history`,
+  PROFIT_SHARING_TRANSACTION_HISTORY: `/profit-sharing/wallet-history`,
   /** ดึงรายชื่อ Clients ของ Profit Sharing แบ่งตาม product_port */
   PROFIT_SHARING_MY_CLIENT: `/profit-sharing/my-client`,
   /** ดึงข้อมูล Port Detail ตาม mt5_id */

@@ -40,10 +40,10 @@ export const ProfitSharingService = {
     }
   },
 
-  getTransactionHistory: async (port: number): Promise<ServiceResponse<ProfitSharingTransaction[]>> => {
+  getTransactionHistory: async (wallet_code: string): Promise<ServiceResponse<ProfitSharingTransaction[]>> => {
     try {
       const response = await apiClient<ServiceResponse<ProfitSharingTransaction[]>>(
-        SUB_ENDPOINTS.PROFIT_SHARING_TRANSACTION_HISTORY + "/" + port,
+        SUB_ENDPOINTS.PROFIT_SHARING_TRANSACTION_HISTORY + `?wallet_code=${wallet_code}`,
         undefined,
         undefined,
         API_GATEWAY_SUB

@@ -225,6 +225,7 @@ export interface AccountInfo {
   readonly mt5_id: number;
   readonly balance: number;
   readonly net_profit: number;
+  readonly growth: number;
   readonly support_group: string;
   readonly image: string;
 }
@@ -328,6 +329,7 @@ export interface ProfitSharingProduct {
   readonly total_earned: number;
   readonly total_withdrawn: number;
   readonly available: number;
+  readonly wallet_code: string;
 }
 
 export interface ProfitSharingWithdrawalRequest {
@@ -341,6 +343,7 @@ export interface MyClient {
   readonly mt5_id: number;
   readonly total_pf: number;
   readonly balance: number;
+  readonly is_active: boolean;
 }
 
 export interface MyClientProduct {
@@ -369,15 +372,17 @@ export interface PortDetail {
 
 export interface ProfitSharingTransaction {
   readonly id: string;
+  readonly wallet_code: string;
   readonly user_id: string;
   readonly product_name?: string | null;
-  readonly product_port?: number | null;
+  readonly type: string;
   readonly amount: number;
-  readonly status?: string | null;
-  readonly note?: string | null;
-  readonly requested_at: string;
-  readonly reviewed_at?: string | null;
-  readonly reviewed_by?: string | null;
+  readonly status: string;
+  readonly reference_id?: string | null;
+  readonly description?: string | null;
+  readonly related_wallet_code?: string | null;
+  readonly fee: number;
+  readonly created_at: string;
 }
 
 // ---------------------------------------------

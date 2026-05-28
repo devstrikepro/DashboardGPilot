@@ -9,7 +9,7 @@ import type { AccountInitialData } from "../AccountPage";
 export function useAccountData(tableParams?: TradeRequest, initialData?: AccountInitialData, mt5Id?: number) {
   const { isHealthy } = useApiHealth();
 
-  const [accountInfoList, setAccountInfoList] = useState<AccountInfo[]>((initialData?.info || []).map((e) => ({ ...e, image: "/ror/bg.png" })));
+  const [accountInfoList, setAccountInfoList] = useState<AccountInfo[]>(initialData?.info || []);
   const [profiles, setProfiles] = useState<AccountProfile[]>(() => {
     if (!initialData?.profile) return [];
     return Array.isArray(initialData.profile) ? initialData.profile : [initialData.profile];

@@ -2,19 +2,6 @@ import type { ProfitSharingTransaction } from "@/shared/types/api";
 
 export const FEE_RATE = 0.015;
 
-export const MOCK_PROFIT_SHARING_TRANSACTIONS: ProfitSharingTransaction[] = [
-  { id: "tx-001", user_id: "u-01", product_name: "Alpha Fund", product_port: 1001, amount: 1_250.0, status: "credit", note: "Profit Sharing Reward", requested_at: "2026-05-01T10:00:00Z", reviewed_at: "2026-05-01T12:00:00Z", reviewed_by: "admin" },
-  { id: "tx-002", user_id: "u-01", product_name: "Alpha Fund", product_port: 1001, amount: 5_000.0, status: "deposit", note: "Deposit from Bank", requested_at: "2026-04-28T09:30:00Z", reviewed_at: "2026-04-28T11:00:00Z", reviewed_by: "admin" },
-  { id: "tx-003", user_id: "u-01", product_name: "Alpha Fund", product_port: 1001, amount: -2_000.0, status: "withdraw", note: "Withdrawal to Strikepro", requested_at: "2026-04-25T14:00:00Z", reviewed_at: "2026-04-25T16:30:00Z", reviewed_by: "admin" },
-  { id: "tx-004", user_id: "u-01", product_name: "Beta Fund", product_port: 1002, amount: 980.0, status: "credit", note: "Profit Sharing Reward", requested_at: "2026-04-20T08:00:00Z", reviewed_at: "2026-04-20T10:00:00Z", reviewed_by: "admin" },
-  { id: "tx-005", user_id: "u-01", product_name: "Beta Fund", product_port: 1002, amount: 3_000.0, status: "deposit", note: "Deposit from Bank", requested_at: "2026-04-15T11:00:00Z", reviewed_at: "2026-04-15T13:00:00Z", reviewed_by: "admin" },
-  { id: "tx-006", user_id: "u-01", product_name: "Alpha Fund", product_port: 1001, amount: -1_500.0, status: "withdraw", note: "Withdrawal to Strikepro", requested_at: "2026-04-10T09:00:00Z", reviewed_at: "2026-04-10T11:00:00Z", reviewed_by: "admin" },
-  { id: "tx-007", user_id: "u-01", product_name: "Alpha Fund", product_port: 1001, amount: -500.0, status: "rejected", note: "Withdrawal Rejected", requested_at: "2026-04-05T15:00:00Z", reviewed_at: "2026-04-06T09:00:00Z", reviewed_by: "admin" },
-  { id: "tx-008", user_id: "u-01", product_name: "Beta Fund", product_port: 1002, amount: 640.5, status: "credit", note: "Profit Sharing Reward", requested_at: "2026-03-31T08:00:00Z", reviewed_at: "2026-03-31T10:00:00Z", reviewed_by: "admin" },
-  { id: "tx-009", user_id: "u-01", product_name: "Alpha Fund", product_port: 1001, amount: -750.0, status: "pending", note: "Withdrawal Pending Review", requested_at: "2026-05-24T08:00:00Z", reviewed_at: null, reviewed_by: null },
-  { id: "tx-010", user_id: "u-01", product_name: "Beta Fund", product_port: 1002, amount: -1_200.0, status: "approved", note: "Withdrawal Approved", requested_at: "2026-05-20T10:00:00Z", reviewed_at: "2026-05-21T09:00:00Z", reviewed_by: "admin" },
-];
-
 export const TRANSACTIONS: {
   id: number;
   type: "credit" | "deposit" | "withdraw";
@@ -35,12 +22,14 @@ export const TRANSACTIONS: {
 export const fmt = (val: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Math.abs(val));
 
 export const TX_META: Record<string, { bg: string; color: string; label: string }> = {
-  credit: { bg: "rgba(34,211,238,0.15)", color: "#22D3EE", label: "Reward" },
+  rewards: { bg: "rgba(34,211,238,0.15)", color: "#22D3EE", label: "Reward" },
   deposit: { bg: "rgba(16,185,129,0.15)", color: "#10B981", label: "Deposit" },
-  withdraw: { bg: "rgba(239,68,68,0.15)", color: "#EF4444", label: "Withdraw" },
-  rejected: { bg: "rgba(249,115,22,0.15)", color: "#F97316", label: "Rejected" },
+  withdrawal: { bg: "rgba(239,68,68,0.15)", color: "#EF4444", label: "Withdraw" },
+  rejected: { bg: "rgba(239,68,68,0.15)", color: "#EF4444", label: "Rejected" },
+  reject: { bg: "rgba(239,68,68,0.15)", color: "#EF4444", label: "Reject" },
   pending: { bg: "rgba(245,158,11,0.15)", color: "#F59E0B", label: "Pending" },
-  approved: { bg: "rgba(139,92,246,0.15)", color: "#8B5CF6", label: "Approved" },
+  approved: { bg: "rgba(16,185,129,0.15)", color: "#10B981", label: "Approve" },
+  success: { bg: "rgba(16,185,129,0.15)", color: "#10B981", label: "Success" },
 };
 
 export const CARD_SX = {

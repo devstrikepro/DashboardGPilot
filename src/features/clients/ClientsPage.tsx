@@ -11,70 +11,6 @@ import { ProfitSharingService } from "@/shared/services/profit-sharing-service";
 import type { MyClient, MyClientProduct, PortDetail } from "@/shared/types/api";
 import EditIcon from "@mui/icons-material/Edit";
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
-const MOCK_CLIENTS = [
-  {
-    id: 1,
-    name: "Siriporn Kaewkla",
-    initials: "SK",
-    status: "Active" as const,
-    portfolio: 32_450.0,
-    performance: 12.4,
-    sparkline: [100, 105, 102, 110, 108, 118, 115, 124],
-    color: "#22D3EE",
-  },
-  {
-    id: 2,
-    name: "Nattapol Wongchai",
-    initials: "NW",
-    status: "Active" as const,
-    portfolio: 18_720.5,
-    performance: -3.2,
-    sparkline: [100, 98, 95, 97, 93, 91, 95, 97],
-    color: "#10B981",
-  },
-  {
-    id: 3,
-    name: "Priya Suwan",
-    initials: "PS",
-    status: "Inactive" as const,
-    portfolio: 9_800.0,
-    performance: 0.8,
-    sparkline: [100, 101, 100, 103, 101, 102, 101, 101],
-    color: "#F59E0B",
-  },
-  {
-    id: 4,
-    name: "Somchai Limcharoen",
-    initials: "SL",
-    status: "Active" as const,
-    portfolio: 55_100.0,
-    performance: 18.7,
-    sparkline: [100, 108, 112, 115, 119, 122, 130, 119],
-    color: "#8B5CF6",
-  },
-  {
-    id: 5,
-    name: "Malee Phongphan",
-    initials: "MP",
-    status: "Inactive" as const,
-    portfolio: 4_325.0,
-    performance: -7.5,
-    sparkline: [100, 96, 93, 90, 88, 91, 93, 93],
-    color: "#EC4899",
-  },
-  {
-    id: 6,
-    name: "Thanet Rungsri",
-    initials: "TR",
-    status: "Active" as const,
-    portfolio: 41_200.0,
-    performance: 9.1,
-    sparkline: [100, 103, 105, 107, 109, 110, 109, 109],
-    color: "#EF4444",
-  },
-];
-
 const fmt = (val: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(val);
 
 // ─── Client Card ──────────────────────────────────────────────────────────────
@@ -90,8 +26,7 @@ function ClientCard({ client, onStatusLoaded }: { client: MyClient; onStatusLoad
     });
   }, [client.mt5_id]);
 
-  const status = portData?.status || "Active";
-  const isActive = status === "Active";
+  const isActive = client.is_active;
 
   return (
     <Card
@@ -128,7 +63,7 @@ function ClientCard({ client, onStatusLoaded }: { client: MyClient; onStatusLoad
               {client.name}
             </Typography>
             <Chip
-              label={status}
+              label={isActive ? "Active" : "Inactive"}
               size="small"
               sx={{
                 height: 18,
@@ -175,7 +110,7 @@ function ClientCard({ client, onStatusLoaded }: { client: MyClient; onStatusLoad
 }
 
 export interface ClientsInitialData {
-  clients?: typeof MOCK_CLIENTS;
+  clients?: MyClient[];
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
@@ -204,10 +139,9 @@ export function ClientsPage() {
     return matchesSearch && matchesStatus;
   });
 
-  const activeCount =
-    Object.values(clientStatuses).filter((s) => s.toLowerCase() === "active").length || MOCK_CLIENTS.filter((c) => c.status === "Active").length;
+  const activeCount = Object.values(clientStatuses).filter((s) => s.toLowerCase() === "active").length;
   const inactiveCount = (clients?.length || 0) - activeCount;
-  const totalPortfolio = MOCK_CLIENTS.reduce((s, c) => s + c.portfolio, 0);
+  const totalPortfolio = clients?.reduce((s, c) => s + c.balance, 0) ?? 0;
 
   function decrypt() {
     try {
@@ -294,7 +228,7 @@ export function ClientsPage() {
       {/* Summary chips */}
       <Stack direction="row" spacing={1} sx={{ mb: 3, flexWrap: "wrap", gap: 1 }}>
         <Chip
-          label={`All (${clients?.length})`}
+          label={`All (${clients?.length || 0})`}
           size="small"
           color="primary"
           variant={statusFilter === "all" ? "filled" : "outlined"}

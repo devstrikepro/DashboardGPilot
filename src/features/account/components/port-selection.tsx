@@ -32,7 +32,6 @@ export function PortSelection({ ports, onSelect, loading }: Readonly<PortSelecti
       </Typography>
       <Grid container spacing={3} justifyContent="flex-start">
         {ports.map((port, index) => {
-          const growth = port.balance > 0 ? (port.net_profit / port.balance) * 100 : 0;
           const isProfit = port.net_profit >= 0;
 
           return (
@@ -85,8 +84,7 @@ export function PortSelection({ ports, onSelect, loading }: Readonly<PortSelecti
                           Growth
                         </Typography>
                         <Typography variant="body2" sx={{ fontSize: 18, fontWeight: 700, color: isProfit ? "success.main" : "error.main" }}>
-                          {/* {isProfit ? "+" : ""} */}
-                          {growth.toFixed(2)}%
+                          {port.growth}
                         </Typography>
                       </Box>
                       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
