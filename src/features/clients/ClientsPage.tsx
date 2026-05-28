@@ -171,7 +171,6 @@ export function ClientsPage() {
       .then((res) => {
         if (res.success && res.data) {
           setMyClients(res.data);
-          console.log(res.data);
         } else {
           setMyClientsError(res.message ?? "ไม่สามารถโหลดข้อมูล Clients ได้");
         }
