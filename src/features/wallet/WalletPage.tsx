@@ -20,14 +20,14 @@ interface WalletPageProps {
 }
 
 interface WalletTab {
-  key: number;
+  key: string;
   label: string;
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export function WalletPage({ initialData }: WalletPageProps) {
   const [tabs, setTabs] = useState<WalletTab[] | null>(null);
-  const [activeTab, setActiveTab] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<string | null>(null);
   const [products, setProducts] = useState<ProfitSharingProduct[]>([]);
   const [transactionHistory, setTransactionHistory] = useState<ProfitSharingTransaction[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
@@ -38,7 +38,7 @@ export function WalletPage({ initialData }: WalletPageProps) {
       .then((res) => {
         if (res.success && res.data) {
           setProducts(res.data);
-          const productTabs = res.data.map((product) => ({ key: product.product_port, label: product.product_name }));
+          const productTabs = res.data.map((product) => ({ key: product.wallet_code, label: product.product_name }));
           setTabs(productTabs);
           setActiveTab(productTabs[0].key);
         } else {
@@ -49,7 +49,7 @@ export function WalletPage({ initialData }: WalletPageProps) {
   }, []);
 
   useEffect(() => {
-    const wallet = products.find((p) => p.product_port === activeTab)?.wallet_code;
+    const wallet = products.find((p) => p.wallet_code === activeTab)?.wallet_code;
     ProfitSharingService.getTransactionHistory(wallet || "").then((res) => {
       if (res.success && res.data) {
         setTransactionHistory(res.data);
@@ -58,7 +58,7 @@ export function WalletPage({ initialData }: WalletPageProps) {
     });
   }, [activeTab]);
 
-  const activeBalance = products.find((p) => p.product_port === activeTab)?.available ?? initialData?.profitSharingBalance ?? 0;
+  const activeBalance = products.find((p) => p.wallet_code === activeTab)?.available ?? initialData?.profitSharingBalance ?? 0;
 
   return (
     <Box sx={{ p: { xs: 2, lg: 3 }, flex: 1 }}>
@@ -96,7 +96,7 @@ export function WalletPage({ initialData }: WalletPageProps) {
       {/* ── Lower Section ───────────────────────────────────── */}
       <Grid container spacing={{ xs: 2, lg: 3 }} alignItems="flex-start">
         <Grid size={{ xs: 12, md: 5, lg: 4 }}>
-          <WithdrawalForm activeProduct={products.find((p) => p.product_port === activeTab) ?? null} />
+          <WithdrawalForm activeProduct={products.find((p) => p.wallet_code === activeTab) ?? null} />
         </Grid>
         <Grid size={{ xs: 12, md: 7, lg: 8 }}>
           <TransactionHistory transactions={transactionHistory} />
