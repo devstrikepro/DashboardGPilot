@@ -3,19 +3,13 @@ import { AccountService } from "@/shared/services/account-service";
 import { AnalyticsService } from "@/shared/services/analytics-service";
 import { API_GATEWAY_SUB } from "@/shared/api/endpoint";
 import { useApiHealth } from "@/shared/providers/api-health-provider";
-import type { 
-  AccountProfile, 
-  AccountFinance, 
-  AccountInfo,
-  GroupedTradesResponse,
-  TradeRequest
-} from "@/shared/types/api";
+import type { AccountProfile, AccountFinance, AccountInfo, GroupedTradesResponse, TradeRequest } from "@/shared/types/api";
 import type { AccountInitialData } from "../AccountPage";
 
 export function useAccountData(tableParams?: TradeRequest, initialData?: AccountInitialData, mt5Id?: number) {
   const { isHealthy } = useApiHealth();
 
-  const [accountInfoList, setAccountInfoList] = useState<AccountInfo[]>(initialData?.info || []);
+  const [accountInfoList, setAccountInfoList] = useState<AccountInfo[]>((initialData?.info || []).map((e) => ({ ...e, image: "/ror/bg.png" })));
   const [profiles, setProfiles] = useState<AccountProfile[]>(() => {
     if (!initialData?.profile) return [];
     return Array.isArray(initialData.profile) ? initialData.profile : [initialData.profile];
@@ -28,9 +22,9 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
     if (!initialData?.tradesData) return [];
     return Array.isArray(initialData.tradesData) ? initialData.tradesData : [initialData.tradesData];
   });
-  
+
   const [activePortIndex, setActivePortIndex] = useState(0);
-  
+
   const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,85 +34,95 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
   const isInitialFetched = useRef(!!initialData && Object.keys(initialData).length > 0);
 
   // 1. Fetch Account Info List (Listing Page)
-  const fetchAccountInfoList = useCallback(async (options?: RequestInit) => {
-    if (!isHealthy) return;
-    setLoading(true);
-    try {
-      const res = await AccountService.getInfo(options);
-      if (res.success && res.data) {
-        // Backend-Sub คืนแบบ wrapped: { list: AccountInfo[], last_update: string | null }
-        setAccountInfoList(res.data.list);
-        setLastUpdate(res.data.last_update);
-      } else if (!res.success) {
-        setError(res.message || "Failed to fetch account list");
+  const fetchAccountInfoList = useCallback(
+    async (options?: RequestInit) => {
+      if (!isHealthy) return;
+      setLoading(true);
+      try {
+        const res = await AccountService.getInfo(options);
+        if (res.success && res.data) {
+          // Backend-Sub คืนแบบ wrapped: { list: AccountInfo[], last_update: string | null }
+          setAccountInfoList(res.data.list);
+          setLastUpdate(res.data.last_update);
+        } else if (!res.success) {
+          setError(res.message || "Failed to fetch account list");
+        }
+      } catch (err) {
+        setError("An unexpected error occurred while fetching account list.");
+      } finally {
+        setLoading(false);
+        isInitialFetched.current = true;
       }
-    } catch (err) {
-      setError("An unexpected error occurred while fetching account list.");
-    } finally {
-      setLoading(false);
-      isInitialFetched.current = true;
-    }
-  }, [isHealthy]);
+    },
+    [isHealthy]
+  );
 
   // 2. Fetch Detail Data (Detail Page)
-  const fetchDetailInfo = useCallback(async (targetMt5Id: number, options?: RequestInit) => {
-    if (!isHealthy) return;
-    
-    setLoading(true);
-    try {
-      const [profileRes, financeRes] = await Promise.all([
-        AccountService.getProfile(targetMt5Id, options),
-        AccountService.getFinance(targetMt5Id, options),
-      ]);
+  const fetchDetailInfo = useCallback(
+    async (targetMt5Id: number, options?: RequestInit) => {
+      if (!isHealthy) return;
 
-      if (profileRes.success && profileRes.data) {
-        const profileList = Array.isArray(profileRes.data) ? profileRes.data : [profileRes.data];
-        setProfiles(profileList);
+      setLoading(true);
+      try {
+        const [profileRes, financeRes] = await Promise.all([AccountService.getProfile(targetMt5Id, options), AccountService.getFinance(targetMt5Id, options)]);
+
+        if (profileRes.success && profileRes.data) {
+          const profileList = Array.isArray(profileRes.data) ? profileRes.data : [profileRes.data];
+          setProfiles(profileList);
+        }
+        if (financeRes.success && financeRes.data) {
+          const financeList = Array.isArray(financeRes.data) ? financeRes.data : [financeRes.data];
+          setFinances(financeList);
+        }
+
+        if (!profileRes.success || !financeRes.success) {
+          setError(profileRes.message || financeRes.message || "Failed to fetch account info");
+        }
+      } catch (err) {
+        setError("An unexpected error occurred while fetching account info.");
+      } finally {
+        setLoading(false);
+        isInitialFetched.current = true;
       }
-      if (financeRes.success && financeRes.data) {
-        const financeList = Array.isArray(financeRes.data) ? financeRes.data : [financeRes.data];
-        setFinances(financeList);
-      }
-      
-      if (!profileRes.success || !financeRes.success) {
-        setError(profileRes.message || financeRes.message || "Failed to fetch account info");
-      }
-    } catch (err) {
-      setError("An unexpected error occurred while fetching account info.");
-    } finally {
-      setLoading(false);
-      isInitialFetched.current = true;
-    }
-  }, [isHealthy]);
+    },
+    [isHealthy]
+  );
 
   // 3. Fetch Trades (Independent)
-  const fetchTrades = useCallback(async (targetMt5Id?: number, options?: RequestInit) => {
-    if (!isHealthy) return;
+  const fetchTrades = useCallback(
+    async (targetMt5Id?: number, options?: RequestInit) => {
+      if (!isHealthy) return;
 
-    setTableLoading(true);
-    try {
-      const tradesRes = await AnalyticsService.getGroupedTrades({
-        mt5_id: targetMt5Id,
-        page: tableParams?.page || 1,
-        limit: tableParams?.limit || 10,
-        type: tableParams?.type || null,
-        date_from: tableParams?.date_from || null,
-        end_date: tableParams?.end_date || null,
-      }, API_GATEWAY_SUB, options);
+      setTableLoading(true);
+      try {
+        const tradesRes = await AnalyticsService.getGroupedTrades(
+          {
+            mt5_id: targetMt5Id,
+            page: tableParams?.page || 1,
+            limit: tableParams?.limit || 10,
+            type: tableParams?.type || null,
+            date_from: tableParams?.date_from || null,
+            end_date: tableParams?.end_date || null,
+          },
+          API_GATEWAY_SUB,
+          options
+        );
 
-      if (tradesRes.success && tradesRes.data) {
-        // Sub-API returns List of objects, each for one port
-        const dataList = Array.isArray(tradesRes.data) ? tradesRes.data : [tradesRes.data];
-        setAllTradesData(dataList);
-      } else if (!tradesRes.success) {
-        setError(tradesRes.message || "Failed to fetch trades");
+        if (tradesRes.success && tradesRes.data) {
+          // Sub-API returns List of objects, each for one port
+          const dataList = Array.isArray(tradesRes.data) ? tradesRes.data : [tradesRes.data];
+          setAllTradesData(dataList);
+        } else if (!tradesRes.success) {
+          setError(tradesRes.message || "Failed to fetch trades");
+        }
+      } catch (err) {
+        setError("An unexpected error occurred while fetching trades.");
+      } finally {
+        setTableLoading(false);
       }
-    } catch (err) {
-      setError("An unexpected error occurred while fetching trades.");
-    } finally {
-      setTableLoading(false);
-    }
-  }, [isHealthy, tableParams]);
+    },
+    [isHealthy, tableParams]
+  );
 
   // Initial load
   useEffect(() => {
@@ -137,11 +141,11 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
       fetchTrades(mt5Id);
     }
   }, [isHealthy, mt5Id, fetchTrades]);
-  
+
   // 3. Sync activePortIndex with mt5Id from URL
   useEffect(() => {
     if (mt5Id && profiles.length > 0) {
-      const index = profiles.findIndex(p => p.mt5_id === mt5Id);
+      const index = profiles.findIndex((p) => p.mt5_id === mt5Id);
       if (index !== -1 && index !== activePortIndex) {
         setActivePortIndex(index);
       }
@@ -168,7 +172,7 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
       leverage: profile.leverage,
       currency: profile.currency,
       balance: profile.balance,
-      ...finance
+      ...finance,
     };
   }, [profile, finance]);
 
@@ -198,7 +202,7 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
       commission: 0,
       swap: 0,
       fee: tradesData?.fee ?? 0,
-      totalTrades: tradesData?.total_trades ?? 0
+      totalTrades: tradesData?.total_trades ?? 0,
     },
     realBalance: finance?.total_balance ?? profile?.balance ?? 0,
     grossTradeProfit: finance?.gross_trade_profit ?? 0,
@@ -232,14 +236,11 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
       try {
         // 2. Trigger manual sync (เส้นนี้หนักที่สุด)
         await AccountService.syncAccount();
-        
+
         // 3. Then fetch updated data based on view (Force no-cache)
-        const fetchOptions: RequestInit = { cache: 'no-store' };
+        const fetchOptions: RequestInit = { cache: "no-store" };
         if (mt5Id) {
-          await Promise.all([
-            fetchDetailInfo(mt5Id, fetchOptions), 
-            fetchTrades(mt5Id, fetchOptions)
-          ]);
+          await Promise.all([fetchDetailInfo(mt5Id, fetchOptions), fetchTrades(mt5Id, fetchOptions)]);
         } else {
           await fetchAccountInfoList(fetchOptions);
         }
@@ -251,5 +252,3 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
     },
   };
 }
-
-
