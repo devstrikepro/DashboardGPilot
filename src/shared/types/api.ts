@@ -226,6 +226,7 @@ export interface AccountInfo {
   readonly balance: number;
   readonly net_profit: number;
   readonly support_group: string;
+  readonly image: string;
 }
 
 /**

@@ -13,6 +13,7 @@ interface FinancialSummaryProps {
   readonly netProfit: number;
   readonly growthPercent: number;
   readonly formatCurrency: (value: number) => string;
+  readonly image?: string;
   readonly sx?: SxProps<Theme>;
 }
 
@@ -26,6 +27,7 @@ export function FinancialSummary({
   netProfit,
   growthPercent,
   formatCurrency,
+  image,
   sx,
 }: Readonly<FinancialSummaryProps>) {
   return (
@@ -34,7 +36,7 @@ export function FinancialSummary({
         {/* Header */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
           <Avatar sx={{ width: 52, height: 52, bgcolor: "primary.main" }}>
-            <img src="/ror/bg.png" alt="" className="w-7 h-7 rounded-full" />
+            <img src={image} alt="" className="w-7 h-7 rounded-full" />
           </Avatar>
           <Box>
             {loading ? (

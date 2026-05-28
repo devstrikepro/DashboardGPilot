@@ -62,7 +62,7 @@ export function PortSelection({ ports, onSelect, loading }: Readonly<PortSelecti
                           flexShrink: 0,
                         }}
                       >
-                        <img src="/ror/bg.png" alt="" className="w-7 h-7 rounded-full" />
+                        <img src={port.image} alt="" className="w-7 h-7 rounded-full" />
                       </Avatar>
                       <Box sx={{ flex: 1, minWidth: 0 }}>
                         <Typography variant="body1" sx={{ fontWeight: 700, lineHeight: 1.3, letterSpacing: 0.3 }} noWrap>

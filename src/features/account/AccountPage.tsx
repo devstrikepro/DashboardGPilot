@@ -101,6 +101,7 @@ export function AccountPage({ initialData, mt5Id }: AccountPageProps) {
               totalWithdrawals={totalWithdrawals}
               netProfit={netProfit}
               growthPercent={growthPercent}
+              image={accountInfoList.find((info) => info.mt5_id === mt5Id)?.image}
               formatCurrency={formatCurrency}
               sx={{ height: "100%" }}
             />
