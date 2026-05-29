@@ -330,6 +330,7 @@ export interface ProfitSharingProduct {
   readonly total_withdrawn: number;
   readonly available: number;
   readonly wallet_code: string;
+  readonly last_update: string;
 }
 
 export interface ProfitSharingWithdrawalRequest {

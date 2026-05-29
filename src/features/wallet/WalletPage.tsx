@@ -3,7 +3,7 @@
 import { ProfitSharingService } from "@/shared/services/profit-sharing-service";
 import type { ProfitSharingProduct, ProfitSharingTransaction } from "@/shared/types/api";
 import { Box, Grid, Tab, Tabs, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ProfitSharingHero } from "./components/ProfitSharingHero";
 import { TransactionHistory } from "./components/TransactionHistory";
 import { WithdrawalForm } from "./components/WithdrawalForm";
@@ -29,10 +29,12 @@ export function WalletPage({ initialData }: WalletPageProps) {
   const [tabs, setTabs] = useState<WalletTab[] | null>(null);
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [products, setProducts] = useState<ProfitSharingProduct[]>([]);
+  const [activeProduct, setActiveProduct] = useState<ProfitSharingProduct>();
   const [transactionHistory, setTransactionHistory] = useState<ProfitSharingTransaction[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
   const [productsError, setProductsError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const currentWalletRef = useRef<string>("");
 
   useEffect(() => {
     ProfitSharingService.getProducts()
@@ -50,17 +52,25 @@ export function WalletPage({ initialData }: WalletPageProps) {
   }, []);
 
   useEffect(() => {
-    const wallet = products.find((p) => p.wallet_code === activeTab)?.wallet_code;
-    ProfitSharingService.getTransactionHistory(wallet || "").then((res) => {
-      if (res.success && res.data) {
-        setTransactionHistory(res.data);
-        setIsLoading(false);
-        // setTransactionHistory(MOCK_PROFIT_SHARING_TRANSACTIONS);
-      }
+    const product = products.find((p) => p.wallet_code === activeTab);
+    const wallet = product?.wallet_code ?? "";
+    currentWalletRef.current = wallet;
+    setActiveProduct(product);
+    ProfitSharingService.getTransactionHistory(wallet).then((res) => {
+      if (res.success && res.data) setTransactionHistory(res.data);
     });
-  }, [activeTab, isLoading]);
+  }, [activeTab]);
 
-  const activeBalance = products.find((p) => p.wallet_code === activeTab)?.available ?? initialData?.profitSharingBalance ?? 0;
+  useEffect(() => {
+    if (!isLoading) return;
+    ProfitSharingService.getTransactionHistory(currentWalletRef.current).then((res) => {
+      if (res.success && res.data) setTransactionHistory(res.data);
+      setIsLoading(false);
+    });
+    ProfitSharingService.getProducts().then((res) => {
+      if (res.success && res.data) setActiveProduct(res.data.find((r) => r.wallet_code === activeProduct?.wallet_code));
+    });
+  }, [isLoading]);
 
   return (
     <Box sx={{ p: { xs: 2, lg: 3 }, flex: 1 }}>
@@ -93,7 +103,7 @@ export function WalletPage({ initialData }: WalletPageProps) {
       </Box>
 
       {/* ── Hero ────────────────────────────────────────────── */}
-      <ProfitSharingHero balance={activeBalance} />
+      <ProfitSharingHero balance={activeProduct?.available || 0} last_update={activeProduct?.last_update || ""} />
 
       {/* ── Lower Section ───────────────────────────────────── */}
       <Grid container spacing={{ xs: 2, lg: 3 }} alignItems="flex-start">

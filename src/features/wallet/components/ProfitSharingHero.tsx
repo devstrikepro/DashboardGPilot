@@ -5,9 +5,23 @@ import { SectionIconBox } from "./SectionIconBox";
 
 interface ProfitSharingHeroProps {
   balance: number;
+  last_update: string;
 }
 
-export function ProfitSharingHero({ balance }: ProfitSharingHeroProps) {
+const formatDate = (dateStr: string) => {
+  try {
+    const date = new Date(dateStr);
+    const today = new Date();
+    if (date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth() && date.getDate() === today.getDate()) {
+      return `Today, ${new Intl.DateTimeFormat("th-TH", { hour: "2-digit", minute: "2-digit" }).format(date)}`;
+    }
+    return new Intl.DateTimeFormat("th-TH", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(date);
+  } catch {
+    return dateStr;
+  }
+};
+
+export function ProfitSharingHero({ balance, last_update }: ProfitSharingHeroProps) {
   return (
     <Paper
       elevation={0}
@@ -21,8 +35,7 @@ export function ProfitSharingHero({ balance }: ProfitSharingHeroProps) {
           t.palette.mode === "dark"
             ? "linear-gradient(135deg, rgba(8,145,178,0.25) 0%, rgba(34,211,238,0.08) 100%)"
             : "linear-gradient(135deg, rgba(8,145,178,0.12) 0%, rgba(34,211,238,0.04) 100%)",
-        border: (t) =>
-          `1px solid ${t.palette.mode === "dark" ? "rgba(34,211,238,0.25)" : "rgba(8,145,178,0.2)"}`,
+        border: (t) => `1px solid ${t.palette.mode === "dark" ? "rgba(34,211,238,0.25)" : "rgba(8,145,178,0.2)"}`,
       }}
     >
       {/* decorative blur blobs */}
@@ -80,7 +93,7 @@ export function ProfitSharingHero({ balance }: ProfitSharingHeroProps) {
             {fmt(balance)}
           </Typography>
           <Typography variant="caption" sx={{ color: "text.disabled" }}>
-            Last updated: Today, 17:30
+            Last updated: {formatDate(last_update)}
           </Typography>
         </Box>
       </Box>
