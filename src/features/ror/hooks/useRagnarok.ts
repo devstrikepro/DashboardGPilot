@@ -60,16 +60,15 @@ export const useRagnarok = () => {
     }));
   }, [portGods]);
 
-  const handlePledgeChange = (field: string, value: number) => {
+  const handlePledgeChange = useCallback((field: string, value: number) => {
     setPledgeData((prev) => {
       const newData = { ...prev, [field]: value };
-      // ล้างค่า investorId เมื่อมีการเปลี่ยนเทพ
       if (field === "god") {
         newData.investorId = "";
       }
       return newData;
     });
-  };
+  }, []);
 
   const filteredAccounts = useMemo(() => {
     if (!accounts) return [];
@@ -118,7 +117,6 @@ export const useRagnarok = () => {
   const fetchRorInternalData = useCallback(async () => {
     setGodsLoading(true);
     const godsRes = await RorService.getPortGods();
-    console.log("godsRes.data.data: ", godsRes.data.data);
     if (godsRes.success) setPortGods(godsRes.data.data);
     setGodsLoading(false);
   }, []);

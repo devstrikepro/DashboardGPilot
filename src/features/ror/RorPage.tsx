@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useCallback } from "react";
 import { useRagnarok } from "./hooks/useRagnarok";
 import { HeroSectionV2 } from "./components/HeroSectionV2";
 import { GodsPantheonV2 } from "./components/GodsPantheonV2";
@@ -42,6 +42,9 @@ export const RecordOfRagnarok: React.FC = () => {
     infoLoading,
   } = useRagnarok();
 
+  const clearPledgeMessage = useCallback(() => setPledgeMessage(null), [setPledgeMessage]);
+  const clearError = useCallback(() => setError(null), [setError]);
+
   return (
     <div className={`${notoSansThai.className} min-h-screen flex flex-col text-white`}>
       <HeroSectionV2 />
@@ -60,7 +63,7 @@ export const RecordOfRagnarok: React.FC = () => {
                 onPledge={pledge}
                 isLoading={pledgeLoading}
                 message={pledgeMessage}
-                onClearMessage={() => setPledgeMessage(null)}
+                onClearMessage={clearPledgeMessage}
                 infoLoading={infoLoading}
                 accounts={accounts}
               />
@@ -74,7 +77,7 @@ export const RecordOfRagnarok: React.FC = () => {
                 onSelectWorkflow={setWorkflow}
                 tfaProviders={tfaProviders}
                 error={error}
-                onClearError={() => setError(null)}
+                onClearError={clearError}
               />
             )}
           </div>

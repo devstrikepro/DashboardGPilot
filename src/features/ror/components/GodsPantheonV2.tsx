@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useRagnarok } from "../hooks/useRagnarok";
 
 export type God = ReturnType<typeof useRagnarok>["gods"][number];
@@ -76,7 +77,7 @@ interface GodsPantheonV2Props {
   isLoading?: boolean;
 }
 
-export const GodsPantheonV2 = ({ gods, isLoading }: GodsPantheonV2Props) => (
+export const GodsPantheonV2 = memo(({ gods, isLoading }: GodsPantheonV2Props) => (
   <div className="w-full">
     <div className="text-center my-4!">
       <h2 className="text-[#d4af37] font-bold text-xl">เหล่าเทพเจ้า</h2>
@@ -98,4 +99,4 @@ export const GodsPantheonV2 = ({ gods, isLoading }: GodsPantheonV2Props) => (
         : gods.map((god) => <GodCard key={god.name} god={god} />)}
     </div>
   </div>
-);
+));

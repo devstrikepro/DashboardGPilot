@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { memo, useState } from "react";
 import { TextField, Button, InputAdornment, IconButton, CircularProgress } from "@mui/material";
 import { Email as EmailIcon, Lock as LockIcon, Visibility, VisibilityOff } from "@mui/icons-material";
 
@@ -14,7 +14,7 @@ export interface LoginSectionV2Props {
   onClearError: () => void;
 }
 
-export const LoginSectionV2 = ({
+export const LoginSectionV2 = memo(({
   onLogin,
   onVerify2fa,
   onVerify2faSms,
@@ -188,4 +188,4 @@ export const LoginSectionV2 = ({
       </div>
     </div>
   );
-};
+});

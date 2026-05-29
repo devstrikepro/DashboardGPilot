@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@mui/material";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 interface FooterSectionV2Props {
   onLogout: () => void;
@@ -19,7 +19,7 @@ const pledgeBtnSx = {
   "&.Mui-disabled": { backgroundColor: "rgba(212,175,55,0.2)", color: "rgba(255,255,255,0.3)" },
 } as const;
 
-export const FooterSectionV2 = ({ onLogout, isLoggedIn }: FooterSectionV2Props) => {
+export const FooterSectionV2 = memo(({ onLogout, isLoggedIn }: FooterSectionV2Props) => {
   const [showConfirm, setShowConfirm] = useState(false);
 
   return (
@@ -79,4 +79,4 @@ export const FooterSectionV2 = ({ onLogout, isLoggedIn }: FooterSectionV2Props) 
       )}
     </>
   );
-};
+});

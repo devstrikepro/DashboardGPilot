@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useRagnarok } from "../hooks/useRagnarok";
 import { GOD_STYLES } from "./GodsPantheonV2";
 
@@ -8,6 +8,50 @@ interface ValhallaBoardV2Props {
   rankingData: RankingRow[];
   isLoading?: boolean;
 }
+
+const CountdownTimer = ({ lastUpdate }: { lastUpdate?: string }) => {
+  const [timeLeft, setTimeLeft] = useState<string>("กำลังคำนวณ...");
+
+  useEffect(() => {
+    if (!lastUpdate) {
+      setTimeLeft("ไม่พบข้อมูลเวลา");
+      return;
+    }
+
+    const lastUpdateMs = new Date(lastUpdate).getTime() + 7 * 60 * 60 * 1000;
+
+    if (isNaN(lastUpdateMs)) {
+      setTimeLeft("รูปแบบเวลาไม่ถูกต้อง");
+      return;
+    }
+
+    let intervalId: ReturnType<typeof setInterval>;
+
+    const updateCountdown = () => {
+      const now = new Date().getTime();
+      const targetTime = lastUpdateMs + 16 * 60 * 1000;
+      const remaining = targetTime - now;
+
+      if (remaining <= 0) {
+        setTimeLeft("กดรีเฟรชเพื่อดูข้อมูลล่าสุด");
+        clearInterval(intervalId);
+        return;
+      }
+
+      const minutes = Math.floor(remaining / (1000 * 60));
+      const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+      const pad = (num: number) => String(num).padStart(2, "0");
+      setTimeLeft(`${pad(minutes)}:${pad(seconds)} นาที`);
+    };
+
+    updateCountdown();
+    intervalId = setInterval(updateCountdown, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [lastUpdate]);
+
+  return <div className="text-end">{timeLeft}</div>;
+};
 
 const rankColor = (rank: number) => {
   if (rank === 1) return "text-[#d4af37]";
@@ -27,52 +71,7 @@ const winRateColor = (winRate: number, rank: number) => {
 
 const followersColor = (rank: number) => (rank === 1 ? "text-[#d4af37]" : "text-white");
 
-export const ValhallaBoardV2 = ({ rankingData, isLoading }: ValhallaBoardV2Props) => {
-  const [timeLeft, setTimeLeft] = useState<string>("กำลังคำนวณ...");
-
-  useEffect(() => {
-    if (!rankingData?.[0]?.last_update) {
-      setTimeLeft("ไม่พบข้อมูลเวลา");
-      return;
-    }
-
-    const lastUpdate = rankingData?.[0]?.last_update ? new Date(rankingData[0].last_update).getTime() + 7 * 60 * 60 * 1000 : NaN;
-
-    if (isNaN(lastUpdate)) {
-      setTimeLeft("รูปแบบเวลาไม่ถูกต้อง");
-      return;
-    }
-
-    let intervalId: ReturnType<typeof setInterval>;
-
-    const updateCountdown = () => {
-      const now = new Date().getTime();
-      const targetTime = lastUpdate + 16 * 60 * 1000;
-      const remaining = targetTime - now;
-
-      if (remaining <= 0) {
-        setTimeLeft("กดรีเฟรชเพื่อดูข้อมูลล่าสุด");
-        clearInterval(intervalId);
-        return;
-      }
-
-      const minutes = Math.floor(remaining / (1000 * 60));
-      const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
-
-      const pad = (num: number) => String(num).padStart(2, "0");
-      setTimeLeft(`${pad(minutes)}:${pad(seconds)} นาที`);
-    };
-
-    // รันครั้งแรกทันทีเพื่อให้หน้าจอไม่ว่างเปล่า
-    updateCountdown();
-
-    // ตั้ง Interval อัปเดตทุก 1 วินาที
-    intervalId = setInterval(updateCountdown, 1000);
-
-    // เคลียร์ Interval เมื่อ Component ถูกถอดออก (Unmount)
-    return () => clearInterval(intervalId);
-  }, [rankingData?.[0]?.last_update]);
-
+export const ValhallaBoardV2 = memo(({ rankingData, isLoading }: ValhallaBoardV2Props) => {
   return (
     <div className="flex flex-col gap-3">
       <div className="text-center">
@@ -84,7 +83,7 @@ export const ValhallaBoardV2 = ({ rankingData, isLoading }: ValhallaBoardV2Props
         <div className="py-3 text-center">
           <h3 className="text-white font-black text-base tracking-widest">อันดับแบบเรียลไทม์</h3>
         </div>
-        <div className="text-end">{timeLeft}</div>
+        <CountdownTimer lastUpdate={rankingData?.[0]?.last_update} />
 
         <div className="overflow-x-auto">
           <div className="min-w-100">
@@ -144,4 +143,4 @@ export const ValhallaBoardV2 = ({ rankingData, isLoading }: ValhallaBoardV2Props
       </div>
     </div>
   );
-};
+});

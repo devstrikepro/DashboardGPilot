@@ -1,4 +1,4 @@
-import React from "react";
+import { memo } from "react";
 
 const STEPS = [
   {
@@ -55,7 +55,7 @@ const STEPS = [
   },
 ];
 
-export const HeroSectionV2 = () => (
+export const HeroSectionV2 = memo(() => (
   <div className="w-full">
     <div className="text-center text-sm font-bold tracking-[6px] text-[#d4af37] uppercase py-3!">เหล่าเทพ &amp; กฎกติกา</div>
     <div className="relative w-full overflow-hidden p-4! pb-8!">
@@ -108,4 +108,4 @@ export const HeroSectionV2 = () => (
       </div>
     </div>
   </div>
-);
+));

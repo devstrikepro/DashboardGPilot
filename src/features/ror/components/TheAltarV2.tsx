@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { memo, useState, useEffect } from "react";
 import { Button, Select, MenuItem, FormControl, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { God, GOD_STYLES } from "./GodsPantheonV2";
 import { SupportInfoResponse } from "@/shared/services/ror-service";
@@ -37,7 +37,7 @@ export interface TheAltarV2Props {
   infoLoading: boolean;
 }
 
-export const TheAltarV2 = ({
+export const TheAltarV2 = memo(({
   accounts,
   gods,
   supportInfo,
@@ -252,4 +252,4 @@ export const TheAltarV2 = ({
       </div>
     </div>
   );
-};
+});
