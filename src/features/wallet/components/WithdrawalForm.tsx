@@ -1,22 +1,30 @@
 "use client";
 
-import { useState } from "react";
-import { Alert, Box, Button, Card, CardContent, CircularProgress, Divider, InputAdornment, Stack, TextField, Typography } from "@mui/material";
+import { ProfitSharingService } from "@/shared/services/profit-sharing-service";
+import type { ProfitSharingProduct } from "@/shared/types/api";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import { Alert, Box, Button, Card, CardContent, CircularProgress, Divider, InputAdornment, Stack, TextField, Typography } from "@mui/material";
+import crypto from "crypto";
 import { useRouter } from "next/navigation";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { CARD_SX, FEE_RATE, fmt } from "../constants";
 import { SectionIconBox } from "./SectionIconBox";
-import { ProfitSharingService } from "@/shared/services/profit-sharing-service";
-import type { ProfitSharingProduct } from "@/shared/types/api";
-import crypto from "crypto";
+
+interface WithdrawalRequest {
+  product_name: string;
+  product_port: number;
+  amount: number;
+  wallet_code: string;
+}
 
 interface WithdrawalFormProps {
   activeProduct: ProfitSharingProduct | null;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
 }
 
-export function WithdrawalForm({ activeProduct }: WithdrawalFormProps) {
+export function WithdrawalForm({ activeProduct, setIsLoading }: WithdrawalFormProps) {
   const router = useRouter();
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,16 +41,19 @@ export function WithdrawalForm({ activeProduct }: WithdrawalFormProps) {
     setError(null);
     setSuccess(false);
 
-    const res = await ProfitSharingService.withdrawal({
+    const payload: WithdrawalRequest = {
       product_name: activeProduct.product_name,
       product_port: activeProduct.product_port,
       amount: parsed,
-    });
+      wallet_code: activeProduct.wallet_code,
+    };
+    const res = await ProfitSharingService.withdrawal(payload);
 
     setLoading(false);
     if (res.success) {
       setSuccess(true);
       setWithdrawAmount("");
+      setIsLoading(true);
     } else {
       setError(res.message || "ไม่สามารถทำรายการถอนได้");
     }

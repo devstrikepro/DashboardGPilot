@@ -336,6 +336,7 @@ export interface ProfitSharingWithdrawalRequest {
   product_name: string;
   product_port: number;
   amount: number;
+  wallet_code: string;
 }
 
 export interface MyClient {

@@ -1,13 +1,13 @@
 "use client";
 
-import { Box, Grid, Tab, Tabs, Typography } from "@mui/material";
-import { useState, useEffect } from "react";
 import { ProfitSharingService } from "@/shared/services/profit-sharing-service";
 import type { ProfitSharingProduct, ProfitSharingTransaction } from "@/shared/types/api";
-import { TRANSACTIONS } from "./constants";
+import { Box, Grid, Tab, Tabs, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import { ProfitSharingHero } from "./components/ProfitSharingHero";
-import { WithdrawalForm } from "./components/WithdrawalForm";
 import { TransactionHistory } from "./components/TransactionHistory";
+import { WithdrawalForm } from "./components/WithdrawalForm";
+import { TRANSACTIONS } from "./constants";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export interface WalletInitialData {
@@ -32,6 +32,7 @@ export function WalletPage({ initialData }: WalletPageProps) {
   const [transactionHistory, setTransactionHistory] = useState<ProfitSharingTransaction[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
   const [productsError, setProductsError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     ProfitSharingService.getProducts()
@@ -53,10 +54,11 @@ export function WalletPage({ initialData }: WalletPageProps) {
     ProfitSharingService.getTransactionHistory(wallet || "").then((res) => {
       if (res.success && res.data) {
         setTransactionHistory(res.data);
+        setIsLoading(false);
         // setTransactionHistory(MOCK_PROFIT_SHARING_TRANSACTIONS);
       }
     });
-  }, [activeTab]);
+  }, [activeTab, isLoading]);
 
   const activeBalance = products.find((p) => p.wallet_code === activeTab)?.available ?? initialData?.profitSharingBalance ?? 0;
 
@@ -96,7 +98,7 @@ export function WalletPage({ initialData }: WalletPageProps) {
       {/* ── Lower Section ───────────────────────────────────── */}
       <Grid container spacing={{ xs: 2, lg: 3 }} alignItems="flex-start">
         <Grid size={{ xs: 12, md: 5, lg: 4 }}>
-          <WithdrawalForm activeProduct={products.find((p) => p.wallet_code === activeTab) ?? null} />
+          <WithdrawalForm activeProduct={products.find((p) => p.wallet_code === activeTab) ?? null} setIsLoading={setIsLoading} />
         </Grid>
         <Grid size={{ xs: 12, md: 7, lg: 8 }}>
           <TransactionHistory transactions={transactionHistory} />

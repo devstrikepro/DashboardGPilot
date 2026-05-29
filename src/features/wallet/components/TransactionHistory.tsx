@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react";
-import { Box, Card, CardContent, Chip, Stack, Typography } from "@mui/material";
-import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import type { ProfitSharingTransaction } from "@/shared/types/api";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import { CARD_SX, fmt, TRANSACTIONS, TX_META } from "../constants";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import { Box, Card, CardContent, Chip, Stack, Typography } from "@mui/material";
+import { CARD_SX, fmt, TX_META } from "../constants";
 import { SectionIconBox } from "./SectionIconBox";
-import type { ProfitSharingTransaction } from "@/shared/types/api";
 
 const TX_ICON: Record<string, React.ReactNode> = {
   rewards: <EmojiEventsIcon sx={{ fontSize: 18 }} />,
@@ -41,7 +40,7 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
 
         <Stack spacing={1}>
           {transactions?.map((tx) => {
-            const meta = TX_META[tx.status.toLowerCase() || ""] ?? { bg: "rgba(148,163,184,0.15)", color: "#94A3B8", label: tx.status };
+            const meta = TX_META[tx.type.toLowerCase() || ""] ?? { bg: "rgba(148,163,184,0.15)", color: "#94A3B8", label: tx.status };
 
             return (
               <Box
@@ -72,7 +71,7 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
                     flexShrink: 0,
                   }}
                 >
-                  {TX_ICON[tx.status.toLowerCase() || ""]}
+                  {TX_ICON[tx.type.toLowerCase() || ""]}
                 </Box>
 
                 <Box sx={{ flex: 1, minWidth: 0 }}>
