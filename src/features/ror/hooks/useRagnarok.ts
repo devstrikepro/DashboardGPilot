@@ -47,19 +47,17 @@ export const useRagnarok = () => {
 
   const rankingData = useMemo(() => {
     if (!Array.isArray(portGods)) return [];
-    return [...portGods]
-      .sort((a: any, b: any) => b.roi - a.roi)
-      .map((live: any, idx: number) => ({
-        rank: idx + 1,
-        god: live.god_name,
-        color: live.god_color,
-        avatar: live.god_img,
-        roi: live.roi as number,
-        winRate: live.winrate as number,
-        followers: live.god_support as number,
-        last_update: live.last_update,
-        score: live.score as number,
-      }));
+    return portGods.map((live: any, idx: number) => ({
+      rank: idx + 1,
+      god: live.god_name,
+      color: live.god_color,
+      avatar: live.god_img,
+      roi: live.roi as number,
+      winRate: live.winrate as number,
+      followers: live.god_support as number,
+      last_update: live.last_update,
+      score: live.score as number,
+    }));
   }, [portGods]);
 
   const handlePledgeChange = (field: string, value: number) => {
@@ -120,6 +118,7 @@ export const useRagnarok = () => {
   const fetchRorInternalData = useCallback(async () => {
     setGodsLoading(true);
     const godsRes = await RorService.getPortGods();
+    console.log("godsRes.data.data: ", godsRes.data.data);
     if (godsRes.success) setPortGods(godsRes.data.data);
     setGodsLoading(false);
   }, []);
