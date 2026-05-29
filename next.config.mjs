@@ -8,26 +8,26 @@ const nextConfig = {
   },
   experimental: {
     serverActions: {
-      allowedOrigins: ['*'],
+      allowedOrigins: ["*"],
     },
   },
   async rewrites() {
     return [
       {
-        source: '/api/gateway/sub/:path*',
-        destination: 'http://103.91.191.172:8000/:path*',
+        source: "/api/gateway/sub/:path*",
+        destination: process.env.API_URL_SUB + "/:path*",
       },
       {
-        source: '/api/gateway/ror/:path*',
-        destination: 'https://api.strikeprofx.com/:path*',
+        source: "/api/gateway/ror/:path*",
+        destination: process.env.API_URL_STKPRO + "/:path*",
       },
       {
-        source: '/api/gateway/ror-internal/:path*',
-        destination: 'http://123.253.62.147:8000/:path*',
+        source: "/api/gateway/ror-internal/:path*",
+        destination: process.env.API_URL_ROR_INTERNAL + "/:path*",
       },
       {
-        source: '/api/gateway/:account/:path*',
-        destination: 'http://103.91.191.171:8000/:path*',
+        source: "/api/gateway/:account/:path*",
+        destination: process.env.API_URL + "/:path*",
       },
     ];
   },

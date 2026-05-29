@@ -5,23 +5,23 @@ import { API_GATEWAY_MAIN, API_GATEWAY_SUB } from "./endpoint";
 
 // แผนผังการแมป Gateway Path ไปยัง Backend URL จริง (เพื่อใช้เรียกฝั่ง Server)
 const SERVER_GATEWAY_MAP: Record<string, string> = {
-  "/api/gateway/gpilot": "http://103.91.191.171:8000",
-  "/api/gateway/safegrow": "http://103.91.191.171:8000",
-  "/api/gateway/hqultimate": "http://103.91.191.171:8000",
-  "/api/gateway/ppvp": "http://103.91.191.171:8000",
-  "/api/gateway/goldenboy": "http://103.91.191.171:8000",
-  "/api/gateway/sub": "http://103.91.191.172:8000",
-  "/api/gateway/ror": "https://api.strikeprofx.com",
-  "/api/gateway/ror-internal": "http://103.91.191.171:8002",
+  "/api/gateway/gpilot": process.env.API_URL || "",
+  "/api/gateway/safegrow": process.env.API_URL || "",
+  "/api/gateway/hqultimate": process.env.API_URL || "",
+  "/api/gateway/ppvp": process.env.API_URL || "",
+  "/api/gateway/goldenboy": process.env.API_URL || "",
+  "/api/gateway/sub": process.env.API_URL_SUB || "",
+  "/api/gateway/ror": process.env.API_URL_STKPRO || "",
+  "/api/gateway/ror-internal": process.env.API_URL_ROR_INTERNAL || "",
 };
 
 /**
  * ตรวจสอบว่าเป็น Error ที่เกิดจากการสั่ง redirect() ของ Next.js หรือไม่
  */
 export function isRedirectError(error: any): boolean {
-  if (!error || typeof error !== 'object') return false;
+  if (!error || typeof error !== "object") return false;
   const digest = error.digest || (error as any).message;
-  return typeof digest === 'string' && digest.startsWith('NEXT_REDIRECT');
+  return typeof digest === "string" && digest.startsWith("NEXT_REDIRECT");
 }
 
 /**
@@ -36,23 +36,23 @@ export async function apiServer<T>(
   serviceBase?: string
 ): Promise<T> {
   const base = serviceBase || API_GATEWAY_MAIN;
-  const urlBase = SERVER_GATEWAY_MAP[base] || "http://103.91.191.171:8000";
-  
-  const isSubService = base.includes('/api/gateway/sub');
-  const isRorService = base.includes('/api/gateway/ror');
-  
+  const urlBase = SERVER_GATEWAY_MAP[base] || process.env.API_URL;
+
+  const isSubService = base.includes("/api/gateway/sub");
+  const isRorService = base.includes("/api/gateway/ror");
+
   // Logic การสร้าง Path เหมือนกับ apiClient
   const getAccountId = (b: string) => {
-    if (b.includes('/api/gateway/')) {
-      const parts = b.split('/api/gateway/');
-      return parts[1] || 'gpilot';
+    if (b.includes("/api/gateway/")) {
+      const parts = b.split("/api/gateway/");
+      return parts[1] || "gpilot";
     }
-    return 'gpilot';
+    return "gpilot";
   };
   const accountId = getAccountId(base);
 
-  const safeEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-  let apiPath = '';
+  const safeEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  let apiPath = "";
   if (isSubService) {
     apiPath = `/api/v1${safeEndpoint}`;
   } else if (isRorService) {
@@ -70,10 +70,10 @@ export async function apiServer<T>(
       }
     });
   }
-  const queryString = searchParams.toString() ? `?${searchParams.toString()}` : '';
+  const queryString = searchParams.toString() ? `?${searchParams.toString()}` : "";
 
   const url = `${urlBase}${apiPath}${queryString}`;
-  
+
   // ดึง Token จาก Cookie (ฝั่ง Server)
   const cookieStore = await cookies();
   const token = cookieStore.get("auth_token")?.value;
@@ -93,9 +93,7 @@ export async function apiServer<T>(
       const errorData = await response.json().catch(() => ({}));
       // ปฏิบัติตาม Layer Separation และ Standard Response
       const errorDetail = errorData.error || errorData.detail || errorData;
-      const errorMsg = typeof errorDetail === "string" 
-        ? errorDetail 
-        : (errorDetail?.message || response.statusText);
+      const errorMsg = typeof errorDetail === "string" ? errorDetail : errorDetail?.message || response.statusText;
 
       const errorCode = errorData?.error?.code || errorData?.code;
 
@@ -106,11 +104,7 @@ export async function apiServer<T>(
         redirect("/login");
       }
 
-      throw new ApiError(
-        errorMsg,
-        response.status,
-        errorData
-      );
+      throw new ApiError(errorMsg, response.status, errorData);
     }
 
     return (await response.json()) as T;
