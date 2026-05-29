@@ -3,16 +3,22 @@ import { redirect } from "next/navigation";
 import { ApiError } from "./api-error";
 import { API_GATEWAY_MAIN, API_GATEWAY_SUB } from "./endpoint";
 
+function requireEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) throw new Error(`Missing required environment variable: ${name}`);
+  return value;
+}
+
 // แผนผังการแมป Gateway Path ไปยัง Backend URL จริง (เพื่อใช้เรียกฝั่ง Server)
 const SERVER_GATEWAY_MAP: Record<string, string> = {
-  "/api/gateway/gpilot": process.env.API_URL || "",
-  "/api/gateway/safegrow": process.env.API_URL || "",
-  "/api/gateway/hqultimate": process.env.API_URL || "",
-  "/api/gateway/ppvp": process.env.API_URL || "",
-  "/api/gateway/goldenboy": process.env.API_URL || "",
-  "/api/gateway/sub": process.env.API_URL_SUB || "",
-  "/api/gateway/ror": process.env.API_URL_STKPRO || "",
-  "/api/gateway/ror-internal": process.env.API_URL_ROR_INTERNAL || "",
+  "/api/gateway/gpilot": requireEnv("API_URL"),
+  "/api/gateway/safegrow": requireEnv("API_URL"),
+  "/api/gateway/hqultimate": requireEnv("API_URL"),
+  "/api/gateway/ppvp": requireEnv("API_URL"),
+  "/api/gateway/goldenboy": requireEnv("API_URL"),
+  "/api/gateway/sub": requireEnv("API_URL_SUB"),
+  "/api/gateway/ror": requireEnv("API_URL_STKPRO"),
+  "/api/gateway/ror-internal": requireEnv("API_URL_ROR_INTERNAL"),
 };
 
 /**
@@ -36,7 +42,7 @@ export async function apiServer<T>(
   serviceBase?: string
 ): Promise<T> {
   const base = serviceBase || API_GATEWAY_MAIN;
-  const urlBase = SERVER_GATEWAY_MAP[base] || process.env.API_URL;
+  const urlBase = SERVER_GATEWAY_MAP[base] ?? requireEnv("API_URL");
 
   const isSubService = base.includes("/api/gateway/sub");
   const isRorService = base.includes("/api/gateway/ror");
