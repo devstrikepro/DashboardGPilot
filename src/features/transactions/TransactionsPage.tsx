@@ -22,11 +22,10 @@ const formatDate = (dateStr: string) => {
   }
 };
 
-const getInitials = (email: string) => {
-  const local = email.split("@")[0];
-  const parts = local.split(/[._-]/);
+const getInitials = (name: string) => {
+  const parts = name?.trim()?.split(/\s+/) || [];
   if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-  return local.slice(0, 2).toUpperCase();
+  return name.slice(0, 2).toUpperCase();
 };
 
 const transactionsTab = ["Pending", "Approved", "Rejected"].map((e) => ({ key: e.toLowerCase(), label: e }));
@@ -57,6 +56,7 @@ export function TransactionsPage() {
   const [dialog, setDialog] = useState<DialogState>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   // MOCK: เปิดบรรทัดนี้แทน API จริง (ข้อมูลจะเปลี่ยนตาม tab อัตโนมัติ)
   // useEffect(() => {
@@ -73,13 +73,14 @@ export function TransactionsPage() {
     });
   }, [activeTab]);
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (reason?: string) => {
     if (!dialog) return;
     setIsSubmitting(true);
-    const res = dialog.action === "approve" ? await AdminService.approveWithdrawal(dialog.tx.id) : await AdminService.rejectWithdrawal(dialog.tx.id);
+    const res = dialog.action === "approve" ? await AdminService.approveWithdrawal(dialog.tx.id) : await AdminService.rejectWithdrawal(dialog.tx.id, reason);
     setIsSubmitting(false);
     if (res.success) {
       setAdminWithdrawals((prev) => prev.filter((w) => w.id !== dialog.tx.id));
+      setSuccessMsg(dialog.action === "approve" ? "Withdrawal approved successfully" : "Withdrawal rejected successfully");
       setDialog(null);
     } else {
       setErrorMsg(res.message ?? "Something went wrong");
@@ -126,7 +127,7 @@ export function TransactionsPage() {
             ) : (
               adminWithdrawals.map((tx) => {
                 const status = tx.status ?? activeTab;
-                const initials = getInitials(tx.user_email);
+                const initials = getInitials(tx.name || tx.user_email?.split("@")?.[0]);
                 const date = tx.requested_at ? formatDate(tx.requested_at) : tx.reviewed_at ? formatDate(tx.reviewed_at) : "";
 
                 return (
@@ -257,6 +258,12 @@ export function TransactionsPage() {
       <Snackbar open={errorMsg !== null} autoHideDuration={4000} onClose={() => setErrorMsg(null)} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
         <Alert severity="error" onClose={() => setErrorMsg(null)} sx={{ width: "100%" }}>
           {errorMsg}
+        </Alert>
+      </Snackbar>
+
+      <Snackbar open={successMsg !== null} autoHideDuration={3000} onClose={() => setSuccessMsg(null)} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
+        <Alert severity="success" onClose={() => setSuccessMsg(null)} sx={{ width: "100%" }}>
+          {successMsg}
         </Alert>
       </Snackbar>
     </Box>

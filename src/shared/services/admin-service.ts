@@ -25,12 +25,7 @@ export interface AdminWithdrawal {
 export const AdminService = {
   approveWithdrawal: async (id: string): Promise<ServiceResponse<null>> => {
     try {
-      const response = await apiClient<ServiceResponse<null>>(
-        `/admin/withdrawals/${id}/approve`,
-        { method: "PATCH" },
-        { id },
-        API_GATEWAY_SUB
-      );
+      const response = await apiClient<ServiceResponse<null>>(`/admin/withdrawals/${id}/approve`, { method: "PATCH" }, { id }, API_GATEWAY_SUB);
       if (!response.success) {
         return { success: false, data: null, error_code: response.error_code || "APPROVE_ERROR", message: response.message || "Approve failed" };
       }
@@ -42,11 +37,11 @@ export const AdminService = {
     }
   },
 
-  rejectWithdrawal: async (id: string): Promise<ServiceResponse<null>> => {
+  rejectWithdrawal: async (id: string, reason?: string): Promise<ServiceResponse<null>> => {
     try {
       const response = await apiClient<ServiceResponse<null>>(
         `/admin/withdrawals/${id}/reject`,
-        { method: "PATCH" },
+        { method: "PATCH", ...(reason ? { body: JSON.stringify({ note: reason }) } : {}) },
         { id },
         API_GATEWAY_SUB
       );

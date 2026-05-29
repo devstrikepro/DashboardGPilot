@@ -1,4 +1,5 @@
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, Avatar, CircularProgress } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, Avatar, CircularProgress, TextField } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import type { AdminWithdrawal } from "@/shared/services/admin-service";
@@ -6,7 +7,7 @@ import type { AdminWithdrawal } from "@/shared/services/admin-service";
 const fmt = (val: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Math.abs(val));
 
 const getInitials = (email: string) => {
-  const local = email.split("@")[0];
+  const local = email?.split("@")[0];
   const parts = local.split(/[._-]/);
   if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
   return local.slice(0, 2).toUpperCase();
@@ -17,7 +18,7 @@ interface WithdrawalActionDialogProps {
   action: "approve" | "reject";
   withdrawal: AdminWithdrawal | null;
   isLoading: boolean;
-  onConfirm: () => void;
+  onConfirm: (reason?: string) => void;
   onClose: () => void;
 }
 
@@ -44,6 +45,11 @@ const ACTION_CONFIG = {
 
 export function WithdrawalActionDialog({ open, action, withdrawal, isLoading, onConfirm, onClose }: WithdrawalActionDialogProps) {
   const config = ACTION_CONFIG[action];
+  const [rejectionReason, setRejectionReason] = useState("");
+
+  useEffect(() => {
+    if (!open) setRejectionReason("");
+  }, [open]);
 
   return (
     <Dialog
@@ -74,11 +80,11 @@ export function WithdrawalActionDialog({ open, action, withdrawal, isLoading, on
             }}
           >
             <Avatar sx={{ width: 36, height: 36, bgcolor: "primary.main", fontSize: "0.75rem", fontWeight: 700 }}>
-              {getInitials(withdrawal.user_email)}
+              {getInitials(withdrawal?.name || withdrawal.user_email)}
             </Avatar>
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <Typography variant="body2" sx={{ fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                {withdrawal.user_email}
+                {withdrawal?.name}
               </Typography>
               <Typography variant="caption" sx={{ color: "text.disabled" }}>
                 {withdrawal.id}
@@ -88,6 +94,20 @@ export function WithdrawalActionDialog({ open, action, withdrawal, isLoading, on
               {fmt(withdrawal.amount)}
             </Typography>
           </Box>
+        )}
+
+        {action === "reject" && (
+          <TextField
+            multiline
+            rows={3}
+            fullWidth
+            size="small"
+            placeholder="Reason for rejection (optional)"
+            value={rejectionReason}
+            onChange={(e) => setRejectionReason(e.target.value)}
+            disabled={isLoading}
+            sx={{ mt: 2 }}
+          />
         )}
       </DialogContent>
 
@@ -102,7 +122,7 @@ export function WithdrawalActionDialog({ open, action, withdrawal, isLoading, on
           Cancel
         </Button>
         <Button
-          onClick={onConfirm}
+          onClick={() => onConfirm(action === "reject" ? rejectionReason || undefined : undefined)}
           disabled={isLoading}
           size="small"
           startIcon={isLoading ? <CircularProgress size={14} color="inherit" /> : config.icon}
