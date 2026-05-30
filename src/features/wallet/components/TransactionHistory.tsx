@@ -41,6 +41,7 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
         <Stack spacing={1}>
           {transactions?.map((tx) => {
             const meta = TX_META[tx.type.toLowerCase() || ""] ?? { bg: "rgba(148,163,184,0.15)", color: "#94A3B8", label: tx.status };
+            const metaStatus = TX_META[tx.status.toLowerCase() || ""] ?? { bg: "rgba(148,163,184,0.15)", color: "#94A3B8", label: tx.status };
 
             return (
               <Box
@@ -81,9 +82,24 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
                   >
                     {tx.description}
                   </Typography>
-                  <Typography variant="caption" sx={{ color: "text.disabled" }}>
-                    {new Date(tx.created_at).toLocaleDateString("en-EN", { dateStyle: "medium" })}
-                  </Typography>
+                  <Box sx={{ flex: 1, display: "flex", gap: 1 }}>
+                    <Chip
+                      label={metaStatus.label}
+                      size="small"
+                      sx={{
+                        height: 16,
+                        fontSize: "0.58rem",
+                        fontWeight: 700,
+                        mt: 0.25,
+                        bgcolor: metaStatus.bg,
+                        color: metaStatus.color,
+                        "& .MuiChip-label": { px: 1 },
+                      }}
+                    />
+                    <Typography variant="caption" sx={{ color: "text.disabled" }}>
+                      {new Date(tx.created_at).toLocaleDateString("en-EN", { dateStyle: "medium" })}{" "}
+                    </Typography>
+                  </Box>
                 </Box>
 
                 <Box sx={{ textAlign: "right", flexShrink: 0 }}>
@@ -92,7 +108,8 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
                     sx={{
                       fontWeight: 800,
                       fontFamily: '"Inter", monospace',
-                      color: tx.status === "Reject" ? "error.main" : tx.amount > 0 ? "success.main" : "error.main",
+                      // color: tx.status === "Reject" ? "error.main" : tx.amount > 0 ? "success.main" : "error.main",
+                      color: meta.color,
                     }}
                   >
                     {/* {tx.amount > 0 ? "+" : "-"} */}
