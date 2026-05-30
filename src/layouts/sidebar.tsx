@@ -1,16 +1,16 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import Link from "next/link";
-import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
-import { Dashboard, Description, Person, Wallet } from "@mui/icons-material";
-import { useThemeMode } from "@/shared/ui";
 import { useAuth } from "@/shared/providers/auth-provider";
+import { useThemeMode } from "@/shared/ui";
+import { Dashboard, Description, Person, Wallet } from "@mui/icons-material";
 import ScheduleIcon from "@mui/icons-material/Schedule";
+import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: Dashboard },
-  // { label: "Wallet", href: "/wallet", icon: Wallet },
+  { label: "Wallet", href: "/wallet", icon: Wallet },
   { label: "My Portfolio", href: "/account", icon: Person },
   { label: "Transactions", href: "/transactions", icon: ScheduleIcon },
 ];
