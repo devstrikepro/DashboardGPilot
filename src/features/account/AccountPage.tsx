@@ -106,6 +106,37 @@ export function AccountPage({ initialData, mt5Id }: AccountPageProps) {
               sx={{ height: "100%" }}
             />
           </Grid>
+
+          {/* Row 2: Account Growth */}
+          <Grid size={{ xs: 12 }}>
+            <BalanceChart loading={loading} data={chartData} currentBalance={realBalance} change={netProfit} changePercent={growthPercent} />
+          </Grid>
+
+          {/* Row 3: Trade History Table */}
+          <Grid size={{ xs: 12 }}>
+            <DataTable
+              variant="compact"
+              loading={tableLoading}
+              deals={trades}
+              totals={tradesTotals}
+              sortField="time"
+              sortDirection="desc"
+              onSort={() => {}}
+              hideSymbolFilter={true}
+              typeFilter={typeFilter}
+              onTypeFilterChange={setTypeFilter}
+              typeOptions={typeOptions}
+              startDate={startDate}
+              onStartDateChange={setStartDate}
+              endDate={endDate}
+              onEndDateChange={setEndDate}
+              totalCount={totalTrades}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              onPageChange={setPage}
+              onRowsPerPageChange={setRowsPerPage}
+            />
+          </Grid>
         </Grid>
       )}
     </Box>
