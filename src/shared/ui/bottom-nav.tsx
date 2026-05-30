@@ -12,7 +12,7 @@ import ScheduleIcon from "@mui/icons-material/Schedule";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: <DashboardIcon /> },
-  // { label: "Wallet", href: "/wallet", icon: <WalletIcon /> },
+  { label: "Wallet", href: "/wallet", icon: <WalletIcon /> },
   { label: "Account", href: "/account", icon: <PersonIcon /> },
   { label: "Transactions", href: "/transactions", icon: <ScheduleIcon /> },
 ];
