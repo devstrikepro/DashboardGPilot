@@ -105,7 +105,7 @@ export function PortSelection({ ports, onSelect, loading }: Readonly<PortSelecti
                         mb: 2,
                         px: 2.5,
                         py: 1.5,
-                        bgcolor: "rgb(34, 50, 67)",
+                        bgcolor: (theme) => theme.palette.mode === "dark" ? "rgba(34, 50, 67, 1)" : "rgba(8, 145, 178, 0.08)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",

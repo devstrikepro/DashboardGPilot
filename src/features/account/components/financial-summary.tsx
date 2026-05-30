@@ -63,7 +63,7 @@ export function FinancialSummary({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            bgcolor: "rgb(34, 50, 67)",
+            bgcolor: (theme) => theme.palette.mode === "dark" ? "rgba(34, 50, 67, 1)" : "rgba(8, 145, 178, 0.08)",
             borderRadius: 1,
             px: 2,
             py: 1.5,
@@ -87,7 +87,7 @@ export function FinancialSummary({
           <Box
             sx={{
               border: "1px solid",
-              borderColor: "rgb(34, 50, 67)",
+              borderColor: "divider",
               borderRadius: 1,
               px: 2,
               py: 1.5,
@@ -107,7 +107,7 @@ export function FinancialSummary({
           <Box
             sx={{
               border: "1px solid",
-              borderColor: "rgb(34, 50, 67)",
+              borderColor: "divider",
               borderRadius: 1,
               px: 2,
               py: 1.5,
