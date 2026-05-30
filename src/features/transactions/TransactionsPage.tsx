@@ -255,7 +255,7 @@ export function TransactionsPage() {
         onClose={() => setDialog(null)}
       />
 
-      <Snackbar open={errorMsg !== null} autoHideDuration={4000} onClose={() => setErrorMsg(null)} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+      <Snackbar open={errorMsg !== null} autoHideDuration={4000} onClose={() => setErrorMsg(null)} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
         <Alert severity="error" onClose={() => setErrorMsg(null)} sx={{ width: "100%" }}>
           {errorMsg}
         </Alert>

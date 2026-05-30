@@ -5,7 +5,7 @@ import type { ProfitSharingProduct } from "@/shared/types/api";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import { Alert, Box, Button, Card, CardContent, CircularProgress, Divider, InputAdornment, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Card, CardContent, CircularProgress, Divider, InputAdornment, Snackbar, Stack, TextField, Typography } from "@mui/material";
 import crypto from "crypto";
 import { useRouter } from "next/navigation";
 import { useState, type Dispatch, type SetStateAction } from "react";
@@ -28,8 +28,8 @@ export function WithdrawalForm({ activeProduct, setIsLoading }: WithdrawalFormPr
   const router = useRouter();
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   const parsed = parseFloat(withdrawAmount) || 0;
   const fee = parsed * FEE_RATE;
@@ -38,8 +38,8 @@ export function WithdrawalForm({ activeProduct, setIsLoading }: WithdrawalFormPr
   const handleWithdraw = async () => {
     if (!activeProduct || parsed <= 0) return;
     setLoading(true);
-    setError(null);
-    setSuccess(false);
+    setErrorMsg(null);
+    setSuccessMsg(null);
 
     const payload: WithdrawalRequest = {
       product_name: activeProduct.product_name,
@@ -51,11 +51,11 @@ export function WithdrawalForm({ activeProduct, setIsLoading }: WithdrawalFormPr
 
     setLoading(false);
     if (res.success) {
-      setSuccess(true);
+      setSuccessMsg("Withdrawal submitted successfully");
       setWithdrawAmount("");
       setIsLoading(true);
     } else {
-      setError(res.message || "ไม่สามารถทำรายการถอนได้");
+      setErrorMsg(res.message || "ไม่สามารถทำรายการถอนได้");
     }
   };
 
@@ -135,17 +135,6 @@ export function WithdrawalForm({ activeProduct, setIsLoading }: WithdrawalFormPr
               </Box>
             )}
 
-            {error && (
-              <Alert severity="error" sx={{ borderRadius: 2 }}>
-                {error}
-              </Alert>
-            )}
-            {success && (
-              <Alert severity="success" sx={{ borderRadius: 2 }}>
-                Withdrawal submitted successfully
-              </Alert>
-            )}
-
             <Button
               fullWidth
               variant="contained"
@@ -183,6 +172,17 @@ export function WithdrawalForm({ activeProduct, setIsLoading }: WithdrawalFormPr
       >
         My Client List
       </Button>
+      <Snackbar open={errorMsg !== null} autoHideDuration={4000} onClose={() => setErrorMsg(null)} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
+        <Alert severity="error" onClose={() => setErrorMsg(null)} sx={{ width: "100%" }}>
+          {errorMsg}
+        </Alert>
+      </Snackbar>
+
+      <Snackbar open={successMsg !== null} autoHideDuration={3000} onClose={() => setSuccessMsg(null)} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
+        <Alert severity="success" onClose={() => setSuccessMsg(null)} sx={{ width: "100%" }}>
+          {successMsg}
+        </Alert>
+      </Snackbar>
     </>
   );
 }
