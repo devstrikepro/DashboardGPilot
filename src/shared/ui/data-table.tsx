@@ -298,6 +298,7 @@ export function DataTable({
                   label="Start Date"
                   value={startDate ? dayjs(startDate) : null}
                   onChange={(newValue) => onStartDateChange(newValue ? newValue.format("YYYY-MM-DD") : "")}
+                  maxDate={endDate ? dayjs(endDate) : undefined}
                   slotProps={{ textField: { size: "small", fullWidth: true } }}
                   format="DD/MM/YYYY"
                 />
@@ -307,6 +308,7 @@ export function DataTable({
                   label="End Date"
                   value={endDate ? dayjs(endDate) : null}
                   onChange={(newValue) => onEndDateChange(newValue ? newValue.format("YYYY-MM-DD") : "")}
+                  minDate={startDate ? dayjs(startDate) : undefined}
                   slotProps={{ textField: { size: "small", fullWidth: true } }}
                   format="DD/MM/YYYY"
                 />
