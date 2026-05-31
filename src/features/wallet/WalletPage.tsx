@@ -73,7 +73,7 @@ export function WalletPage({ initialData }: WalletPageProps) {
   }, [isLoading]);
 
   return (
-    <Box sx={{ p: { xs: 2, lg: 3 }, flex: 1 }}>
+    <Box sx={{ p: { xs: 2, lg: 3 }, flex: 1, minWidth: 0, overflowX: "hidden" }}>
       {/* ── Page Header ─────────────────────────────────────── */}
       <Box sx={{ mb: { xs: 2.5, lg: 3 } }}>
         <Typography

@@ -13,9 +13,9 @@ export default function GpilotLayout({
     <TradeDataProvider>
       <Box sx={{ display: "flex", minHeight: "100vh" }}>
         <Sidebar />
-        <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", ml: { lg: "256px" }, pb: { xs: "80px", lg: 0 } }}>
+        <Box sx={{ flexGrow: 1, minWidth: 0, display: "flex", flexDirection: "column", ml: { lg: "256px" }, pb: { xs: "80px", lg: 0 }, overflow: "hidden" }}>
           <TopBar />
-          <Box component="main" sx={{ flexGrow: 1 }}>
+          <Box component="main" sx={{ flexGrow: 1, minWidth: 0 }}>
             {children}
           </Box>
         </Box>

@@ -142,7 +142,7 @@ export function WithdrawalForm({ activeProduct, setIsLoading }: WithdrawalFormPr
               disabled={parsed <= 0 || !activeProduct || loading}
               onClick={handleWithdraw}
               startIcon={loading ? <CircularProgress size={18} color="inherit" /> : <AccountBalanceWalletIcon sx={{ fontSize: 18 }} />}
-              sx={{ borderRadius: 2, py: 1.2, fontWeight: 700, textTransform: "none" }}
+              sx={{ borderRadius: 2, py: 1.2, fontWeight: 700, textTransform: "none", fontSize: { xs: "0.8rem", sm: "0.875rem" } }}
             >
               {loading ? "Processing..." : "Withdraw to Strikepro"}
             </Button>

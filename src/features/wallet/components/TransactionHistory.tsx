@@ -53,6 +53,7 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
                   px: 1.5,
                   py: 1.25,
                   borderRadius: 2,
+                  minWidth: 0,
                   transition: "background 0.15s",
                   "&:hover": {
                     bgcolor: (t) => (t.palette.mode === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.02)"),
@@ -102,14 +103,17 @@ export function TransactionHistory({ transactions }: TransactionHistoryProps) {
                   </Box>
                 </Box>
 
-                <Box sx={{ textAlign: "right", flexShrink: 0 }}>
+                <Box sx={{ textAlign: "right", flexShrink: 0, maxWidth: { xs: 80, sm: 100 } }}>
                   <Typography
                     variant="body2"
                     sx={{
                       fontWeight: 800,
                       fontFamily: '"Inter", monospace',
-                      // color: tx.status === "Reject" ? "error.main" : tx.amount > 0 ? "success.main" : "error.main",
                       color: meta.color,
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
                     }}
                   >
                     {/* {tx.amount > 0 ? "+" : "-"} */}
