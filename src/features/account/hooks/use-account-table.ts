@@ -9,6 +9,11 @@ export function useAccountTable() {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
 
+    const handleRowsPerPageChange = (value: number) => {
+        setRowsPerPage(value);
+        setPage(0);
+    };
+
     const handleTypeFilterChange = (value: AccountTradeType) => {
         setTypeFilter(value);
         setPage(0);
@@ -28,7 +33,7 @@ export function useAccountTable() {
         page,
         setPage,
         rowsPerPage,
-        setRowsPerPage,
+        setRowsPerPage: handleRowsPerPageChange,
         typeFilter,
         setTypeFilter: handleTypeFilterChange,
         startDate,
