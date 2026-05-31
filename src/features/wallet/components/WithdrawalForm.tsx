@@ -97,6 +97,7 @@ export function WithdrawalForm({ activeProduct, setIsLoading }: WithdrawalFormPr
               value={withdrawAmount}
               onChange={(e) => setWithdrawAmount(e.target.value.replace(/[^0-9.]/g, ""))}
               size="small"
+              disabled={!activeProduct?.available}
               slotProps={{ input: { startAdornment: <InputAdornment position="start">$</InputAdornment> } }}
               sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
             />
@@ -112,7 +113,7 @@ export function WithdrawalForm({ activeProduct, setIsLoading }: WithdrawalFormPr
               >
                 {[
                   { label: "Amount", value: `+${fmt(parsed)}`, color: "text.primary" },
-                  { label: "Fee (1.5%)", value: `-${fmt(fee)}`, color: "error.main" },
+                  // { label: "Fee (1.5%)", value: `-${fmt(fee)}`, color: "error.main" },
                 ].map(({ label, value, color }) => (
                   <Box key={label} sx={{ display: "flex", justifyContent: "space-between", mb: 0.25 }}>
                     <Typography variant="caption" sx={{ color: "text.secondary" }}>
@@ -139,7 +140,7 @@ export function WithdrawalForm({ activeProduct, setIsLoading }: WithdrawalFormPr
               fullWidth
               variant="contained"
               color="error"
-              disabled={parsed <= 0 || !activeProduct || loading}
+              disabled={parsed <= 0 || !activeProduct || loading || !activeProduct.available}
               onClick={handleWithdraw}
               startIcon={loading ? <CircularProgress size={18} color="inherit" /> : <AccountBalanceWalletIcon sx={{ fontSize: 18 }} />}
               sx={{ borderRadius: 2, py: 1.2, fontWeight: 700, textTransform: "none", fontSize: { xs: "0.8rem", sm: "0.875rem" } }}
