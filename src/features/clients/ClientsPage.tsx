@@ -1,15 +1,21 @@
 "use client";
 
-import { Box, Typography, Grid, Card, CardContent, Button, TextField, InputAdornment, Avatar, Chip, Stack, IconButton } from "@mui/material";
+import { Box, Typography, Grid, Card, CardContent, Button, TextField, InputAdornment, Avatar, Chip, Stack, IconButton, Tab, Tabs } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import crypto from "crypto";
 import { ProfitSharingService } from "@/shared/services/profit-sharing-service";
 import type { MyClient, MyClientProduct, PortDetail } from "@/shared/types/api";
 import EditIcon from "@mui/icons-material/Edit";
+import crypto from "crypto";
+
+interface WalletTab {
+  key: string;
+  label: string;
+  product_port: number;
+}
 
 const fmt = (val: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(val);
 
@@ -119,30 +125,6 @@ export function ClientsPage() {
   const searchParams = useSearchParams();
   const p = searchParams.get("p");
 
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
-  const [clientStatuses, setClientStatuses] = useState<Record<number, string>>({});
-  const [myClients, setMyClients] = useState<MyClientProduct | null>(null);
-  const [myClientsLoading, setMyClientsLoading] = useState(false);
-  const [myClientsError, setMyClientsError] = useState<string | null>(null);
-
-  const clients = myClients?.user;
-
-  const handleStatusLoaded = (mt5_id: number, status: string) => {
-    setClientStatuses((prev) => ({ ...prev, [mt5_id]: status }));
-  };
-
-  const filtered = clients?.filter((c) => {
-    const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase());
-    const status = (clientStatuses[c.mt5_id] ?? "Active").toLowerCase();
-    const matchesStatus = statusFilter === "all" || status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
-
-  const activeCount = Object.values(clientStatuses).filter((s) => s.toLowerCase() === "active").length;
-  const inactiveCount = (clients?.length || 0) - activeCount;
-  const totalPortfolio = clients?.reduce((s, c) => s + c.balance, 0) ?? 0;
-
   function decrypt() {
     try {
       if (!p) return null;
@@ -162,12 +144,42 @@ export function ClientsPage() {
     }
   }
 
-  const port = decrypt();
+  const port = useMemo(() => decrypt(), [p]);
+
+  const [tabs, setTabs] = useState<WalletTab[] | null>(null);
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [clientStatuses, setClientStatuses] = useState<Record<number, string>>({});
+  const [myClients, setMyClients] = useState<MyClientProduct | null>(null);
+  const [myClientsLoading, setMyClientsLoading] = useState(false);
+  const [myClientsError, setMyClientsError] = useState<string | null>(null);
+
+  const clients = myClients?.user;
 
   useEffect(() => {
-    if (port === null) return;
+    ProfitSharingService.getProducts().then((res) => {
+      if (res.success && res.data) {
+        const productTabs = res.data.map((p) => ({ key: p.wallet_code, label: p.product_name, product_port: p.product_port }));
+        setTabs(productTabs);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!tabs || tabs.length === 0) return;
+    const matched = tabs.find((t) => Number(t.product_port) === Number(port));
+    setActiveTab(matched?.key ?? tabs[0].key);
+  }, [tabs, port]);
+
+  useEffect(() => {
+    const tab = tabs?.find((t) => t.key === activeTab);
+    if (!tab) return;
+    setMyClients(null);
+    setClientStatuses({});
     setMyClientsLoading(true);
-    ProfitSharingService.getMyClients(port)
+    setMyClientsError(null);
+    ProfitSharingService.getMyClients(tab.product_port)
       .then((res) => {
         if (res.success && res.data) {
           setMyClients(res.data);
@@ -176,7 +188,22 @@ export function ClientsPage() {
         }
       })
       .finally(() => setMyClientsLoading(false));
-  }, [port]);
+  }, [activeTab]);
+
+  const handleStatusLoaded = (mt5_id: number, status: string) => {
+    setClientStatuses((prev) => ({ ...prev, [mt5_id]: status }));
+  };
+
+  const filtered = clients?.filter((c) => {
+    const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase());
+    const status = (clientStatuses[c.mt5_id] ?? "Active").toLowerCase();
+    const matchesStatus = statusFilter === "all" || status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const activeCount = Object.values(clientStatuses).filter((s) => s.toLowerCase() === "active").length;
+  const inactiveCount = (clients?.length || 0) - activeCount;
+  const totalPortfolio = clients?.reduce((s, c) => s + c.balance, 0) ?? 0;
 
   return (
     <Box sx={{ p: { xs: 2, lg: 3 }, flex: 1 }}>
@@ -201,6 +228,22 @@ export function ClientsPage() {
         >
           Add Client
         </Button>
+      </Box>
+
+      {/* Tabs */}
+      <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
+        <Tabs
+          value={activeTab ?? false}
+          onChange={(_, v) => setActiveTab(v)}
+          sx={{
+            "& .MuiTab-root": { textTransform: "none", fontWeight: 500, fontSize: "0.875rem", minHeight: 44, gap: 0.5 },
+            "& .Mui-selected": { fontWeight: 700 },
+          }}
+        >
+          {tabs?.map((tab) => (
+            <Tab key={tab.key} value={tab.key} id={`${tab.key}`} aria-controls={"tabpanel-" + tab.key} iconPosition="start" label={tab.label} />
+          ))}
+        </Tabs>
       </Box>
 
       {/* Search */}
