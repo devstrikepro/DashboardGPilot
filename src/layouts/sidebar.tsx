@@ -10,7 +10,7 @@ import { usePathname } from "next/navigation";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: Dashboard },
-  { label: "Wallet", href: "/wallet", icon: Wallet },
+  { label: "Wallet", href: "/wallet", icon: Wallet, activeOn: ["/clients"] },
   { label: "My Portfolio", href: "/account", icon: Person },
   { label: "Transactions", href: "/transactions", icon: ScheduleIcon },
 ];
@@ -82,7 +82,10 @@ export function Sidebar() {
 
       <List sx={{ flex: 1, px: 2, py: 2 }}>
         {navPermissions.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive =
+            pathname === item.href ||
+            pathname.startsWith(item.href + "/") ||
+            (item.activeOn?.some((p) => pathname === p || pathname.startsWith(p + "/")) ?? false);
           return (
             <ListItem key={item.href} disablePadding sx={{ mb: 0.5 }}>
               <ListItemButton
