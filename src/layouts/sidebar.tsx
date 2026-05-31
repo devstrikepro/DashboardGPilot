@@ -9,7 +9,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { label: "Dashboard", href: "/dashboard", icon: Dashboard },
+  { label: "Dashboard", href: "/dashboard", icon: Dashboard, activeOn: ["/product-detail"] },
   { label: "Wallet", href: "/wallet", icon: Wallet, activeOn: ["/clients"] },
   { label: "My Portfolio", href: "/account", icon: Person },
   { label: "Transactions", href: "/transactions", icon: ScheduleIcon },
