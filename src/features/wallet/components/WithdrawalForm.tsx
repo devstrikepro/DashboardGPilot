@@ -8,7 +8,7 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import { Alert, Box, Button, Card, CardContent, CircularProgress, Divider, InputAdornment, Snackbar, Stack, TextField, Typography } from "@mui/material";
 import crypto from "crypto";
 import { useRouter } from "next/navigation";
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { CARD_SX, FEE_RATE, fmt } from "../constants";
 import { SectionIconBox } from "./SectionIconBox";
 
@@ -30,6 +30,10 @@ export function WithdrawalForm({ activeProduct, setIsLoading }: WithdrawalFormPr
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    setWithdrawAmount("");
+  }, [activeProduct]);
 
   const parsed = parseFloat(withdrawAmount) || 0;
   const fee = parsed * FEE_RATE;
@@ -130,7 +134,7 @@ export function WithdrawalForm({ activeProduct, setIsLoading }: WithdrawalFormPr
                     You receive
                   </Typography>
                   <Typography variant="caption" sx={{ fontWeight: 800, color: "success.main" }}>
-                    {fmt(net)}
+                    {fmt(parsed)}
                   </Typography>
                 </Box>
               </Box>
