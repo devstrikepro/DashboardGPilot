@@ -99,10 +99,31 @@ export function WithdrawalForm({ activeProduct, setIsLoading }: WithdrawalFormPr
               fullWidth
               label="Amount (USD)"
               value={withdrawAmount}
-              onChange={(e) => setWithdrawAmount(e.target.value.replace(/[^0-9.]/g, ""))}
+              onChange={(e) => {
+                const raw = e.target.value.replace(/[^0-9.]/g, "");
+                const num = parseFloat(raw);
+                const max = activeProduct?.available ?? 0;
+                if (!isNaN(num) && num > max) {
+                  setWithdrawAmount(String(max));
+                } else {
+                  setWithdrawAmount(raw);
+                }
+              }}
               size="small"
               disabled={!activeProduct?.available}
-              slotProps={{ input: { startAdornment: <InputAdornment position="start">$</InputAdornment> } }}
+              helperText={activeProduct?.available ? `Max: ${fmt(activeProduct.available)}` : undefined}
+              slotProps={{
+                input: {
+                  startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                  endAdornment: activeProduct?.available ? (
+                    <InputAdornment position="end">
+                      <Button size="small" onClick={() => setWithdrawAmount(String(activeProduct.available))} sx={{ minWidth: 0, px: 1, py: 0, fontSize: "0.7rem", fontWeight: 700, lineHeight: 1.5 }}>
+                        MAX
+                      </Button>
+                    </InputAdornment>
+                  ) : undefined,
+                },
+              }}
               sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
             />
 
