@@ -264,7 +264,7 @@ export function ClientsPage() {
       {filtered?.length === 0 ? (
         <Box sx={{ textAlign: "center", py: 8, color: "text.secondary" }}>
           <SearchIcon sx={{ fontSize: 48, opacity: 0.3, mb: 1 }} />
-          <Typography variant="body1">No clients match "{search}"</Typography>
+          <Typography variant="body1">No clients match {search ? '"' + search + '"' : ""}</Typography>
         </Box>
       ) : (
         <Grid container spacing={{ xs: 2, lg: 2.5 }}>
