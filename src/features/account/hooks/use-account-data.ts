@@ -100,7 +100,7 @@ export function useAccountData(tableParams?: TradeRequest, initialData?: Account
             mt5_id: targetMt5Id,
             page: tableParams?.page || 1,
             limit: tableParams?.limit || 10,
-            type: tableParams?.type || null,
+            trade_type: tableParams?.trade_type || null,
             date_from: tableParams?.date_from || null,
             end_date: tableParams?.end_date || null,
           },

@@ -6,60 +6,54 @@ import { useAccountTable, AccountTradeType } from "./use-account-table";
 import type { AccountInitialData } from "../AccountPage";
 
 export function useAccountViewModel(initialData?: AccountInitialData, mt5Id?: number) {
-    const tableState = useAccountTable();
+  const tableState = useAccountTable();
 
-    const tableParams = useMemo(
-        () => ({
-            page: tableState.page + 1,
-            limit: tableState.rowsPerPage,
-            type: tableState.typeFilter === "ALL" ? null : (tableState.typeFilter as string),
-            date_from: tableState.startDate || null,
-            end_date: tableState.endDate || null,
-        }),
-        [
-            tableState.page,
-            tableState.rowsPerPage,
-            tableState.typeFilter,
-            tableState.startDate,
-            tableState.endDate,
-        ]
-    );
+  const tableParams = useMemo(
+    () => ({
+      page: tableState.page + 1,
+      limit: tableState.rowsPerPage,
+      trade_type: tableState.typeFilter === "ALL" ? null : (tableState.typeFilter as string),
+      date_from: tableState.startDate || null,
+      end_date: tableState.endDate || null,
+    }),
+    [tableState.page, tableState.rowsPerPage, tableState.typeFilter, tableState.startDate, tableState.endDate]
+  );
 
-    const accountData = useAccountData(tableParams, initialData, mt5Id);
+  const accountData = useAccountData(tableParams, initialData, mt5Id);
 
-    const chartData = useMemo(() => {
-        if (!accountData.equityCurve || accountData.equityCurve.length === 0) return [];
-        return accountData.equityCurve.map((p) => ({
-            date: new Date(p.time).toLocaleDateString("en-US", { month: "short", day: "2-digit" }),
-            time: p.time,
-            balance: p.equity,
-        }));
-    }, [accountData.equityCurve]);
+  const chartData = useMemo(() => {
+    if (!accountData.equityCurve || accountData.equityCurve.length === 0) return [];
+    return accountData.equityCurve.map((p) => ({
+      date: new Date(p.time).toLocaleDateString("en-US", { month: "short", day: "2-digit" }),
+      time: p.time,
+      balance: p.equity,
+    }));
+  }, [accountData.equityCurve]);
 
-    const typeOptions = useMemo(
-        () => [
-            { label: "All Types", value: "ALL" as AccountTradeType },
-            { label: "Trade", value: "Trade" as AccountTradeType },
-            { label: "Deposit", value: "Deposit" as AccountTradeType },
-            { label: "Profit Share", value: "ProfitShare" as AccountTradeType },
-            { label: "Withdraw", value: "Withdraw" as AccountTradeType },
-        ],
-        []
-    );
+  const typeOptions = useMemo(
+    () => [
+      { label: "All Types", value: "ALL" as AccountTradeType },
+      { label: "Trade", value: "Trade" as AccountTradeType },
+      { label: "Deposit", value: "Deposit" as AccountTradeType },
+      { label: "Profit Share", value: "ProfitShare" as AccountTradeType },
+      { label: "Withdraw", value: "Withdraw" as AccountTradeType },
+    ],
+    []
+  );
 
-    const growthPercent = useMemo(() => {
-        const { realBalance, netProfit } = accountData;
-        if (realBalance > 0) {
-            return Number(((netProfit / (realBalance - netProfit)) * 100).toFixed(2));
-        }
-        return 0;
-    }, [accountData.realBalance, accountData.netProfit]);
+  const growthPercent = useMemo(() => {
+    const { realBalance, netProfit } = accountData;
+    if (realBalance > 0) {
+      return Number(((netProfit / (realBalance - netProfit)) * 100).toFixed(2));
+    }
+    return 0;
+  }, [accountData.realBalance, accountData.netProfit]);
 
-    return {
-        ...accountData,
-        ...tableState,
-        chartData,
-        typeOptions,
-        growthPercent,
-    };
+  return {
+    ...accountData,
+    ...tableState,
+    chartData,
+    typeOptions,
+    growthPercent,
+  };
 }

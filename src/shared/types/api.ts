@@ -62,7 +62,7 @@ export interface TradeRequest {
   date_from?: string | null; // สำหรับ /trades/grouped (Backend Alias)
   end_date?: string | null; // สำหรับ /trades/grouped (Backend Alias)
   symbol?: string | null;
-  type?: string | null;
+  trade_type?: string | null;
   entry?: string | null;
   comment?: string | null;
   pageNumber?: number;
