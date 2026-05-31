@@ -9,17 +9,32 @@ export function useAccountTable() {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
 
+    const handleTypeFilterChange = (value: AccountTradeType) => {
+        setTypeFilter(value);
+        setPage(0);
+    };
+
+    const handleStartDateChange = (value: string) => {
+        setStartDate(value);
+        setPage(0);
+    };
+
+    const handleEndDateChange = (value: string) => {
+        setEndDate(value);
+        setPage(0);
+    };
+
     return {
         page,
         setPage,
         rowsPerPage,
         setRowsPerPage,
         typeFilter,
-        setTypeFilter,
+        setTypeFilter: handleTypeFilterChange,
         startDate,
-        setStartDate,
+        setStartDate: handleStartDateChange,
         endDate,
-        setEndDate,
+        setEndDate: handleEndDateChange,
     };
 }
 

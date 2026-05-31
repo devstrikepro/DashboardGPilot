@@ -119,6 +119,21 @@ export function useHistoryData(serviceBase?: string, initialData?: GroupedTrades
     };
   }, [processedData]);
 
+  const handleTypeFilterChange = (value: "ALL" | "BUY" | "SELL") => {
+    setTypeFilter(value);
+    setPage(0);
+  };
+
+  const handleStartDateChange = (value: string) => {
+    setStartDate(value);
+    setPage(0);
+  };
+
+  const handleEndDateChange = (value: string) => {
+    setEndDate(value);
+    setPage(0);
+  };
+
   const handleSort = (field: SortField) => {
     if (sortField === field) {
       setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
@@ -152,9 +167,9 @@ export function useHistoryData(serviceBase?: string, initialData?: GroupedTrades
     sortDirection,
     handleSort,
     symbolFilter, setSymbolFilter,
-    typeFilter, setTypeFilter,
-    startDate, setStartDate,
-    endDate, setEndDate,
+    typeFilter, setTypeFilter: handleTypeFilterChange,
+    startDate, setStartDate: handleStartDateChange,
+    endDate, setEndDate: handleEndDateChange,
     refreshData,
   };
 }
