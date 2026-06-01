@@ -32,7 +32,7 @@ export function ProductCard({ title, avgMonthProfit, percentDD, initials, loadin
   return (
     <Card
       sx={{
-        minHeight: { xs: 100, sm: 130, md: 160 },
+        minHeight: { xs: 130, sm: 145, md: 160 },
         display: "flex",
         bgcolor: (theme) => (theme.palette.mode === "dark" ? "rgba(15, 23, 42, 0.4)" : "rgba(255, 255, 255, 0.7)"),
         backdropFilter: "blur(16px) saturate(180%)",
@@ -66,7 +66,7 @@ export function ProductCard({ title, avgMonthProfit, percentDD, initials, loadin
           height: "100%",
           display: "flex",
           alignItems: "center",
-          p: { xs: 2, sm: 2.5, md: 3 },
+          p: { xs: 2.5, sm: 2.5, md: 3 },
           m: 0,
           "& .MuiCardActionArea-focusHighlight": {
             bgcolor: "transparent",
