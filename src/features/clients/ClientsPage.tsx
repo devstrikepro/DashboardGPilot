@@ -201,9 +201,11 @@ export function ClientsPage() {
     return matchesSearch && matchesStatus;
   });
 
-  const activeCount = Object.values(clientStatuses).filter((s) => s.toLowerCase() === "active").length;
+  const activeCount = clients?.reduce((p, c) => (c.is_active ? p + 1 : p), 0) || 0;
   const inactiveCount = (clients?.length || 0) - activeCount;
   const totalPortfolio = clients?.reduce((s, c) => s + c.balance, 0) ?? 0;
+
+  console.log("client: ", clients);
 
   return (
     <Box sx={{ p: { xs: 2, lg: 3 }, flex: 1 }}>
