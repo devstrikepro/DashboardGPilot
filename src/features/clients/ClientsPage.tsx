@@ -7,7 +7,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { useState, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ProfitSharingService } from "@/shared/services/profit-sharing-service";
-import type { MyClient, MyClientProduct, PortDetail } from "@/shared/types/api";
+import type { MyClient, MyClientProduct /*, PortDetail */ } from "@/shared/types/api";
 import EditIcon from "@mui/icons-material/Edit";
 import crypto from "crypto";
 
@@ -20,17 +20,17 @@ interface WalletTab {
 const fmt = (val: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(val);
 
 // ─── Client Card ──────────────────────────────────────────────────────────────
-function ClientCard({ client, onStatusLoaded }: { client: MyClient; onStatusLoaded?: (mt5_id: number, status: string) => void }) {
-  const [portData, setPortData] = useState<PortDetail | null>(null);
-
-  useEffect(() => {
-    ProfitSharingService.getPortDetail(client.mt5_id).then((res) => {
-      if (res.success && res.data) {
-        setPortData(res.data);
-        onStatusLoaded?.(client.mt5_id, res.data.status ?? "Active");
-      }
-    });
-  }, [client.mt5_id]);
+// function ClientCard({ client, onStatusLoaded }: { client: MyClient; onStatusLoaded?: (mt5_id: number, status: string) => void }) {
+function ClientCard({ client }: { client: MyClient }) {
+  // const [portData, setPortData] = useState<PortDetail | null>(null);
+  // useEffect(() => {
+  //   ProfitSharingService.getPortDetail(client.mt5_id).then((res) => {
+  //     if (res.success && res.data) {
+  //       setPortData(res.data);
+  //       onStatusLoaded?.(client.mt5_id, res.data.status ?? "Active");
+  //     }
+  //   });
+  // }, [client.mt5_id]);
 
   const isActive = client.is_active;
 
@@ -150,7 +150,7 @@ export function ClientsPage() {
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
-  const [clientStatuses, setClientStatuses] = useState<Record<number, string>>({});
+  // const [clientStatuses, setClientStatuses] = useState<Record<number, string>>({});
   const [myClients, setMyClients] = useState<MyClientProduct | null>(null);
   const [myClientsLoading, setMyClientsLoading] = useState(false);
   const [myClientsError, setMyClientsError] = useState<string | null>(null);
@@ -176,7 +176,7 @@ export function ClientsPage() {
     const tab = tabs?.find((t) => t.key === activeTab);
     if (!tab) return;
     setMyClients(null);
-    setClientStatuses({});
+    // setClientStatuses({});
     setMyClientsLoading(true);
     setMyClientsError(null);
     ProfitSharingService.getMyClients(tab.product_port)
@@ -190,14 +190,15 @@ export function ClientsPage() {
       .finally(() => setMyClientsLoading(false));
   }, [activeTab]);
 
-  const handleStatusLoaded = (mt5_id: number, status: string) => {
-    setClientStatuses((prev) => ({ ...prev, [mt5_id]: status }));
-  };
+  // const handleStatusLoaded = (mt5_id: number, status: string) => {
+  //   setClientStatuses((prev) => ({ ...prev, [mt5_id]: status }));
+  // };
 
   const filtered = clients?.filter((c) => {
     const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase());
-    const status = (clientStatuses[c.mt5_id] ?? "Active").toLowerCase();
-    const matchesStatus = statusFilter === "all" || status === statusFilter;
+    // old: const status = (clientStatuses[c.mt5_id] ?? "Active").toLowerCase();
+    // old: const matchesStatus = statusFilter === "all" || status === statusFilter;
+    const matchesStatus = statusFilter === "all" || (statusFilter === "active" ? c.is_active : !c.is_active);
     return matchesSearch && matchesStatus;
   });
 
@@ -313,7 +314,7 @@ export function ClientsPage() {
         <Grid container spacing={{ xs: 2, lg: 2.5 }}>
           {filtered?.map((client) => (
             <Grid key={client.mt5_id} size={{ xs: 12, sm: 6, lg: 4 }}>
-              <ClientCard client={client} onStatusLoaded={handleStatusLoaded} />
+              <ClientCard client={client} /* onStatusLoaded={handleStatusLoaded} */ />
             </Grid>
           ))}
         </Grid>
