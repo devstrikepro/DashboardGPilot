@@ -1,4 +1,4 @@
-import { SERVICE_BASE_GPILOT, SERVICE_BASE_SAFEGROW, SERVICE_BASE_HQULTIMATE, SERVICE_BASE_PPVP, SERVICE_BASE_GOLDENBOY } from "@/shared/api/endpoint";
+import { SERVICE_BASE_GOLDENBOY, SERVICE_BASE_GPILOT, SERVICE_BASE_HQULTIMATE, SERVICE_BASE_PPVP, SERVICE_BASE_SAFEGROW } from "@/shared/api/endpoint";
 
 export interface ProductInfo {
   id: string;
@@ -22,19 +22,19 @@ export const PRODUCTS: Record<string, ProductInfo> = {
   },
   hqultimate: {
     id: "hqultimate",
-    title: "HQ Ultimate",
+    title: "HQ บางระจัน",
     initials: "HQ",
     serviceBase: SERVICE_BASE_HQULTIMATE,
   },
   ppvp: {
     id: "ppvp",
-    title: "PPVP",
+    title: "กุมารเงิน",
     initials: "PP",
     serviceBase: SERVICE_BASE_PPVP,
   },
   goldenboy: {
     id: "goldenboy",
-    title: "Golden Boy",
+    title: "กุมารทอง",
     initials: "GB",
     serviceBase: SERVICE_BASE_GOLDENBOY,
   },
