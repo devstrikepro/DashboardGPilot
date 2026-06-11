@@ -57,7 +57,7 @@ export function SymbolPerformance({ loading, stats, totalTrades }: Readonly<Symb
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Typography
                 sx={{
-                  fontFamily: "var(--font-inter)",
+                  fontFamily: "var(--font-inter), var(--font-thai)",
                   fontWeight: 500,
                   fontSize: "0.875rem",
                   color: "text.primary",
@@ -75,7 +75,7 @@ export function SymbolPerformance({ loading, stats, totalTrades }: Readonly<Symb
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               <Typography
                 sx={{
-                  fontFamily: "var(--font-inter)",
+                  fontFamily: "var(--font-inter), var(--font-thai)",
                   fontSize: "0.875rem",
                   color: profitColor,
                 }}
@@ -84,7 +84,7 @@ export function SymbolPerformance({ loading, stats, totalTrades }: Readonly<Symb
               </Typography>
               <Typography
                 sx={{
-                  fontFamily: "var(--font-inter)",
+                  fontFamily: "var(--font-inter), var(--font-thai)",
                   fontSize: "0.875rem",
                   color: "primary.main",
                   fontWeight: 500,
@@ -145,7 +145,7 @@ export function SymbolPerformance({ loading, stats, totalTrades }: Readonly<Symb
                   color: 'primary.main', 
                   fontSize: '0.75rem', 
                   fontWeight: 700,
-                  fontFamily: 'var(--font-inter)'
+                  fontFamily: 'var(--font-inter), var(--font-thai)'
                 }}
               >
                 Total Trades: {totalTrades}

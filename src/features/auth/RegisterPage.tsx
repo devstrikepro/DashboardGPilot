@@ -90,7 +90,7 @@ function RegisterContent() {
             >
               <PersonIcon sx={{ color: "primary.main", fontSize: 32 }} />
             </Box>
-            <Typography variant="h5" sx={{ fontWeight: 800, fontFamily: "Manrope" }}>
+            <Typography variant="h5" sx={{ fontWeight: 800, fontFamily: "Manrope, var(--font-thai), sans-serif" }}>
               Create Account
             </Typography>
             <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>

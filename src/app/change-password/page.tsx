@@ -119,7 +119,7 @@ export default function ChangePasswordPage() {
             >
               <SecurityIcon sx={{ color: "warning.main", fontSize: 32 }} />
             </Box>
-            <Typography variant="h5" sx={{ fontWeight: 800, fontFamily: 'Manrope', mb: 1 }}>
+            <Typography variant="h5" sx={{ fontWeight: 800, fontFamily: 'Manrope, var(--font-thai), sans-serif', mb: 1 }}>
               ตั้งรหัสผ่านใหม่
             </Typography>
             <Typography variant="body2" sx={{ color: "text.secondary" }}>

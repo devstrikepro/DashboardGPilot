@@ -64,7 +64,7 @@ export function Sidebar() {
               <Typography
                 variant="subtitle1"
                 sx={{
-                  fontFamily: '"Manrope", sans-serif',
+                  fontFamily: '"Manrope", var(--font-thai), sans-serif',
                   fontWeight: 600,
                   color: "text.primary",
                   letterSpacing: "-0.01em",

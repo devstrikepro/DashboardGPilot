@@ -81,37 +81,37 @@ export const getTheme = (mode: PaletteMode) =>
           }),
     },
     typography: {
-      fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+      fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", var(--font-thai), sans-serif',
       h1: {
-        fontFamily: '"Manrope", "Inter", sans-serif',
+        fontFamily: '"Manrope", "Inter", var(--font-thai), sans-serif',
         fontWeight: 700,
       },
       h2: {
-        fontFamily: '"Manrope", "Inter", sans-serif',
+        fontFamily: '"Manrope", "Inter", var(--font-thai), sans-serif',
         fontWeight: 700,
       },
       h3: {
-        fontFamily: '"Manrope", "Inter", sans-serif',
+        fontFamily: '"Manrope", "Inter", var(--font-thai), sans-serif',
         fontWeight: 600,
       },
       h4: {
-        fontFamily: '"Manrope", "Inter", sans-serif',
+        fontFamily: '"Manrope", "Inter", var(--font-thai), sans-serif',
         fontWeight: 600,
       },
       h5: {
-        fontFamily: '"Manrope", "Inter", sans-serif',
+        fontFamily: '"Manrope", "Inter", var(--font-thai), sans-serif',
         fontWeight: 600,
       },
       h6: {
-        fontFamily: '"Manrope", "Inter", sans-serif',
+        fontFamily: '"Manrope", "Inter", var(--font-thai), sans-serif',
         fontWeight: 600,
       },
       body1: {
-        fontFamily: '"Inter", sans-serif',
+        fontFamily: '"Inter", var(--font-thai), sans-serif',
         fontSize: "0.875rem",
       },
       body2: {
-        fontFamily: '"Inter", sans-serif',
+        fontFamily: '"Inter", var(--font-thai), sans-serif',
         fontSize: "0.75rem",
       },
     },

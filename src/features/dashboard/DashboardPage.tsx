@@ -37,7 +37,7 @@ export function DashboardPage({ initialUser }: DashboardPageProps) {
           <Typography
             variant="h5"
             sx={{
-              fontFamily: "var(--font-manrope)",
+              fontFamily: "var(--font-manrope), var(--font-thai)",
               fontWeight: 700,
               color: "text.primary",
               fontSize: { xs: "1.25rem", lg: "1.5rem" },

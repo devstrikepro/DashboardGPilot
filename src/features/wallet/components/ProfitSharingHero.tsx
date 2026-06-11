@@ -79,7 +79,7 @@ export function ProfitSharingHero({ balance, last_update }: ProfitSharingHeroPro
           <Typography
             variant="h2"
             sx={{
-              fontFamily: '"Manrope", sans-serif',
+              fontFamily: '"Manrope", var(--font-thai), sans-serif',
               fontWeight: 800,
               fontSize: { xs: "2.2rem", lg: "3rem" },
               background: "linear-gradient(135deg, #22D3EE 0%, #0891B2 100%)",

@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  --font-thai: 'Anuphan', sans-serif;
   --font-inter: 'Inter', sans-serif;
   --font-manrope: 'Manrope', sans-serif;
 }
@@ -16,6 +17,7 @@ html, body {
 }
 
 body {
+  font-family: var(--font-inter), var(--font-thai), sans-serif;
   background-color: #0F172A;
   background-image: radial-gradient(ellipse at top, #1E293B 0%, #0F172A 50%);
   min-height: 100vh;

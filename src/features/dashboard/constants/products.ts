@@ -16,7 +16,7 @@ export const PRODUCTS: Record<string, ProductInfo> = {
   },
   gpilot: {
     id: "gpilot",
-    title: "Gpilot",
+    title: "G pilot",
     initials: "GP",
     serviceBase: SERVICE_BASE_GPILOT,
   },

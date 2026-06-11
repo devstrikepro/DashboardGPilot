@@ -78,7 +78,7 @@ export function WalletPage({ initialData }: WalletPageProps) {
       <Box sx={{ mb: { xs: 2.5, lg: 3 } }}>
         <Typography
           variant="h5"
-          sx={{ fontFamily: '"Manrope", sans-serif', fontWeight: 700, color: "text.primary", fontSize: { xs: "1.25rem", lg: "1.5rem" } }}
+          sx={{ fontFamily: '"Manrope", var(--font-thai), sans-serif', fontWeight: 700, color: "text.primary", fontSize: { xs: "1.25rem", lg: "1.5rem" } }}
         >
           Wallet
         </Typography>

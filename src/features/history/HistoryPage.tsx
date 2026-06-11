@@ -43,7 +43,7 @@ export default function HistoryPage({
         <Typography
           variant="h5"
           sx={{
-            fontFamily: '"Manrope", sans-serif',
+            fontFamily: '"Manrope", var(--font-thai), sans-serif',
             fontWeight: 700,
             color: "text.primary",
             fontSize: { xs: "1.25rem", lg: "1.5rem" },

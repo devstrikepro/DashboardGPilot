@@ -82,7 +82,7 @@ export function MetricCard({
               variant="h6"
               sx={{
                 color: "text.primary",
-                fontFamily: "var(--font-inter)",
+                fontFamily: "var(--font-inter), var(--font-thai)",
                 fontWeight: 700,
                 fontSize: { xs: "1.1rem", lg: "1.35rem" },
                 letterSpacing: "-0.02em",

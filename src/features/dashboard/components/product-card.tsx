@@ -96,7 +96,7 @@ export function ProductCard({ title, avgMonthProfit, percentDD, initials, loadin
               color: "#fff",
               fontWeight: 800,
               fontSize: { xs: "1rem", sm: "1.2rem", md: "1.4rem" },
-              fontFamily: "var(--font-manrope)",
+              fontFamily: "var(--font-manrope), var(--font-thai)",
               flexShrink: 0,
               border: "2px solid rgba(255,255,255,0.3)",
             }}
@@ -110,7 +110,7 @@ export function ProductCard({ title, avgMonthProfit, percentDD, initials, loadin
               variant="h6"
               sx={{
                 color: "text.primary",
-                fontFamily: "var(--font-manrope)",
+                fontFamily: "var(--font-manrope), var(--font-thai)",
                 fontWeight: 800,
                 fontSize: { xs: "0.95rem", sm: "1.15rem", md: "1.3rem" },
                 letterSpacing: "-0.02em",
@@ -140,7 +140,7 @@ export function ProductCard({ title, avgMonthProfit, percentDD, initials, loadin
                 sx={{
                   color: "error.main",
                   fontWeight: 700,
-                  fontFamily: "var(--font-inter)",
+                  fontFamily: "var(--font-inter), var(--font-thai)",
                   fontSize: "0.9rem",
                 }}
               >
@@ -172,7 +172,7 @@ export function ProductCard({ title, avgMonthProfit, percentDD, initials, loadin
               sx={{
                 color: avgMonthProfit >= 0 ? "#10B981" : "#FFFFFF",
                 fontWeight: 850,
-                fontFamily: "var(--font-inter)",
+                fontFamily: "var(--font-inter), var(--font-thai)",
                 fontSize: { xs: "1.6rem", sm: "1.85rem", md: "2.1rem" },
                 transition: "all 0.3s ease",
                 textAlign: "right",

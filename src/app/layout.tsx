@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Manrope } from "next/font/google";
+import { Inter, Manrope, Anuphan } from "next/font/google";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { ThemeProvider } from "@/shared/ui/theme-provider";
 import { ApiHealthProvider } from "@/shared/providers/api-health-provider";
@@ -16,6 +16,13 @@ const inter = Inter({
 const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-manrope",
+  display: "swap",
+});
+
+// Thai loopless (ไม่มีหัว) font — provides Thai glyphs as a fallback for the Latin fonts above
+const anuphan = Anuphan({
+  subsets: ["thai", "latin"],
+  variable: "--font-thai",
   display: "swap",
 });
 
@@ -49,7 +56,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${manrope.variable} antialiased`} suppressHydrationWarning>
+      <body className={`${inter.variable} ${manrope.variable} ${anuphan.variable} antialiased`} suppressHydrationWarning>
         <AppRouterCacheProvider>
           <ThemeProvider>
             <AuthProvider>
